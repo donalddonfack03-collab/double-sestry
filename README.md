@@ -47,3 +47,16 @@ Tout se passe dans `src/data/produits.ts` :
 - **ajouter un produit** : copier un bloc existant et changer le `slug` (il devient l'adresse de la page).
 
 Vérifier avant d'envoyer : `npm run check` puis `npm run build`.
+
+## Référencement et aperçus de liens
+
+- **Image d'aperçu** : chaque page a sa propre image 1200 × 630 (photo dans une alvéole, nom, prix),
+  générée à la construction dans `dist/og/`. C'est elle qui s'affiche quand on partage un lien
+  sur WhatsApp, Telegram ou VK. Code : `src/lib/og.ts` et `src/pages/og/`.
+- **Plan du site** : `sitemap-index.xml`, avec les versions française et russe de chaque page.
+- **robots.txt** : autorise Google et Yandex, exclut le guide de style.
+- **Données structurées** (`src/lib/schema.ts`) : fiche « établissement » (ville, horaires, téléphone,
+  fourchette de prix) sur l'accueil, fiche « produit » avec les prix sur chaque page produit.
+
+> Les adresses complètes utilisent `site` dans `astro.config.mjs`. Tant qu'il vaut `https://example.com`,
+> les aperçus ne peuvent pas s'afficher sur WhatsApp : on le remplace à l'étape 6 (mise en ligne).

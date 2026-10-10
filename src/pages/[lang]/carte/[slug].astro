@@ -8,6 +8,7 @@ import WhatsAppButton from '../../../components/WhatsAppButton.astro';
 import { langs, t, path, colon, bang, type Lang, type UiKey } from '../../../i18n/ui';
 import { enVente, trouver, type Produit } from '../../../data/produits';
 import { contact, retrait } from '../../../data/infos';
+import { produit as produitSchema } from '../../../lib/schema';
 
 export function getStaticPaths() {
   return langs.flatMap((lang) => enVente.map((p) => ({ params: { lang, slug: p.slug }, props: { p } })));
@@ -28,7 +29,7 @@ const autres = enVente
   .slice(0, 2);
 const hexLabel = p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim() : undefined;
 ---
-<Base lang={lang} title={p.nom[lang]} description={`${p.accroche[lang]}. ${p.description[lang]}`.slice(0, 158)}>
+<Base lang={lang} title={p.nom[lang]} ogType="product" jsonLd={produitSchema(p, lang, Astro.site!)} description={`${p.accroche[lang]}. ${p.description[lang]}`.slice(0, 158)}>
   <div class="wrap crumbs">
     <a href={path(lang, 'carte')}>{t(lang, 'nav.carte')}</a>
     <span aria-hidden="true">/</span>
