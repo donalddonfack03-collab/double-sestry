@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langPaths, t, colon, type Lang } from '../../i18n/ui';
+import { contact, lienWhatsApp, retrait, paiement, livraison } from '../../data/infos';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+---
+<Base lang={lang} title={t(lang, 'nav.commander')} description={lang === 'fr' ? 'Commandez avant jeudi soir sur WhatsApp, récupérez le week-end à Briansk.' : 'Заказывайте в WhatsApp до вечера четверга, забирайте на выходных в Брянске.'}>
+  <h1>{t(lang, 'nav.commander')}</h1>
+  <ul>{retrait.creneaux.map((c) => <li>{c.jour[lang]}{colon(lang)} {c.heures.join(', ')}</li>)}</ul>
+  <p>{retrait.lieu[lang]}</p>
+  <p>{retrait.prevenir[lang]}</p>
+  <p>{paiement[lang]}</p>
+  <p>{livraison[lang]}</p>
+  <p>WhatsApp{colon(lang)} {contact.telephone}</p>
+  <a href={lienWhatsApp(contact.messageParDefaut[lang])}>{t(lang, 'cta.whatsapp')}</a>
+</Base>

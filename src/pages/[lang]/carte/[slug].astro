@@ -1,0 +1,29 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { langs, t, path, colon, bang, type Lang } from '../../../i18n/ui';
+import { enVente, allergenes, prix, type Produit } from '../../../data/produits';
+import { contact, lienWhatsApp } from '../../../data/infos';
+
+export function getStaticPaths() {
+  return langs.flatMap((lang) => enVente.map((p) => ({ params: { lang, slug: p.slug }, props: { p } })));
+}
+const lang = Astro.params.lang as Lang;
+const { p } = Astro.props as { p: Produit };
+const liste = (a: Produit['contient']) => a.map((x) => allergenes[x][lang]).join(', ');
+const message = `${contact.messageParDefaut[lang]}${bang(lang)} ${lang === 'fr' ? 'Je voudrais commander' : 'Хочу заказать'}${colon(lang)} ${p.nom[lang]}`;
+---
+<Base lang={lang} title={p.nom[lang]} description={`${p.accroche[lang]}. ${p.description[lang].slice(0, 120)}…`}>
+  <a href={path(lang, 'carte')}>{t(lang, 'produit.retourCarte')}</a>
+  <h1>{p.nom[lang]}</h1>
+  <p>{p.accroche[lang]}</p>
+  {p.photo && <img src={p.photo} alt={p.photoAlt?.[lang] ?? ''} width="360" height="360" />}
+  <p>{p.description[lang]}</p>
+  <ul>
+    {p.formats.map((f) => (
+      <li>{f.libelle[lang]}{colon(lang)} {f.prix === null ? t(lang, 'produit.surDevis') : prix(f.prix)}{f.prixBarre && <> ({t(lang, 'produit.auLieuDe')} <s>{prix(f.prixBarre)}</s>)</>}</li>
+    ))}
+  </ul>
+  <p><b>{t(lang, 'produit.allergenes')}{colon(lang)}</b> {p.contient.length ? liste(p.contient) : t(lang, 'produit.aucunAllergene')}{p.traces.length > 0 && <>. {t(lang, 'produit.traces')}{colon(lang)} {liste(p.traces)}</>}</p>
+  {p.conservation && <p><b>{t(lang, 'produit.conservation')}{colon(lang)}</b> {p.conservation[lang]}</p>}
+  <a href={lienWhatsApp(message)}>{t(lang, 'cta.whatsapp')}</a>
+</Base>

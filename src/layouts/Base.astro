@@ -1,0 +1,48 @@
+---
+// Squelette commun à toutes les pages : langue, titre, liens vers l'autre langue, menu.
+// Le design arrive à l'étape 3.
+import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+}
+const { lang, title, description } = Astro.props;
+const current = Astro.url.pathname;
+const pageTitle = title === 'Double Sestry' ? title : `${title} · Double Sestry`;
+const nav = [
+  ['', 'nav.accueil'],
+  ['carte', 'nav.carte'],
+  ['histoire', 'nav.histoire'],
+  ['commander', 'nav.commander'],
+] as const;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    {langs.map((l) => <link rel="alternate" hreflang={l} href={new URL(switchLang(current, l), Astro.site)} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(switchLang(current, 'fr'), Astro.site)} />
+  </head>
+  <body>
+    <header>
+      <a href={path(lang)}><img src="/ds-mark.svg" alt="" width="40" height="38" /> Double Sestry</a>
+      <nav>
+        {nav.map(([slug, key]) => (
+          <a href={path(lang, slug)} aria-current={current === path(lang, slug) ? 'page' : undefined}>{t(lang, key)}</a>
+        ))}
+      </nav>
+      <div>
+        {langs.map((l) => (
+          <a href={switchLang(current, l)} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
+        ))}
+      </div>
+    </header>
+    <main><slot /></main>
+  </body>
+</html>

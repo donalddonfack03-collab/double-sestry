@@ -1,0 +1,12 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langPaths, t, path, type Lang } from '../../i18n/ui';
+import { marque, semaine } from '../../data/infos';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+---
+<Base lang={lang} title="Double Sestry" description={marque.slogan[lang]}>
+  <h1>{marque.slogan[lang]}</h1>
+  <a href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
+  <ol>{semaine.map((j) => <li><b>{j.jour[lang]}</b> {j.quoi[lang]}</li>)}</ol>
+</Base>

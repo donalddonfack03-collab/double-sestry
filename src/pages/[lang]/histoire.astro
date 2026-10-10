@@ -1,0 +1,10 @@
+---
+import Base from '../../layouts/Base.astro';
+import { langPaths, t, type Lang } from '../../i18n/ui';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+---
+<Base lang={lang} title={t(lang, 'nav.histoire')} description={lang === 'fr' ? 'Deux sœurs, une cuisine partagée, des recettes qui ont voyagé.' : 'Две сестры, общая кухня и рецепты, которые приехали с нами.'}>
+  <h1>{t(lang, 'nav.histoire')}</h1>
+  <p>{lang === 'fr' ? 'Le texte arrive à l’étape 4.' : 'Текст появится на шаге 4.'}</p>
+</Base>

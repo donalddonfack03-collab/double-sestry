@@ -1,0 +1,30 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { langPaths, t, path, type Lang, type UiKey } from '../../../i18n/ui';
+import { parCategorie, prix, type Categorie } from '../../../data/produits';
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+const sections: [Categorie, UiKey][] = [
+  ['sale', 'carte.sale'], ['sucre', 'carte.sucre'], ['boisson', 'carte.boisson'],
+  ['formule', 'carte.formule'], ['surCommande', 'carte.surCommande'],
+];
+---
+<Base lang={lang} title={t(lang, 'nav.carte')} description={lang === 'fr' ? 'Crêpes, pastels, bissap et formules : la carte du week-end, avec les prix et les allergènes.' : 'Блины, пастели, биссап и наборы: меню выходных с ценами и аллергенами.'}>
+  <h1>{t(lang, 'nav.carte')}</h1>
+  {sections.map(([cat, key]) => {
+    const items = parCategorie(cat);
+    return items.length > 0 && (
+      <section>
+        <h2>{t(lang, key)}</h2>
+        <ul>
+          {items.map((p) => (
+            <li>
+              <a href={path(lang, `carte/${p.slug}`)}>{p.nom[lang]}</a> · {p.accroche[lang]} ·
+              {p.formats.map((f) => (f.prix === null ? t(lang, 'produit.surDevis') : `${f.libelle[lang]} ${prix(f.prix)}`)).join(' / ')}
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  })}
+</Base>
