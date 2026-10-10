@@ -1,0 +1,103 @@
+---
+// Guide de style : tous les éléments du design system sur une page. Non indexée, non liée.
+import Base from '../layouts/Base.astro';
+import Mark from '../components/Mark.astro';
+import Hex from '../components/Hex.astro';
+import Prices from '../components/Prices.astro';
+import Allergens from '../components/Allergens.astro';
+import ProductCard from '../components/ProductCard.astro';
+import WeekStrip from '../components/WeekStrip.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { trouver } from '../data/produits';
+
+const sestry = trouver('la-sestry')!;
+const lotus = trouver('lotus')!;
+const grandeFaim = trouver('grande-faim')!;
+const colors = [
+  ['creme', 'Fond de page'], ['surface', 'Cartes'], ['alveole', 'Zones teintées'], ['line', 'Filets'],
+  ['choco', 'Titres, boutons'], ['ink', 'Texte'], ['muted', 'Texte secondaire'], ['miel', 'Accent'], ['miel-ink', 'Miel en texte'],
+];
+---
+<Base lang="fr" title="Guide de style" description="Design system du site Double Sestry." noindex>
+  <div class="wrap section stack sg">
+    <p class="eyebrow">Design system</p>
+    <h1>Guide de style</h1>
+    <p class="lead">Tous les éléments du site, en un seul endroit. Passez le téléphone en mode sombre pour voir la version nuit.</p>
+
+    <h2>Logo</h2>
+    <div class="row"><Mark size="120px" label="Double Sestry" /><Mark size="64px" /><Mark size="32px" /></div>
+
+    <h2>Couleurs</h2>
+    <div class="swatches">
+      {colors.map(([k, role]) => (
+        <div class="sw"><span style={`background:var(--${k})`}></span><b>{k}</b><small>{role}</small></div>
+      ))}
+    </div>
+
+    <h2>Typographie</h2>
+    <div class="type">
+      <p class="eyebrow">Eyebrow · fait maison</p>
+      <h1>Cuisiné par deux sœurs.</h1>
+      <h2>Peu de produits, faits avec soin.</h2>
+      <h3>La Sestry, crêpe poulet-fromage</h3>
+      <p class="lead">Texte d’introduction : crêpes, pastels et bissap faits le jour même.</p>
+      <p>Texte courant. Une crêpe fine garnie de poulet épicé cuit maison, d’une cuillère de sauce et d’une tranche de cheddar.</p>
+      <div lang="ru" class="ru-sample">
+        <h2>Готовят две сестры.</h2>
+        <p>Русский текст: тонкий блин с острой домашней курицей, ложкой соуса и ломтиком чеддера.</p>
+      </div>
+    </div>
+
+    <h2>Boutons</h2>
+    <div class="row">
+      <a class="btn btn--main" href="#">Voir la carte</a>
+      <a class="btn btn--ghost" href="#">Comment commander</a>
+      <a class="btn btn--miel" href="#">Bouton miel</a>
+      <WhatsAppButton lang="fr" />
+    </div>
+
+    <h2>Alvéoles</h2>
+    <div class="row hexes">
+      <Hex photo="crepes.jpg" alt="Crêpes" width={200} />
+      <Hex photo="pastels.jpg" alt="Pastels" width={200} />
+      <Hex label="Lotus" width={200} />
+      <Hex label="fait le jour même" tone="choco" width={200} />
+      <Hex label="sur commande" tone="alveole" width={200} />
+    </div>
+
+    <h2>Prix</h2>
+    <Prices lang="fr" formats={sestry.formats} />
+    <Prices lang="fr" formats={grandeFaim.formats} size="lg" />
+
+    <h2>Allergènes et conservation</h2>
+    <div class="cols">
+      <Allergens lang="fr" produit={sestry} />
+      <Allergens lang="ru" produit={lotus} />
+    </div>
+
+    <h2>Fiches produit</h2>
+    <div class="cards">
+      <ProductCard lang="fr" produit={sestry} />
+      <ProductCard lang="fr" produit={lotus} />
+      <ProductCard lang="ru" produit={grandeFaim} />
+    </div>
+
+    <h2>La semaine</h2>
+    <WeekStrip lang="fr" />
+  </div>
+</Base>
+
+<style>
+  .sg { gap: var(--space-5); }
+  .sg > h2 { margin-top: var(--space-7); padding-top: var(--space-4); border-top: 1.5px solid var(--choco); font-size: var(--step-2); }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+  .hexes > * { width: 140px; }
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--space-3); }
+  .sw { display: grid; gap: 2px; font-size: var(--step--1); }
+  .sw span { height: 64px; border-radius: 10px; border: 1px solid var(--line); }
+  .sw small { color: var(--muted); }
+  .type { display: grid; gap: var(--space-4); }
+  .ru-sample { display: grid; gap: var(--space-3); padding-top: var(--space-4); border-top: 1px dashed var(--line); }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--space-6); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--space-4); }
+</style>

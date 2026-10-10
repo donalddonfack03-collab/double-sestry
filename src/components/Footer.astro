@@ -1,0 +1,40 @@
+---
+import Mark from './Mark.astro';
+import { t, path, type Lang } from '../i18n/ui';
+import { contact, marque, lienWhatsApp } from '../data/infos';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<footer class="site-footer">
+  <div class="wrap grid">
+    <div class="id">
+      <Mark size="46px" />
+      <div>
+        <p class="name">Double Sestry</p>
+        <p class="muted">{lang === 'fr' ? 'Fait maison à' : 'Домашняя кухня,'} {marque.ville[lang]}</p>
+      </div>
+    </div>
+    <nav aria-label={lang === 'fr' ? 'Pied de page' : 'Нижнее меню'}>
+      <a href={path(lang, 'carte')}>{t(lang, 'nav.carte')}</a>
+      <a href={path(lang, 'histoire')}>{t(lang, 'nav.histoire')}</a>
+      <a href={path(lang, 'commander')}>{t(lang, 'nav.commander')}</a>
+    </nav>
+    <div class="contact">
+      <p class="muted">WhatsApp</p>
+      <a class="num" href={lienWhatsApp(contact.messageParDefaut[lang])}>{contact.telephone}</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--line); padding-block: var(--space-7); margin-top: var(--space-8); }
+  .grid { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: space-between; }
+  .id { display: flex; gap: var(--space-3); align-items: center; }
+  .name { font-family: 'Young Serif', Georgia, serif; color: var(--choco); font-size: 1.15rem; }
+  .muted { color: var(--muted); font-size: var(--step--1); }
+  nav { display: flex; gap: var(--space-5); flex-wrap: wrap; }
+  nav a { color: var(--muted); text-decoration: none; font-weight: 650; }
+  nav a:hover { color: var(--choco); }
+  .num { font-weight: 750; color: var(--choco); text-decoration: none; font-variant-numeric: tabular-nums; }
+</style>

@@ -42,7 +42,7 @@ export interface Produit {
   contient: Allergene[];
   traces: Allergene[];
   conservation?: T;
-  /** Photo dans public/photos/ ; absente = alvéole de couleur avec le nom. */
+  /** Nom du fichier dans src/assets/photos/ ; absente = alvéole de couleur avec le nom. */
   photo?: string;
   photoAlt?: T;
   /** Pour les formules : les slugs des produits inclus. */
@@ -74,7 +74,7 @@ export const produits: Produit[] = [
       fr: '2 jours au frais. Réchauffer 1 minute à la poêle, ou au micro-ondes sans le couvercle.',
       ru: '2 дня в холодильнике. Разогреть 1 минуту на сковороде или в микроволновке без крышки.',
     },
-    photo: '/photos/crepes.jpg',
+    photo: 'crepes.jpg',
     photoAlt: { fr: 'Crêpes La Sestry pliées en enveloppe dans leur boîte', ru: 'Блины La Sestry, сложенные конвертом, в коробке' },
   },
   {
@@ -96,7 +96,7 @@ export const produits: Produit[] = [
     contient: ['gluten', 'lait', 'oeufs', 'noisette', 'soja'],
     traces: [],
     conservation: deuxJours,
-    photo: '/photos/choco.jpg',
+    photo: 'choco.jpg',
     photoAlt: { fr: 'Crêpes La Choco roulées et coupées en spirales', ru: 'Блины La Choco, нарезанные рулетиками' },
   },
   {
@@ -139,7 +139,7 @@ export const produits: Produit[] = [
       fr: '2 jours au frais. 5 minutes au four ou à la poêle pour retrouver le croustillant.',
       ru: '2 дня в холодильнике. 5 минут в духовке или на сковороде — и они снова хрустящие.',
     },
-    photo: '/photos/pastels.jpg',
+    photo: 'pastels.jpg',
     photoAlt: { fr: 'Pastels dorés dans leur boîte', ru: 'Золотистые пастели в коробке' },
   },
   {
@@ -160,7 +160,7 @@ export const produits: Produit[] = [
     contient: [],
     traces: [],
     conservation: { fr: '3 jours au frais. Bien agiter avant de servir.', ru: '3 дня в холодильнике. Перед подачей взболтать.' },
-    photo: '/photos/bissap.jpg',
+    photo: 'bissap.jpg',
     photoAlt: { fr: 'Bouteille de bissap rouge', ru: 'Бутылка красного биссапа' },
   },
   {

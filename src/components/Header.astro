@@ -1,0 +1,76 @@
+---
+import Mark from './Mark.astro';
+import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const current = Astro.url.pathname;
+const nav = [
+  ['', 'nav.accueil'],
+  ['carte', 'nav.carte'],
+  ['histoire', 'nav.histoire'],
+  ['commander', 'nav.commander'],
+] as const;
+const isCurrent = (slug: string) =>
+  slug === '' ? current === path(lang) : current.startsWith(path(lang, slug));
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href={path(lang)} aria-label="Double Sestry">
+      <Mark size="40px" />
+      <span>Double Sestry</span>
+    </a>
+    <nav class="nav" aria-label={lang === 'fr' ? 'Menu principal' : 'Главное меню'}>
+      {nav.map(([slug, key]) => (
+        <a href={path(lang, slug)} aria-current={isCurrent(slug) ? 'page' : undefined}>{t(lang, key)}</a>
+      ))}
+    </nav>
+    <div class="lang" role="group" aria-label="Langue / Язык">
+      {langs.map((l) => (
+        <a href={switchLang(current, l)} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--creme) 90%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar { display: flex; align-items: center; gap: var(--space-4); padding-block: 10px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .brand span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+  .nav a {
+    text-decoration: none;
+    font-weight: 650;
+    font-size: 0.94rem;
+    padding: 7px 13px;
+    border-radius: var(--radius-pill);
+    color: var(--muted);
+  }
+  .nav a:hover { color: var(--choco); }
+  .nav a[aria-current='page'] { background: var(--choco); color: var(--on-choco); }
+  .lang { display: flex; border: 1.5px solid var(--line); border-radius: var(--radius-pill); overflow: hidden; }
+  .lang a {
+    text-decoration: none;
+    font-weight: 750;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    padding: 6px 11px;
+    color: var(--muted);
+  }
+  .lang a[aria-current='true'] { background: var(--miel); color: var(--on-miel); }
+
+  @media (max-width: 640px) {
+    .nav { order: 3; width: 100%; margin-left: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .nav a { white-space: nowrap; padding: 6px 11px; font-size: 0.9rem; }
+    .lang { margin-left: auto; }
+  }
+</style>

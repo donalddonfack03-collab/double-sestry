@@ -1,0 +1,45 @@
+---
+// Fiche courte d'un produit sur la carte : alvéole, nom, accroche, prix de départ, lien vers sa page.
+import Hex from './Hex.astro';
+import { t, path, type Lang } from '../i18n/ui';
+import { prix, type Produit } from '../data/produits';
+
+interface Props { lang: Lang; produit: Produit }
+const { lang, produit: p } = Astro.props;
+const prixConnus = p.formats.map((f) => f.prix).filter((x): x is number => x !== null);
+const depuis = prixConnus.length ? Math.min(...prixConnus) : null;
+const libelleDepuis =
+  depuis === null
+    ? t(lang, 'produit.surDevis')
+    : p.formats.length > 1
+      ? `${lang === 'fr' ? 'dès' : 'от'} ${prix(depuis)}`
+      : prix(depuis);
+---
+<a class="card" href={path(lang, `carte/${p.slug}`)}>
+  <Hex tone={p.categorie === 'formule' ? 'alveole' : 'miel'} photo={p.photo} alt={p.photoAlt?.[lang]} label={p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim() : undefined} width={220} />
+  <div class="txt">
+    <h3>{p.nom[lang]}</h3>
+    <p class="acc">{p.accroche[lang]}</p>
+    <p class="from">{libelleDepuis}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: grid;
+    grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: center;
+    text-decoration: none;
+    padding: var(--space-4);
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .txt { min-width: 0; display: grid; gap: 4px; }
+  h3 { font-size: var(--step-1); }
+  .acc { color: var(--muted); font-size: var(--step--1); line-height: 1.4; }
+  .from { font-weight: 750; color: var(--miel-ink); font-variant-numeric: tabular-nums; margin-top: 2px; }
+</style>

@@ -1,0 +1,45 @@
+---
+// Allergènes et conservation d'un produit.
+import { t, colon, type Lang } from '../i18n/ui';
+import { allergenes, type Produit } from '../data/produits';
+
+interface Props { lang: Lang; produit: Produit }
+const { lang, produit: p } = Astro.props;
+---
+<dl class="facts">
+  <div>
+    <dt>{t(lang, 'produit.allergenes')}{colon(lang)}</dt>
+    <dd>
+      {p.contient.length === 0 ? (
+        <span class="none">{t(lang, 'produit.aucunAllergene')}</span>
+      ) : (
+        <ul class="chips">{p.contient.map((a) => <li>{allergenes[a][lang]}</li>)}</ul>
+      )}
+      {p.traces.length > 0 && (
+        <p class="traces">{t(lang, 'produit.traces')}{colon(lang)} {p.traces.map((a) => allergenes[a][lang]).join(', ')}</p>
+      )}
+    </dd>
+  </div>
+  {p.conservation && (
+    <div>
+      <dt>{t(lang, 'produit.conservation')}{colon(lang)}</dt>
+      <dd>{p.conservation[lang]}</dd>
+    </div>
+  )}
+</dl>
+
+<style>
+  .facts { margin: 0; display: grid; gap: var(--space-4); font-size: var(--step--1); }
+  dt { font-weight: 750; color: var(--choco); margin-bottom: var(--space-1); }
+  dd { margin: 0; color: var(--muted); }
+  .chips { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips li {
+    border: 1.5px solid var(--miel);
+    color: var(--ink);
+    border-radius: var(--radius-pill);
+    padding: 2px 10px;
+    font-weight: 650;
+  }
+  .traces { margin-top: var(--space-2); font-style: italic; }
+  .none { font-weight: 650; color: var(--ink); }
+</style>

@@ -1,0 +1,14 @@
+---
+// Bouton qui ouvre WhatsApp avec un message déjà écrit.
+import { t, type Lang } from '../i18n/ui';
+import { contact, lienWhatsApp } from '../data/infos';
+
+interface Props { lang: Lang; message?: string; variant?: 'main' | 'miel' | 'ghost'; label?: string }
+const { lang, message = contact.messageParDefaut[lang], variant = 'main', label = t(lang, 'cta.whatsapp') } = Astro.props;
+---
+<a class={`btn btn--${variant}`} href={lienWhatsApp(message)} target="_blank" rel="noopener">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z" />
+  </svg>
+  {label}
+</a>

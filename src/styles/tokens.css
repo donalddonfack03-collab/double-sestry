@@ -1,0 +1,76 @@
+/*
+ * Design system Double Sestry — les jetons.
+ * Charte : chocolat + miel sur crème. Young Serif pour les titres (Lora pour le russe,
+ * car Young Serif n'a pas de cyrillique), Figtree pour le texte (Golos Text pour le russe).
+ * Le site suit le réglage du téléphone : crème le jour, chocolat foncé la nuit.
+ */
+:root {
+  /* Couleurs */
+  --creme: #fef7ee;        /* fond de page */
+  --surface: #ffffff;      /* cartes, encadrés */
+  --alveole: #f6e6cf;      /* fond des alvéoles et zones teintées */
+  --line: #ebdcc8;         /* filets, bordures */
+  --choco: #541f12;        /* titres, logo, boutons principaux */
+  --ink: #3a1a10;          /* texte courant */
+  --muted: #7a5245;        /* texte secondaire */
+  --miel: #d3902e;         /* accent : alvéoles, ailes, puces */
+  --miel-ink: #8a5a12;     /* miel lisible en texte sur crème */
+  --on-choco: #fef7ee;     /* texte posé sur le chocolat */
+  --on-miel: #2a1408;      /* texte posé sur le miel */
+  --rose: #e9a0a6;         /* réservé à la mascotte panda */
+  --shadow: 0 1px 2px rgb(84 31 18 / 0.06), 0 8px 24px rgb(84 31 18 / 0.08);
+
+  /* Typographie */
+  --font-display: 'Young Serif', 'Lora Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Figtree Variable', 'Golos Text Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display-weight: 400;
+
+  --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.45vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.3rem + 0.9vw, 2rem);
+  --step-3: clamp(1.9rem, 1.5rem + 1.8vw, 2.8rem);
+  --step-4: clamp(2.4rem, 1.7rem + 3.2vw, 4.4rem);
+
+  /* Espacements */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: clamp(3rem, 2rem + 4vw, 5.5rem);
+
+  --radius: 14px;
+  --radius-pill: 999px;
+  --wrap: 1120px;
+  --gutter: clamp(16px, 4vw, 32px);
+  --measure: 64ch;
+
+  color-scheme: light;
+}
+
+/* Le russe : titres en Lora (cyrillique), texte en Golos Text. */
+:lang(ru) {
+  --font-display: 'Lora Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Golos Text Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --creme: #1c110c;
+    --surface: #26170f;
+    --alveole: #33201a;
+    --line: #3f2a1f;
+    --choco: #f3dfc6;
+    --ink: #f6e9d8;
+    --muted: #c8ad97;
+    --miel: #e2a64b;
+    --miel-ink: #f0be6a;
+    --on-choco: #1c110c;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+    color-scheme: dark;
+  }
+}
