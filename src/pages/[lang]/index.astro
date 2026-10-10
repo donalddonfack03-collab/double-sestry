@@ -1,12 +1,164 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Hex from '../../components/Hex.astro';
+import Mark from '../../components/Mark.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import WeekStrip from '../../components/WeekStrip.astro';
+import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, semaine } from '../../data/infos';
+import { marque, retrait } from '../../data/infos';
+import { trouver, type Produit } from '../../data/produits';
+import { accroche, promesses } from '../../data/histoire';
+
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
+const fr = lang === 'fr';
+const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap'].map(trouver).filter((p): p is Produit => !!p);
 ---
-<Base lang={lang} title="Double Sestry" description={marque.slogan[lang]}>
-  <h1>{marque.slogan[lang]}</h1>
-  <a href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
-  <ol>{semaine.map((j) => <li><b>{j.jour[lang]}</b> {j.quoi[lang]}</li>)}</ol>
+<Base
+  lang={lang}
+  title="Double Sestry"
+  description={fr
+    ? 'Crêpes, pastels et bissap faits maison par deux sœurs de Pointe-Noire, à Briansk. Le week-end, sur commande, retrait devant la cité.'
+    : 'Блины, пастели и биссап от двух сестёр из Пуэнт-Нуара, в Брянске. По выходным, под заказ, выдача у общежития.'}
+>
+  <section class="hero wrap">
+    <div class="hero__text">
+      <p class="eyebrow">{fr ? 'Fait maison' : 'Домашняя кухня'} · {marque.ville[lang]}</p>
+      <h1>
+        {fr ? 'Cuisiné par deux sœurs.' : 'Готовят две сестры.'}
+        <em>{fr ? <>Le <span class="nowrap">week-end</span>, sur commande.</> : 'По выходным, под заказ.'}</em>
+      </h1>
+      <p class="lead">
+        {fr
+          ? 'Crêpes, pastels et bissap faits le jour même, en petites quantités, avec la recette de notre maman.'
+          : 'Блины, пастели и биссап, приготовленные в день выдачи, небольшими партиями, по маминому рецепту.'}
+      </p>
+      <div class="cta">
+        <a class="btn btn--main" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
+        <WhatsAppButton lang={lang} variant="ghost" />
+      </div>
+    </div>
+    <div class="comb" aria-hidden="true">
+      <Hex photo="crepes.jpg" width={230} loading="eager" />
+      <Hex label={fr ? 'fait le jour même' : 'в день выдачи'} width={230} />
+      <Hex photo="pastels.jpg" width={230} loading="eager" />
+      <Hex photo="bissap.jpg" width={230} />
+    </div>
+  </section>
+
+  <section class="soeurs">
+    <div class="wrap soeurs__grid">
+      <Mark size="110px" />
+      <div class="stack">
+        <p class="eyebrow">{t(lang, 'nav.histoire')}</p>
+        <h2>{accroche.titre[lang]}</h2>
+        <p class="soeurs__txt">{accroche.texte[lang]}</p>
+        <a class="link" href={path(lang, 'histoire')}>{fr ? 'Lire leur histoire →' : 'Читать их историю →'}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="head">
+      <p class="eyebrow">{fr ? 'Les incontournables' : 'Самое любимое'}</p>
+      <h2>{fr ? 'Ce que nos clients reprennent chaque semaine.' : 'То, что заказывают каждую неделю.'}</h2>
+    </div>
+    <div class="cards">
+      {vedettes.map((p) => <ProductCard lang={lang} produit={p} />)}
+    </div>
+    <a class="link" href={path(lang, 'carte')}>{fr ? 'Toute la carte, les formules et les prix →' : 'Всё меню, наборы и цены →'}</a>
+  </section>
+
+  <section class="wrap section week">
+    <div class="head">
+      <p class="eyebrow">{fr ? 'Notre semaine' : 'Наша неделя'}</p>
+      <h2>{fr ? 'On cuisine seulement ce qui est commandé.' : 'Готовим только то, что заказано.'}</h2>
+    </div>
+    <WeekStrip lang={lang} />
+  </section>
+
+  <section class="wrap section promesses">
+    {promesses.map((p) => (
+      <div>
+        <span class="dot hex-shape" aria-hidden="true"></span>
+        <h3>{p.titre[lang]}</h3>
+        <p>{p.texte[lang]}</p>
+      </div>
+    ))}
+  </section>
+
+  <section class="wrap">
+    <div class="band">
+      <div>
+        <h2>{fr ? `Commandes ouvertes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы принимаем до ${retrait.finCommandes.ru}.`}</h2>
+        <p>{retrait.prevenir[lang]}</p>
+      </div>
+      <WhatsAppButton lang={lang} variant="miel" />
+    </div>
+  </section>
 </Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 64px);
+    align-items: center;
+    padding-block: var(--space-8) calc(var(--space-8) + 40px);
+  }
+  .hero__text { display: grid; gap: var(--space-5); min-width: 0; }
+  .nowrap { white-space: nowrap; }
+  .hero h1 em { display: block; font-style: normal; color: var(--miel-ink); }
+  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+  .comb {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    max-width: 470px;
+    width: 100%;
+    justify-self: end;
+  }
+  .comb > :global(:nth-child(2)) { transform: translateY(50%); }
+  .comb > :global(:nth-child(3)) { margin-top: -18%; }
+  .comb > :global(:nth-child(4)) { transform: translateY(50%); margin-top: -18%; }
+
+  .soeurs { background: var(--alveole); padding-block: var(--space-8); }
+  .soeurs__grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 5vw, 56px); align-items: center; }
+  .soeurs h2 { max-width: 20ch; }
+  .soeurs__txt { font-size: var(--step-1); line-height: 1.5; max-width: 52ch; color: var(--ink); }
+  .link { font-weight: 750; color: var(--choco); text-decoration: none; justify-self: start; }
+  .link:hover { text-decoration: underline; }
+
+  .head { display: grid; gap: var(--space-2); margin-bottom: var(--space-6); max-width: 40ch; }
+  .head h2 { font-size: var(--step-2); }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
+
+  .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); padding-top: 0; }
+  .promesses > div { display: grid; gap: var(--space-2); align-content: start; }
+  .promesses p { color: var(--muted); font-size: var(--step--1); }
+  .dot { width: 22px; height: 25px; background: var(--miel); }
+
+  .band {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    align-items: center;
+    justify-content: space-between;
+    background: var(--choco);
+    color: var(--on-choco);
+    border-radius: calc(var(--radius) * 1.5);
+    padding: clamp(24px, 4vw, 44px);
+  }
+  .band h2 { color: var(--on-choco); font-size: var(--step-2); }
+  .band p { margin-top: var(--space-2); opacity: 0.8; }
+  .band > div { min-width: 0; flex: 1 1 320px; }
+
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: minmax(0, 1fr); padding-bottom: calc(var(--space-8) + 60px); }
+    .comb { justify-self: start; max-width: min(320px, 82vw); }
+    .cards { grid-template-columns: minmax(0, 1fr); }
+    .promesses { grid-template-columns: minmax(0, 1fr); }
+    .soeurs__grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

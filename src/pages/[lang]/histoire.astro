@@ -1,10 +1,127 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { langPaths, t, type Lang } from '../../i18n/ui';
+import Hex from '../../components/Hex.astro';
+import Mark from '../../components/Mark.astro';
+import WhatsAppButton from '../../components/WhatsAppButton.astro';
+import { langPaths, t, path, type Lang } from '../../i18n/ui';
+import { soeurs, accroche, chapitres, nom, promesses } from '../../data/histoire';
+
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
+const fr = lang === 'fr';
 ---
-<Base lang={lang} title={t(lang, 'nav.histoire')} description={lang === 'fr' ? 'Deux sœurs, une cuisine partagée, des recettes qui ont voyagé.' : 'Две сестры, общая кухня и рецепты, которые приехали с нами.'}>
-  <h1>{t(lang, 'nav.histoire')}</h1>
-  <p>{lang === 'fr' ? 'Le texte arrive à l’étape 4.' : 'Текст появится на шаге 4.'}</p>
+<Base lang={lang} title={t(lang, 'nav.histoire')} description={accroche.texte[lang]}>
+  <header class="wrap top">
+    <div class="stack top__txt">
+      <p class="eyebrow">{t(lang, 'nav.histoire')}</p>
+      <h1>{accroche.titre[lang]}</h1>
+      <ul class="facts">
+        <li><b>{fr ? 'Origine' : 'Родом из'}</b>{soeurs.origine[lang]}</li>
+        <li><b>{fr ? 'À Briansk' : 'В Брянске'}</b>{soeurs.etudes[lang]}</li>
+        <li><b>{fr ? 'La recette' : 'Рецепт'}</b>{fr ? 'celle de leur maman' : 'мамин'}</li>
+      </ul>
+    </div>
+    <Hex photo="sac.jpg" alt={fr ? 'Sacs de commande avec « Bon appétit » et le prénom du client écrits à la main' : 'Пакеты с заказами, на которых от руки написано «Приятного аппетита» и имя клиента'} width={340} loading="eager" />
+  </header>
+
+  <article class="wrap chapters">
+    {chapitres.map((c, i) => (
+      <section class="chapter">
+        <span class="n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+        <div class="stack">
+          <h2>{c.titre[lang]}</h2>
+          <p>{c.texte[lang]}</p>
+        </div>
+      </section>
+    ))}
+
+    <blockquote class="pull">
+      {fr ? '« Vous mangez ce qu’on servirait à notre propre famille. »' : '«Вы едите то, что мы подали бы своей семье».'}
+    </blockquote>
+
+    <section class="chapter">
+      <span class="n" aria-hidden="true">DS</span>
+      <div class="stack">
+        <h2>{nom.titre[lang]}</h2>
+        <p>{nom.texte[lang]}</p>
+      </div>
+    </section>
+
+    <div class="ruche">
+      <Mark size="96px" />
+      <div class="stack">
+        <h3>{nom.abeilleTitre[lang]}</h3>
+        <p>{nom.abeille[lang]}</p>
+      </div>
+    </div>
+  </article>
+
+  <section class="wrap section">
+    <h2 class="promesses__title">{fr ? 'Ce qu’on vous promet' : 'Что мы обещаем'}</h2>
+    <div class="promesses">
+      {promesses.map((p) => (
+        <div><h3>{p.titre[lang]}</h3><p>{p.texte[lang]}</p></div>
+      ))}
+    </div>
+    <div class="cta">
+      <a class="btn btn--main" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
+      <WhatsAppButton lang={lang} variant="ghost" />
+    </div>
+  </section>
 </Base>
+
+<style>
+  .top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: clamp(24px, 5vw, 72px);
+    align-items: center;
+    padding-block: var(--space-8);
+  }
+  .top__txt { gap: var(--space-5); }
+  .facts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); }
+  .facts li { display: grid; color: var(--ink); }
+  .facts b { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--miel-ink); }
+
+  .chapters { display: grid; gap: var(--space-7); max-width: calc(var(--measure) + 120px); }
+  .chapter { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: var(--space-4); }
+  .chapter h2 { font-size: var(--step-2); }
+  .chapter p { font-size: 1.1rem; line-height: 1.7; }
+  .n { font-family: 'Young Serif', Georgia, serif; font-size: 1.6rem; color: var(--miel); line-height: 1.2; }
+
+  .pull {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: var(--display-weight);
+    font-size: var(--step-3);
+    line-height: 1.2;
+    color: var(--choco);
+    border-left: 4px solid var(--miel);
+    padding: 4px 0 4px clamp(18px, 3vw, 32px);
+    text-wrap: balance;
+  }
+
+  .ruche {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: center;
+    background: var(--alveole);
+    border-radius: var(--radius);
+    padding: clamp(18px, 3vw, 32px);
+  }
+  .ruche p { color: var(--ink); }
+
+  .promesses__title { font-size: var(--step-2); margin-bottom: var(--space-5); }
+  .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-6); }
+  .promesses > div { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-5); display: grid; gap: var(--space-2); align-content: start; }
+  .promesses p { color: var(--muted); font-size: var(--step--1); }
+  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+  @media (max-width: 860px) {
+    .top { grid-template-columns: minmax(0, 1fr); }
+    .top :global(.hex) { max-width: 240px; }
+    .promesses { grid-template-columns: minmax(0, 1fr); }
+    .chapter { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+  }
+</style>
