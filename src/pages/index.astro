@@ -1,4 +1,5 @@
 ---
 // La racine renvoie vers la version française.
-return Astro.redirect('/fr/');
+import { path } from '../i18n/ui';
+return Astro.redirect(path('fr'));
 ---

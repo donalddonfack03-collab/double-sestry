@@ -60,3 +60,14 @@ Vérifier avant d'envoyer : `npm run check` puis `npm run build`.
 
 > Les adresses complètes utilisent `site` dans `astro.config.mjs`. Tant qu'il vaut `https://example.com`,
 > les aperçus ne peuvent pas s'afficher sur WhatsApp : on le remplace à l'étape 6 (mise en ligne).
+
+## Mise en ligne
+
+Le site est publié automatiquement sur **GitHub Pages** à chaque envoi sur la branche `main`
+(`.github/workflows/deploy.yml`), à l'adresse :
+
+**https://donalddonfack03-collab.github.io/double-sestry/**
+
+Pour passer plus tard à un nom de domaine (par exemple `doublesestry.ru`) : dans `astro.config.mjs`,
+mettre `site: 'https://doublesestry.ru'`, supprimer la ligne `base`, ajouter un fichier `public/CNAME`
+contenant le domaine, puis le déclarer dans GitHub → Settings → Pages → Custom domain.

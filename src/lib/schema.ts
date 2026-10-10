@@ -1,7 +1,7 @@
 // Données structurées schema.org : elles aident Google et Yandex à afficher le nom, la ville,
 // les horaires, le téléphone et les prix directement dans les résultats de recherche.
 import type { Lang } from '../i18n/ui';
-import { path } from '../i18n/ui';
+import { path, withBase } from '../i18n/ui';
 import { contact, marque } from '../data/infos';
 import { enVente, type Produit } from '../data/produits';
 
@@ -10,12 +10,12 @@ export function etablissement(lang: Lang, site: URL) {
   return {
     '@context': 'https://schema.org',
     '@type': 'FoodEstablishment',
-    '@id': new URL('/#double-sestry', site).href,
+    '@id': new URL(withBase('#double-sestry'), site).href,
     name: marque.nom,
     description: marque.slogan[lang],
     url: new URL(path(lang), site).href,
-    image: new URL(`/og/${lang}.png`, site).href,
-    logo: new URL('/ds-logo.svg', site).href,
+    image: new URL(withBase(`og/${lang}.png`), site).href,
+    logo: new URL(withBase('ds-logo.svg'), site).href,
     telephone: contact.telephone.replace(/[\s-]/g, ''),
     servesCuisine: lang === 'fr' ? ['Crêpes', 'Cuisine congolaise', 'Fait maison'] : ['Блины', 'Конголезская кухня', 'Домашняя кухня'],
     priceRange: `${Math.min(...prixConnus)}–${Math.max(...prixConnus)} RUB`,
@@ -47,14 +47,14 @@ export function produit(p: Produit, lang: Lang, site: URL) {
       priceCurrency: 'RUB',
       availability: 'https://schema.org/PreOrder',
       url,
-      seller: { '@id': new URL('/#double-sestry', site).href },
+      seller: { '@id': new URL(withBase('#double-sestry'), site).href },
     }));
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: p.nom[lang],
     description: p.description[lang],
-    image: new URL(`/og/${lang}/carte/${p.slug}.png`, site).href,
+    image: new URL(withBase(`og/${lang}/carte/${p.slug}.png`), site).href,
     url,
     brand: { '@type': 'Brand', name: marque.nom },
     ...(offers.length ? { offers } : {}),

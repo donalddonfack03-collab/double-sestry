@@ -4,8 +4,10 @@ import sitemap from '@astrojs/sitemap';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  // À remplacer à l'étape 6 par l'adresse définitive du site.
-  site: 'https://example.com',
+  // Adresse du site. Option B (actuelle) : GitHub Pages, dans le sous-dossier /double-sestry.
+  // Pour passer à un nom de domaine (option A) : site: 'https://doublesestry.ru' et supprimer `base`.
+  site: 'https://donalddonfack03-collab.github.io',
+  base: '/double-sestry',
   i18n: {
     defaultLocale: 'fr',
     locales: ['fr', 'ru'],

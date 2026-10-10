@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import satori from 'satori';
 import { Resvg } from '@resvg/resvg-js';
 import sharp, { type Sharp } from 'sharp';
-import type { Lang } from '../i18n/ui';
+import { withBase, stripBase, type Lang } from '../i18n/ui';
 
 // Les chemins partent de la racine du projet (là où l'on lance `npm run build`).
 const root = (p: string) => join(process.cwd(), p);
@@ -111,6 +111,6 @@ export async function renderOg(o: OgOptions): Promise<Buffer> {
 
 /** Adresse de l'image d'aperçu d'une page : /fr/carte/la-sestry/ → /og/fr/carte/la-sestry.png */
 export function ogPath(pagePath: string): string {
-  const clean = pagePath.replace(/^\/+|\/+$/g, '');
-  return `/og/${clean || 'fr'}.png`;
+  const clean = stripBase(pagePath).replace(/^\/+|\/+$/g, '');
+  return withBase(`og/${clean || 'fr'}.png`);
 }
