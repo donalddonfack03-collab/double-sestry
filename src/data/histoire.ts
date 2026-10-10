@@ -5,13 +5,13 @@
 import type { T } from '../i18n/ui';
 
 export const soeurs = {
-  noms: { fr: 'Ria et Emmanuelle', ru: 'Риа и Эммануэль' } as T,
+  noms: { fr: 'Ria et Emmanuelle', ru: 'Рия и Эмманюэль' } as T,
   origine: { fr: 'Pointe-Noire, Congo-Brazzaville', ru: 'Пуэнт-Нуар, Республика Конго' } as T,
   etudes: { fr: 'étudiantes en biologie', ru: 'студентки-биологи' } as T,
 };
 
 export const accroche = {
-  titre: { fr: 'Ria et Emmanuelle, deux sœurs de Pointe-Noire.', ru: 'Риа и Эммануэль — две сестры из Пуэнт-Нуара.' } as T,
+  titre: { fr: 'Ria et Emmanuelle, deux sœurs de Pointe-Noire.', ru: 'Рия и Эмманюэль — две сестры из Пуэнт-Нуара.' } as T,
   texte: {
     fr: 'Elles ont grandi au Congo avec le goût des crêpes vendues dans une glacière. Aujourd’hui étudiantes en biologie à Briansk, elles cuisinent chaque week-end la recette de leur maman.',
     ru: 'Они выросли в Конго, где блины продают прямо из сумки-холодильника. Сегодня они изучают биологию в Брянске и каждые выходные готовят по маминому рецепту.',
@@ -28,7 +28,7 @@ export const chapitres: Chapitre[] = [
     titre: { fr: 'Les crêpes de la glacière', ru: 'Блины из сумки-холодильника' },
     texte: {
       fr: 'À Pointe-Noire, au Congo-Brazzaville, on vend des crêpes dans des glacières. Ria et Emmanuelle ont grandi avec ce goût-là, et il ne les a jamais quittées. La pâte qu’elles font aujourd’hui, c’est celle de leur maman.',
-      ru: 'В Пуэнт-Нуаре, в Республике Конго, блины продают из сумок-холодильников. Риа и Эммануэль выросли с этим вкусом и так его и не забыли. Тесто, которое они делают сегодня, — мамин рецепт.',
+      ru: 'В Пуэнт-Нуаре, в Республике Конго, блины продают из сумок-холодильников. Рия и Эмманюэль выросли с этим вкусом и так его и не забыли. Тесто, которое они делают сегодня, — мамин рецепт.',
     },
   },
   {

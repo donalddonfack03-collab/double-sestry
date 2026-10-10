@@ -1,30 +1,110 @@
 ---
 import Base from '../../../layouts/Base.astro';
+import ProductCard from '../../../components/ProductCard.astro';
+import WhatsAppButton from '../../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang, type UiKey } from '../../../i18n/ui';
-import { parCategorie, prix, type Categorie } from '../../../data/produits';
+import { parCategorie, type Categorie } from '../../../data/produits';
+
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
-const sections: [Categorie, UiKey][] = [
-  ['sale', 'carte.sale'], ['sucre', 'carte.sucre'], ['boisson', 'carte.boisson'],
-  ['formule', 'carte.formule'], ['surCommande', 'carte.surCommande'],
+const fr = lang === 'fr';
+
+const sections: { cat: Categorie; titre: UiKey; texte: { fr: string; ru: string } }[] = [
+  { cat: 'sale', titre: 'carte.sale', texte: { fr: 'Le poulet est cuit maison la veille, épicé à notre façon.', ru: 'Курицу готовим накануне и приправляем по-нашему.' } },
+  { cat: 'sucre', titre: 'carte.sucre', texte: { fr: 'La même pâte que nos crêpes salées, garnie de douceur.', ru: 'То же тесто, что и для солёных блинов, но со сладкой начинкой.' } },
+  { cat: 'boisson', titre: 'carte.boisson', texte: { fr: 'Mis en bouteille le vendredi, à boire bien frais.', ru: 'Разливаем в пятницу, пить хорошо охлаждённым.' } },
+  { cat: 'formule', titre: 'carte.formule', texte: { fr: 'Un repas complet, un peu moins cher que les produits achetés séparément.', ru: 'Полноценный обед — немного дешевле, чем по отдельности.' } },
+  { cat: 'surCommande', titre: 'carte.surCommande', texte: { fr: 'Pour une fête ou un anniversaire. Écrivez-nous pour le prix et la date.', ru: 'Для праздника или дня рождения. Напишите нам, чтобы узнать цену и дату.' } },
 ];
 ---
-<Base lang={lang} title={t(lang, 'nav.carte')} description={lang === 'fr' ? 'Crêpes, pastels, bissap et formules : la carte du week-end, avec les prix et les allergènes.' : 'Блины, пастели, биссап и наборы: меню выходных с ценами и аллергенами.'}>
-  <h1>{t(lang, 'nav.carte')}</h1>
-  {sections.map(([cat, key]) => {
-    const items = parCategorie(cat);
+<Base
+  lang={lang}
+  title={t(lang, 'nav.carte')}
+  description={fr
+    ? 'La carte de Double Sestry : crêpes La Sestry et La Choco, pastels, bissap et formules, avec les prix, les allergènes et la conservation.'
+    : 'Меню Double Sestry: блины La Sestry и La Choco, пастели, биссап и наборы — с ценами, аллергенами и сроками хранения.'}
+>
+  <header class="wrap intro">
+    <p class="eyebrow">{fr ? 'La carte du week-end' : 'Меню выходных'}</p>
+    <h1>{fr ? 'Peu de produits, faits avec soin.' : 'Немного блюд, но каждое — с заботой.'}</h1>
+    <p class="lead">
+      {fr
+        ? 'Une seule pâte à crêpes pour tout, des garnitures préparées la veille et la recette de notre maman. Les prix sont en roubles.'
+        : 'Одно тесто для всех блинов, начинки готовим накануне, рецепт — мамин. Цены в рублях.'}
+    </p>
+    <nav class="jump" aria-label={fr ? 'Rubriques de la carte' : 'Разделы меню'}>
+      {sections.filter((s) => parCategorie(s.cat).length).map((s) => <a href={`#${s.cat}`}>{t(lang, s.titre)}</a>)}
+    </nav>
+  </header>
+
+  {sections.map((s) => {
+    const items = parCategorie(s.cat);
     return items.length > 0 && (
-      <section>
-        <h2>{t(lang, key)}</h2>
-        <ul>
-          {items.map((p) => (
-            <li>
-              <a href={path(lang, `carte/${p.slug}`)}>{p.nom[lang]}</a> · {p.accroche[lang]} ·
-              {p.formats.map((f) => (f.prix === null ? t(lang, 'produit.surDevis') : `${f.libelle[lang]} ${prix(f.prix)}`)).join(' / ')}
-            </li>
-          ))}
-        </ul>
+      <section class="wrap cat" id={s.cat}>
+        <div class="cat__head">
+          <h2>{t(lang, s.titre)}</h2>
+          <p>{s.texte[lang]}</p>
+        </div>
+        <div class="grid">
+          {items.map((p) => <ProductCard lang={lang} produit={p} />)}
+        </div>
       </section>
     );
   })}
+
+  <section class="wrap">
+    <div class="note">
+      <div class="stack">
+        <h2>{fr ? 'Une allergie ? Dites-le-nous avant de commander.' : 'Есть аллергия? Сообщите нам до заказа.'}</h2>
+        <p>
+          {fr
+            ? 'Les allergènes sont indiqués sur chaque fiche et sur chaque étiquette. Tout est cuisiné dans la même cuisine : on vous dira honnêtement ce qui est possible.'
+            : 'Аллергены указаны в описании каждого блюда и на каждой этикетке. Всё готовится на одной кухне, и мы честно скажем, что вам подойдёт.'}
+        </p>
+      </div>
+      <div class="note__cta">
+        <WhatsAppButton lang={lang} variant="main" />
+        <a class="link" href={path(lang, 'commander')}>{fr ? 'Comment commander →' : 'Как заказать →'}</a>
+      </div>
+    </div>
+  </section>
 </Base>
+
+<style>
+  .intro { display: grid; gap: var(--space-4); padding-block: var(--space-8) var(--space-6); }
+  .intro .lead { max-width: 52ch; }
+  .jump { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+  .jump a {
+    text-decoration: none;
+    font-weight: 650;
+    font-size: var(--step--1);
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--line);
+    color: var(--choco);
+  }
+  .jump a:hover { border-color: var(--miel); }
+  .cat { padding-block: var(--space-6); scroll-margin-top: 80px; }
+  .cat__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-5); margin-bottom: var(--space-5); padding-top: var(--space-4); border-top: 1.5px solid var(--choco); }
+  .cat__head h2 { font-size: var(--step-2); }
+  .cat__head p { color: var(--muted); font-size: var(--step--1); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+  .note {
+    margin-top: var(--space-7);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    align-items: center;
+    justify-content: space-between;
+    background: var(--alveole);
+    border-radius: calc(var(--radius) * 1.5);
+    padding: clamp(22px, 4vw, 40px);
+  }
+  .note > .stack { flex: 1 1 340px; min-width: 0; }
+  .note h2 { font-size: var(--step-2); }
+  .note p { color: var(--ink); max-width: 56ch; }
+  .note__cta { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
+  .link { font-weight: 750; color: var(--choco); text-decoration: none; }
+  .link:hover { text-decoration: underline; }
+  @media (max-width: 760px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+</style>

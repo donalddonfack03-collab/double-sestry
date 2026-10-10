@@ -1,29 +1,110 @@
 ---
 import Base from '../../../layouts/Base.astro';
-import { langs, t, path, colon, bang, type Lang } from '../../../i18n/ui';
-import { enVente, allergenes, prix, type Produit } from '../../../data/produits';
-import { contact, lienWhatsApp } from '../../../data/infos';
+import Hex from '../../../components/Hex.astro';
+import Prices from '../../../components/Prices.astro';
+import Allergens from '../../../components/Allergens.astro';
+import ProductCard from '../../../components/ProductCard.astro';
+import WhatsAppButton from '../../../components/WhatsAppButton.astro';
+import { langs, t, path, colon, bang, type Lang, type UiKey } from '../../../i18n/ui';
+import { enVente, trouver, type Produit } from '../../../data/produits';
+import { contact, retrait } from '../../../data/infos';
 
 export function getStaticPaths() {
   return langs.flatMap((lang) => enVente.map((p) => ({ params: { lang, slug: p.slug }, props: { p } })));
 }
 const lang = Astro.params.lang as Lang;
 const { p } = Astro.props as { p: Produit };
-const liste = (a: Produit['contient']) => a.map((x) => allergenes[x][lang]).join(', ');
-const message = `${contact.messageParDefaut[lang]}${bang(lang)} ${lang === 'fr' ? 'Je voudrais commander' : 'Хочу заказать'}${colon(lang)} ${p.nom[lang]}`;
+const fr = lang === 'fr';
+
+const categories: Record<Produit['categorie'], UiKey> = {
+  sale: 'carte.sale', sucre: 'carte.sucre', boisson: 'carte.boisson', formule: 'carte.formule', surCommande: 'carte.surCommande',
+};
+const message = `${contact.messageParDefaut[lang]}${bang(lang)} ${fr ? 'Je voudrais commander' : 'Хочу заказать'}${colon(lang)} ${p.nom[lang]}`;
+const inclus = (p.inclus ?? []).map(trouver).filter((x): x is Produit => !!x);
+const dansFormules = enVente.filter((f) => f.inclus?.includes(p.slug));
+const autres = enVente
+  .filter((x) => x.slug !== p.slug && !inclus.includes(x) && !dansFormules.includes(x) && x.categorie !== 'surCommande')
+  .sort((a, b) => Number(b.categorie === p.categorie) - Number(a.categorie === p.categorie))
+  .slice(0, 2);
+const hexLabel = p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim() : undefined;
 ---
-<Base lang={lang} title={p.nom[lang]} description={`${p.accroche[lang]}. ${p.description[lang].slice(0, 120)}…`}>
-  <a href={path(lang, 'carte')}>{t(lang, 'produit.retourCarte')}</a>
-  <h1>{p.nom[lang]}</h1>
-  <p>{p.accroche[lang]}</p>
-  {p.photo && <img src={p.photo} alt={p.photoAlt?.[lang] ?? ''} width="360" height="360" />}
-  <p>{p.description[lang]}</p>
-  <ul>
-    {p.formats.map((f) => (
-      <li>{f.libelle[lang]}{colon(lang)} {f.prix === null ? t(lang, 'produit.surDevis') : prix(f.prix)}{f.prixBarre && <> ({t(lang, 'produit.auLieuDe')} <s>{prix(f.prixBarre)}</s>)</>}</li>
-    ))}
-  </ul>
-  <p><b>{t(lang, 'produit.allergenes')}{colon(lang)}</b> {p.contient.length ? liste(p.contient) : t(lang, 'produit.aucunAllergene')}{p.traces.length > 0 && <>. {t(lang, 'produit.traces')}{colon(lang)} {liste(p.traces)}</>}</p>
-  {p.conservation && <p><b>{t(lang, 'produit.conservation')}{colon(lang)}</b> {p.conservation[lang]}</p>}
-  <a href={lienWhatsApp(message)}>{t(lang, 'cta.whatsapp')}</a>
+<Base lang={lang} title={p.nom[lang]} description={`${p.accroche[lang]}. ${p.description[lang]}`.slice(0, 158)}>
+  <div class="wrap crumbs">
+    <a href={path(lang, 'carte')}>{t(lang, 'nav.carte')}</a>
+    <span aria-hidden="true">/</span>
+    <span>{t(lang, categories[p.categorie])}</span>
+  </div>
+
+  <article class="wrap produit">
+    <div class="visuel">
+      <Hex photo={p.photo} alt={p.photoAlt?.[lang]} label={hexLabel} tone={p.categorie === 'formule' ? 'alveole' : 'miel'} width={440} loading="eager" />
+    </div>
+    <div class="infos">
+      <div class="stack">
+        <p class="eyebrow">{p.accroche[lang]}</p>
+        <h1>{p.nom[lang]}</h1>
+        <p class="desc">{p.description[lang]}</p>
+      </div>
+      <Prices lang={lang} formats={p.formats} size="lg" />
+      <div class="order">
+        <WhatsAppButton lang={lang} message={message} />
+        <p class="hint">
+          {p.categorie === 'surCommande'
+            ? (fr ? 'À commander au moins 48 h à l’avance.' : 'Заказывайте минимум за 48 часов.')
+            : (fr ? `Commande jusqu’au ${retrait.finCommandes.fr}, retrait le week-end.` : `Заказ до ${retrait.finCommandes.ru}, выдача на выходных.`)}
+        </p>
+      </div>
+      {inclus.length > 0 && (
+        <div class="inclus">
+          <h2>{fr ? 'Dans la formule' : 'В наборе'}</h2>
+          <ul>{inclus.map((x) => <li><a href={path(lang, `carte/${x.slug}`)}>{x.nom[lang]}</a></li>)}</ul>
+        </div>
+      )}
+      <Allergens lang={lang} produit={p} />
+      {dansFormules.length > 0 && (
+        <p class="formules">
+          {fr ? 'Aussi dans' : 'Также в'}{colon(lang)}{' '}
+          {dansFormules.map((f, i) => <>{i > 0 && ', '}<a href={path(lang, `carte/${f.slug}`)}>{f.nom[lang]}</a></>)}
+        </p>
+      )}
+    </div>
+  </article>
+
+  {autres.length > 0 && (
+    <section class="wrap section more">
+      <h2>{fr ? 'Avec ça ?' : 'Что-нибудь ещё?'}</h2>
+      <div class="grid">{autres.map((x) => <ProductCard lang={lang} produit={x} />)}</div>
+      <a class="link" href={path(lang, 'carte')}>{t(lang, 'produit.retourCarte')}</a>
+    </section>
+  )}
 </Base>
+
+<style>
+  .crumbs { display: flex; gap: var(--space-2); padding-top: var(--space-5); font-size: var(--step--1); color: var(--muted); }
+  .crumbs a { color: var(--choco); font-weight: 650; text-decoration: none; }
+  .crumbs a:hover { text-decoration: underline; }
+  .produit {
+    display: grid;
+    grid-template-columns: minmax(0, 440px) minmax(0, 1fr);
+    gap: clamp(28px, 6vw, 80px);
+    align-items: start;
+    padding-block: var(--space-6) var(--space-7);
+  }
+  .visuel { position: sticky; top: 90px; }
+  .infos { display: grid; gap: var(--space-6); min-width: 0; max-width: 60ch; }
+  .desc { font-size: var(--step-1); line-height: 1.55; color: var(--ink); }
+  .order { display: grid; gap: var(--space-2); justify-items: start; }
+  .hint { color: var(--muted); font-size: var(--step--1); }
+  .inclus h2 { font-size: var(--step-1); margin-bottom: var(--space-2); }
+  .inclus ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+  .inclus a, .formules a { color: var(--choco); font-weight: 650; }
+  .formules { font-size: var(--step--1); color: var(--muted); }
+  .more h2 { font-size: var(--step-2); margin-bottom: var(--space-5); }
+  .more .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
+  .link { font-weight: 750; color: var(--choco); text-decoration: none; }
+  @media (max-width: 820px) {
+    .produit { grid-template-columns: minmax(0, 1fr); }
+    .visuel { position: static; max-width: 280px; }
+    .more .grid { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
