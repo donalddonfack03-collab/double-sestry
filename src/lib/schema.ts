@@ -31,7 +31,7 @@ export function etablissement(lang: Lang, site: URL) {
     ],
     founder: [
       { '@type': 'Person', name: lang === 'fr' ? 'Ria' : 'Рия' },
-      { '@type': 'Person', name: lang === 'fr' ? 'Emmanuelle' : 'Эмманюэль' },
+      { '@type': 'Person', name: lang === 'fr' ? 'Emma' : 'Эмма' },
     ],
   };
 }

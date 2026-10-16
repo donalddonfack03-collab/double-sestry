@@ -1,17 +1,17 @@
 // L'histoire de Double Sestry, racontée à partir des réponses de Donald (10 octobre 2026).
-// Faits : Ria et Emmanuelle, sœurs de sang, de Pointe-Noire (Congo-Brazzaville) ; la recette vient de leur maman ;
+// Faits : Ria et Emma, sœurs de sang, de Pointe-Noire (Congo-Brazzaville) ; la recette vient de leur maman ;
 // elles étudient la biologie à Briansk ; elles faisaient des crêpes pour elles, un voisin de cité a goûté
 // et a demandé si on pouvait les vendre ; enfants, leur père les emmenait tout le temps à la viennoiserie manger des crêpes, et elles ont décidé de les refaire.
 import type { T } from '../i18n/ui';
 
 export const soeurs = {
-  noms: { fr: 'Ria et Emmanuelle', ru: 'Рия и Эмманюэль' } as T,
+  noms: { fr: 'Ria et Emma', ru: 'Рия и Эмма' } as T,
   origine: { fr: 'Pointe-Noire, Congo-Brazzaville', ru: 'Пуэнт-Нуар, Республика Конго' } as T,
   etudes: { fr: 'étudiantes en biologie', ru: 'студентки-биологи' } as T,
 };
 
 export const accroche = {
-  titre: { fr: 'Ria et Emmanuelle, deux sœurs de Pointe-Noire.', ru: 'Рия и Эмманюэль — две сестры из Пуэнт-Нуара.' } as T,
+  titre: { fr: 'Ria et Emma, deux sœurs de Pointe-Noire.', ru: 'Рия и Эмма — две сестры из Пуэнт-Нуара.' } as T,
   texte: {
     fr: 'Enfants, à Pointe-Noire, leur père les emmenait tout le temps à la viennoiserie manger des crêpes. Aujourd’hui étudiantes en biologie à Briansk, elles refont ces crêpes chaque week-end, avec la recette de leur maman.',
     ru: 'В детстве в Пуэнт-Нуаре папа постоянно водил их в кондитерскую есть блины. Сегодня они изучают биологию в Брянске и каждые выходные пекут те самые блины по маминому рецепту.',
@@ -27,8 +27,8 @@ export const chapitres: Chapitre[] = [
   {
     titre: { fr: 'Les crêpes de la viennoiserie', ru: 'Блины из кондитерской' },
     texte: {
-      fr: 'À Pointe-Noire, au Congo-Brazzaville, leur père les emmenait tout le temps à la viennoiserie, où elles mangeaient des crêpes. Ria et Emmanuelle n’ont jamais oublié ce goût-là, et elles ont décidé de le refaire. La pâte qu’elles font aujourd’hui, c’est celle de leur maman.',
-      ru: 'В Пуэнт-Нуаре, в Республике Конго, папа постоянно водил их в кондитерскую, где они ели блины. Рия и Эмманюэль так и не забыли этот вкус и решили его повторить. Тесто, которое они делают сегодня, — мамин рецепт.',
+      fr: 'À Pointe-Noire, au Congo-Brazzaville, leur père les emmenait tout le temps à la viennoiserie, où elles mangeaient des crêpes. Ria et Emma n’ont jamais oublié ce goût-là, et elles ont décidé de le refaire. La pâte qu’elles font aujourd’hui, c’est celle de leur maman.',
+      ru: 'В Пуэнт-Нуаре, в Республике Конго, папа постоянно водил их в кондитерскую, где они ели блины. Рия и Эмма так и не забыли этот вкус и решили его повторить. Тесто, которое они делают сегодня, — мамин рецепт.',
     },
   },
   {
