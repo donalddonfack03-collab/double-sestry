@@ -1,7 +1,7 @@
 // L'histoire de Double Sestry, racontée à partir des réponses de Donald (10 octobre 2026).
 // Faits : Ria et Emmanuelle, sœurs de sang, de Pointe-Noire (Congo-Brazzaville) ; la recette vient de leur maman ;
 // elles étudient la biologie à Briansk ; elles faisaient des crêpes pour elles, un voisin de cité a goûté
-// et a demandé si on pouvait les vendre ; les crêpes vendues dans une glacière, au pays, les ont marquées.
+// et a demandé si on pouvait les vendre ; les crêpes achetées chez le glacier du quartier, au pays, les ont marquées.
 import type { T } from '../i18n/ui';
 
 export const soeurs = {
@@ -13,8 +13,8 @@ export const soeurs = {
 export const accroche = {
   titre: { fr: 'Ria et Emmanuelle, deux sœurs de Pointe-Noire.', ru: 'Рия и Эмманюэль — две сестры из Пуэнт-Нуара.' } as T,
   texte: {
-    fr: 'Elles ont grandi au Congo avec le goût des crêpes vendues dans une glacière. Aujourd’hui étudiantes en biologie à Briansk, elles cuisinent chaque week-end la recette de leur maman.',
-    ru: 'Они выросли в Конго, где блины продают прямо из сумки-холодильника. Сегодня они изучают биологию в Брянске и каждые выходные готовят по маминому рецепту.',
+    fr: 'Elles ont grandi au Congo avec le goût des crêpes du glacier du quartier. Aujourd’hui étudiantes en biologie à Briansk, elles cuisinent chaque week-end la recette de leur maman.',
+    ru: 'Они выросли в Конго, где блины покупали у уличного мороженщика. Сегодня они изучают биологию в Брянске и каждые выходные готовят по маминому рецепту.',
   } as T,
 };
 
@@ -25,10 +25,10 @@ export interface Chapitre {
 
 export const chapitres: Chapitre[] = [
   {
-    titre: { fr: 'Les crêpes de la glacière', ru: 'Блины из сумки-холодильника' },
+    titre: { fr: 'Les crêpes du glacier', ru: 'Блины от мороженщика' },
     texte: {
-      fr: 'À Pointe-Noire, au Congo-Brazzaville, on vend des crêpes dans des glacières. Ria et Emmanuelle ont grandi avec ce goût-là, et il ne les a jamais quittées. La pâte qu’elles font aujourd’hui, c’est celle de leur maman.',
-      ru: 'В Пуэнт-Нуаре, в Республике Конго, блины продают из сумок-холодильников. Рия и Эмманюэль выросли с этим вкусом и так его и не забыли. Тесто, которое они делают сегодня, — мамин рецепт.',
+      fr: 'À Pointe-Noire, au Congo-Brazzaville, on achetait des crêpes chez le glacier du quartier. Ria et Emmanuelle ont grandi avec ce goût-là, et il ne les a jamais quittées. La pâte qu’elles font aujourd’hui, c’est celle de leur maman.',
+      ru: 'В Пуэнт-Нуаре, в Республике Конго, блины покупали у уличного мороженщика. Рия и Эмманюэль выросли с этим вкусом и так его и не забыли. Тесто, которое они делают сегодня, — мамин рецепт.',
     },
   },
   {
