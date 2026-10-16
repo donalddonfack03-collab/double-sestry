@@ -27,8 +27,8 @@ export const semaine: { jour: T; quoi: T; type: 'commande' | 'prepa' | 'cuisine'
   { jour: { fr: 'Lun', ru: 'Пн' }, quoi: { fr: 'Le menu est publié', ru: 'Публикуем меню' }, type: 'commande' },
   { jour: { fr: 'Mar', ru: 'Вт' }, quoi: { fr: 'Vous commandez', ru: 'Вы заказываете' }, type: 'commande' },
   { jour: { fr: 'Mer', ru: 'Ср' }, quoi: { fr: 'Vous commandez', ru: 'Вы заказываете' }, type: 'commande' },
-  { jour: { fr: 'Jeu', ru: 'Чт' }, quoi: { fr: 'Dernier jour, jusqu’au soir', ru: 'Последний день, до вечера' }, type: 'commande' },
-  { jour: { fr: 'Ven', ru: 'Пт' }, quoi: { fr: 'Courses et préparation', ru: 'Закупка и подготовка' }, type: 'prepa' },
+  { jour: { fr: 'Jeu', ru: 'Чт' }, quoi: { fr: 'Vous commandez', ru: 'Вы заказываете' }, type: 'commande' },
+  { jour: { fr: 'Ven', ru: 'Пт' }, quoi: { fr: 'Dernier jour, jusqu’au soir', ru: 'Последний день, до вечера' }, type: 'commande' },
   { jour: { fr: 'Sam', ru: 'Сб' }, quoi: { fr: 'On cuisine · retrait 8 h – 20 h', ru: 'Готовим · выдача 8:00–20:00' }, type: 'cuisine' },
   { jour: { fr: 'Dim', ru: 'Вс' }, quoi: { fr: 'Retrait 8 h – 10 h et 15 h – 21 h', ru: 'Выдача 8:00–10:00 и 15:00–21:00' }, type: 'cuisine' },
 ];
@@ -46,7 +46,7 @@ export const retrait = {
     fr: 'Prévenez-nous 10 minutes avant d’arriver : on descend devant la cité.',
     ru: 'Напишите за 10 минут до приезда — мы спустимся ко входу.',
   } as T,
-  finCommandes: { fr: 'jeudi soir', ru: 'вечер четверга' } as T,
+  finCommandes: { fr: 'vendredi soir', ru: 'вечер пятницы' } as T,
 };
 
 export const paiement: T = {
