@@ -1,19 +1,29 @@
 ---
 import Mark from './Mark.astro';
 import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
+import { contact, lienWhatsApp, retrait } from '../data/infos';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const current = Astro.url.pathname;
+const fr = lang === 'fr';
 const nav = [
-  ['', 'nav.accueil'],
   ['carte', 'nav.carte'],
   ['histoire', 'nav.histoire'],
-  ['commander', 'nav.commander'],
+  ['commander', 'nav.infos'],
 ] as const;
 const isCurrent = (slug: string) =>
   slug === '' ? current === path(lang) : current.startsWith(path(lang, slug));
 ---
+<a class="skip" href="#contenu">{fr ? 'Aller au contenu' : 'К содержанию'}</a>
+<div class="announce">
+  <div class="wrap">
+    <span class="pulse" aria-hidden="true"></span>
+    <span>{fr
+      ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b> · Retrait samedi et dimanche</>
+      : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b> · Выдача в субботу и воскресенье</>}</span>
+  </div>
+</div>
 <header class="site-header">
   <div class="wrap bar">
     <a class="brand" href={path(lang)} aria-label="Double Sestry">
@@ -22,7 +32,7 @@ const isCurrent = (slug: string) =>
     </a>
     <nav class="nav" aria-label={lang === 'fr' ? 'Menu principal' : 'Главное меню'}>
       {nav.map(([slug, key]) => (
-        <a href={path(lang, slug)} aria-current={isCurrent(slug) ? 'page' : undefined}>{t(lang, key)}</a>
+        <a href={path(lang, slug)} aria-current={isCurrent(slug) ? 'page' : undefined}>{key === 'nav.infos' ? <><span class="long">{t(lang, key)}</span><span class="short">{fr ? 'Infos' : 'Инфо'}</span></> : t(lang, key)}</a>
       ))}
     </nav>
     <div class="lang" role="group" aria-label="Langue / Язык">
@@ -30,10 +40,30 @@ const isCurrent = (slug: string) =>
         <a href={switchLang(current, l)} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
       ))}
     </div>
+    <a class="order" href={lienWhatsApp(contact.messageParDefaut[lang])} target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z" /></svg>
+      {t(lang, 'nav.commander')}
+    </a>
   </div>
 </header>
 
 <style>
+  .skip { position: absolute; left: -9999px; }
+  .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--choco); color: var(--on-choco); padding: 8px 14px; border-radius: 6px; }
+  .announce { background: var(--choco); color: var(--on-choco); font-size: 0.86rem; text-align: center; }
+  .announce .wrap { padding-block: 8px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+  .announce b { color: var(--miel); font-weight: 750; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: #5bd17a; box-shadow: 0 0 0 0 rgb(91 209 122 / 0.6); animation: pulse 2s infinite; flex: none; }
+  @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgb(91 209 122 / 0); } 100% { box-shadow: 0 0 0 0 rgb(91 209 122 / 0); } }
+  .order {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--miel); color: var(--on-miel);
+    font-weight: 800; font-size: 0.92rem; text-decoration: none;
+    padding: 9px 16px; border-radius: var(--radius-pill);
+    transition: transform 0.15s ease;
+  }
+  .order:hover { transform: translateY(-1px); }
+  .order svg { width: 17px; height: 17px; }
   .site-header {
     position: sticky;
     top: 0;
@@ -47,6 +77,8 @@ const isCurrent = (slug: string) =>
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .brand span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
   .nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+  .nav a[aria-current='page'] { background: var(--alveole); color: var(--choco); }
+  .short { display: none; }
   .nav a {
     text-decoration: none;
     font-weight: 650;
@@ -56,7 +88,6 @@ const isCurrent = (slug: string) =>
     color: var(--muted);
   }
   .nav a:hover { color: var(--choco); }
-  .nav a[aria-current='page'] { background: var(--choco); color: var(--on-choco); }
   .lang { display: flex; border: 1.5px solid var(--line); border-radius: var(--radius-pill); overflow: hidden; }
   .lang a {
     text-decoration: none;
@@ -69,8 +100,14 @@ const isCurrent = (slug: string) =>
   .lang a[aria-current='true'] { background: var(--miel); color: var(--on-miel); }
 
   @media (max-width: 640px) {
-    .nav { order: 3; width: 100%; margin-left: 0; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
-    .nav a { white-space: nowrap; padding: 6px 11px; font-size: 0.9rem; }
-    .lang { margin-left: auto; }
+    .bar { row-gap: 6px; }
+    .order { margin-left: auto; }
+    .nav { order: 3; flex: 1 1 60%; min-width: 0; margin-left: -11px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .nav a { white-space: nowrap; padding: 6px 10px; font-size: 0.9rem; }
+    .long { display: none; }
+    .short { display: inline; }
+    .lang { order: 4; }
+    .order { padding: 8px 13px; font-size: 0.86rem; }
+    .announce { font-size: 0.78rem; }
   }
 </style>

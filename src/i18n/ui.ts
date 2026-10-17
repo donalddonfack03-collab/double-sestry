@@ -15,6 +15,7 @@ export const ui = {
   'nav.carte': { fr: 'La carte', ru: 'Меню' },
   'nav.histoire': { fr: 'Notre histoire', ru: 'Наша история' },
   'nav.commander': { fr: 'Commander', ru: 'Заказать' },
+  'nav.infos': { fr: 'Retrait & infos', ru: 'Выдача и инфо' },
   'cta.whatsapp': { fr: 'Commander sur WhatsApp', ru: 'Заказать в WhatsApp' },
   'cta.voirCarte': { fr: 'Voir la carte', ru: 'Смотреть меню' },
   'produit.allergenes': { fr: 'Allergènes', ru: 'Аллергены' },

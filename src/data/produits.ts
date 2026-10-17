@@ -140,7 +140,7 @@ export const produits: Produit[] = [
       ru: '2 дня в холодильнике. 5 минут в духовке или на сковороде — и они снова хрустящие.',
     },
     photo: 'pastels.jpg',
-    photoAlt: { fr: 'Pastels dorés dans leur boîte', ru: 'Золотистые пастели в коробке' },
+    photoAlt: { fr: 'Quatre pastels dorés dans une assiette', ru: 'Четыре золотистых пастели на тарелке' },
   },
   {
     slug: 'bissap',

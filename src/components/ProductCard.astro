@@ -1,45 +1,91 @@
 ---
-// Fiche courte d'un produit sur la carte : alvéole, nom, accroche, prix de départ, lien vers sa page.
-import Hex from './Hex.astro';
+// Carte produit façon catalogue : grande photo verticale, nom, accroche, prix bien visible.
+// Sans photo : une formule montre les photos de ce qu'elle contient ; sinon, un aplat de couleur avec l'abeille.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Mark from './Mark.astro';
 import { t, path, type Lang } from '../i18n/ui';
-import { prix, type Produit } from '../data/produits';
+import { prix, trouver, type Produit } from '../data/produits';
 
-interface Props { lang: Lang; produit: Produit }
-const { lang, produit: p } = Astro.props;
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/*.{jpg,jpeg,png,webp}', { eager: true });
+const img = (f?: string) => (f ? photos[`../assets/photos/${f}`]?.default : undefined);
+
+interface Props { lang: Lang; produit: Produit; loading?: 'lazy' | 'eager'; badge?: string }
+const { lang, produit: p, loading = 'lazy', badge } = Astro.props;
+const fr = lang === 'fr';
 const prixConnus = p.formats.map((f) => f.prix).filter((x): x is number => x !== null);
 const depuis = prixConnus.length ? Math.min(...prixConnus) : null;
-const libelleDepuis =
-  depuis === null
-    ? t(lang, 'produit.surDevis')
-    : p.formats.length > 1
-      ? `${lang === 'fr' ? 'dès' : 'от'} ${prix(depuis)}`
-      : prix(depuis);
+const barre = p.formats.find((f) => f.prix === depuis)?.prixBarre;
+const src = img(p.photo);
+const collage = !src ? (p.inclus ?? []).map(trouver).map((x) => img(x?.photo)).filter((x): x is ImageMetadata => !!x) : [];
+const sizes = '(max-width: 560px) 50vw, (max-width: 900px) 33vw, 280px';
 ---
-<a class="card" href={path(lang, `carte/${p.slug}`)}>
-  <Hex tone={p.categorie === 'formule' ? 'alveole' : 'miel'} photo={p.photo} alt={p.photoAlt?.[lang]} label={p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim() : undefined} width={220} />
+<a class="tile" href={path(lang, `carte/${p.slug}`)}>
+  <div class:list={['pic', !src && !collage.length && `pic--${p.categorie}`]}>
+    {src ? (
+      <Image src={src} alt={p.photoAlt?.[lang] ?? ''} widths={[280, 420, 560]} sizes={sizes} loading={loading} format="webp" quality={78} />
+    ) : collage.length ? (
+      <div class:list={['collage', `collage--${collage.length}`]}>
+        {collage.map((c) => <Image src={c} alt="" widths={[200, 320]} sizes="(max-width: 560px) 25vw, 160px" loading={loading} format="webp" quality={72} />)}
+      </div>
+    ) : (
+      <div class="flat"><Mark size="34%" /><span>{p.nom[lang]}</span></div>
+    )}
+    {badge && <span class="badge">{badge}</span>}
+    {barre && <span class="badge badge--deal">−{barre - depuis!} ₽</span>}
+  </div>
   <div class="txt">
     <h3>{p.nom[lang]}</h3>
     <p class="acc">{p.accroche[lang]}</p>
-    <p class="from">{libelleDepuis}</p>
+    <p class="price">
+      {depuis === null ? (
+        <span class="devis">{t(lang, 'produit.surDevis')}</span>
+      ) : (
+        <>
+          {p.formats.length > 1 && <small>{fr ? 'dès' : 'от'}</small>}
+          <b>{depuis}</b><span class="cur">₽</span>
+          {barre && <s>{prix(barre)}</s>}
+        </>
+      )}
+    </p>
   </div>
 </a>
 
 <style>
-  .card {
-    display: grid;
-    grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
-    gap: var(--space-4);
-    align-items: center;
-    text-decoration: none;
-    padding: var(--space-4);
-    border-radius: var(--radius);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  .tile { display: grid; grid-template-rows: auto 1fr; gap: 12px; text-decoration: none; color: var(--ink); min-width: 0; }
+  .pic {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--alveole);
   }
-  .card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-  .txt { min-width: 0; display: grid; gap: 4px; }
-  h3 { font-size: var(--step-1); }
-  .acc { color: var(--muted); font-size: var(--step--1); line-height: 1.4; }
-  .from { font-weight: 750; color: var(--miel-ink); font-variant-numeric: tabular-nums; margin-top: 2px; }
+  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
+  .tile:hover .pic :global(img) { transform: scale(1.04); }
+  .collage { display: grid; height: 100%; gap: 3px; background: var(--creme); }
+  .collage--2 { grid-template-columns: 1fr 1fr; }
+  .collage--3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+  .collage--3 > :global(:first-child) { grid-row: span 2; }
+  .collage :global(img) { min-height: 0; }
+  .flat { height: 100%; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 16px; text-align: center; }
+  .flat span { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--step-1); line-height: 1.1; color: var(--choco); text-wrap: balance; }
+  .pic--sucre { background: #f3d9c9; }
+  .pic--surCommande { background: var(--miel); }
+  .pic--surCommande .flat span { color: var(--on-miel); }
+  .badge {
+    position: absolute; top: 10px; left: 10px;
+    background: var(--creme); color: var(--choco);
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;
+    padding: 4px 9px; border-radius: 4px;
+  }
+  .badge--deal { left: auto; right: 10px; background: #c8372d; color: #fff; }
+  .txt { display: grid; gap: 3px; align-content: start; min-width: 0; }
+  h3 { font-family: var(--font-body); font-weight: 800; font-size: 1.02rem; color: var(--choco); line-height: 1.25; }
+  .acc { color: var(--muted); font-size: 0.88rem; line-height: 1.35; }
+  .price { margin-top: 6px; display: flex; align-items: baseline; gap: 3px; color: var(--choco); font-variant-numeric: tabular-nums; }
+  .price small { font-size: 0.8rem; font-weight: 650; margin-right: 3px; color: var(--muted); }
+  .price b { font-size: 1.6rem; font-weight: 850; line-height: 1; letter-spacing: -0.02em; }
+  .price .cur { font-weight: 800; font-size: 0.95rem; }
+  .price s { margin-left: 8px; color: var(--muted); font-size: 0.85rem; }
+  .devis { font-weight: 750; color: var(--miel-ink); }
 </style>

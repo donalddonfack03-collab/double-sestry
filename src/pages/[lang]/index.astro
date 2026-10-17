@@ -1,20 +1,55 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import Hex from '../../components/Hex.astro';
 import Mark from '../../components/Mark.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import WeekStrip from '../../components/WeekStrip.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, retrait } from '../../data/infos';
+import { marque, retrait, contact, lienWhatsApp } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
 import { etablissement } from '../../lib/schema';
+import table from '../../assets/photos/table.jpg';
+import trio from '../../assets/photos/trio.jpg';
+import sac from '../../assets/photos/sac.jpg';
+import crepes from '../../assets/photos/crepes.jpg';
+import choco from '../../assets/photos/choco.jpg';
+import pastels from '../../assets/photos/pastels.jpg';
+import bissap from '../../assets/photos/bissap.jpg';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
 const fr = lang === 'fr';
 const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap'].map(trouver).filter((p): p is Produit => !!p);
+const badges: Record<string, { fr: string; ru: string }> = {
+  'la-sestry': { fr: 'Signature', ru: 'Фирменный' },
+};
+const gf = trouver('grande-faim')!;
+const gfFormat = gf.formats[0];
+const sestry = trouver('la-sestry')!;
+
+const rayons = [
+  { img: crepes, label: fr ? 'Crêpes salées' : 'Солёные блины', href: path(lang, 'carte') + '#sale' },
+  { img: choco, label: fr ? 'Crêpes sucrées' : 'Сладкие блины', href: path(lang, 'carte') + '#sucre' },
+  { img: pastels, label: fr ? 'Pastels' : 'Пастели', href: path(lang, 'carte/pastels') },
+  { img: bissap, label: fr ? 'Bissap' : 'Биссап', href: path(lang, 'carte') + '#boisson' },
+  { img: trio, label: fr ? 'Formules' : 'Наборы', href: path(lang, 'carte') + '#formule' },
+];
+
+const etapes = [
+  {
+    t: fr ? 'Vous écrivez sur WhatsApp' : 'Пишете в WhatsApp',
+    d: fr ? `Du lundi au ${retrait.finCommandes.fr}. On vous confirme la commande et l’heure.` : `С понедельника до ${retrait.finCommandes.ru}. Мы подтверждаем заказ и время.`,
+  },
+  {
+    t: fr ? 'On cuisine samedi matin' : 'Готовим в субботу утром',
+    d: fr ? 'Seulement ce qui a été commandé. Votre prénom est écrit à la main sur le sac.' : 'Только то, что заказано. Ваше имя пишем от руки на пакете.',
+  },
+  {
+    t: fr ? 'Vous récupérez devant la cité' : 'Забираете у общежития',
+    d: fr ? 'Samedi 8 h – 20 h, dimanche 8 h – 10 h et 15 h – 21 h. Prévenez 10 minutes avant.' : 'Сб 8:00–20:00, вс 8:00–10:00 и 15:00–21:00. Напишите за 10 минут.',
+  },
+];
 ---
 <Base
   lang={lang}
@@ -24,72 +59,129 @@ const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap'].map(trouver).fil
     ? 'Crêpes, pastels et bissap faits maison par deux sœurs de Pointe-Noire, à Briansk. Le week-end, sur commande, retrait devant la cité.'
     : 'Блины, пастели и биссап от двух сестёр из Пуэнт-Нуара, в Брянске. По выходным, под заказ, выдача у общежития.'}
 >
-  <section class="hero wrap">
+  <!-- 1. Grande photo d'accueil -->
+  <section class="hero">
     <div class="hero__text">
       <p class="eyebrow">{fr ? 'Fait maison' : 'Домашняя кухня'} · {marque.ville[lang]}</p>
       <h1>
-        {fr ? 'Cuisiné par deux sœurs.' : 'Готовят две сестры.'}
-        <em>{fr ? <>Le <span class="nowrap">week-end</span>, sur commande.</> : 'По выходным, под заказ.'}</em>
+        {fr ? 'Les crêpes de deux sœurs,' : 'Блины от двух сестёр,'}
+        <em>{fr ? <>faites le <span class="nowrap">week-end</span>.</> : 'по выходным.'}</em>
       </h1>
       <p class="lead">
         {fr
-          ? 'Crêpes, pastels et bissap faits le jour même, en petites quantités, avec la recette de notre maman.'
-          : 'Блины, пастели и биссап, приготовленные в день выдачи, небольшими партиями, по маминому рецепту.'}
+          ? 'Crêpes, pastels et bissap préparés le jour même, en petites quantités, avec la recette de leur maman.'
+          : 'Блины, пастели и биссап в день выдачи, небольшими партиями, по маминому рецепту.'}
       </p>
       <div class="cta">
-        <a class="btn btn--main" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
-        <WhatsAppButton lang={lang} variant="ghost" />
+        <WhatsAppButton lang={lang} variant="main" />
+        <a class="btn btn--ghost" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
       </div>
+      <ul class="trust">
+        <li>{fr ? 'Fait le jour même' : 'В день выдачи'}</li>
+        <li>{fr ? 'Recette de maman' : 'Мамин рецепт'}</li>
+        <li>{fr ? 'Dès 120 ₽' : 'От 120 ₽'}</li>
+      </ul>
     </div>
-    <div class="comb" aria-hidden="true">
-      <Hex photo="crepes.jpg" width={230} loading="eager" />
-      <Hex label={fr ? 'fait le jour même' : 'в день выдачи'} width={230} />
-      <Hex photo="pastels.jpg" width={230} loading="eager" />
-      <Hex photo="bissap.jpg" width={230} />
+    <div class="hero__pic">
+      <Image src={table} alt={fr ? 'Crêpes La Sestry, La Choco et un verre de bissap au bord d’une fenêtre ensoleillée' : 'Блины La Sestry, La Choco и стакан биссапа на солнечном подоконнике'} widths={[480, 720, 1000]} sizes="(max-width: 860px) 100vw, 50vw" loading="eager" fetchpriority="high" format="webp" quality={80} />
+      <a class="tag" href={path(lang, 'carte/la-sestry')}>
+        <span class="tag__txt"><b>La Sestry</b><small>{sestry.accroche[lang].split('·')[0].trim()}</small></span>
+        <span class="tag__price">150 ₽</span>
+      </a>
     </div>
   </section>
 
-  <section class="soeurs">
-    <div class="wrap soeurs__grid">
-      <Mark size="110px" />
-      <div class="stack">
+  <!-- 2. Rayons, façon catalogue -->
+  <nav class="wrap rayons" aria-label={fr ? 'Parcourir la carte' : 'Разделы меню'}>
+    {rayons.map((r) => (
+      <a href={r.href}>
+        <span class="rayon__pic"><Image src={r.img} alt="" widths={[120, 200]} sizes="100px" format="webp" quality={70} /></span>
+        <span>{r.label}</span>
+      </a>
+    ))}
+  </nav>
+
+  <!-- 3. Les produits -->
+  <section class="wrap section produits">
+    <div class="head">
+      <div>
+        <p class="eyebrow">{fr ? 'Les incontournables' : 'Самое любимое'}</p>
+        <h2>{fr ? 'Ce qu’on cuisine ce week-end' : 'Что готовим в эти выходные'}</h2>
+      </div>
+      <a class="more" href={path(lang, 'carte')}>{fr ? 'Toute la carte' : 'Всё меню'} <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="grid">
+      {vedettes.map((p, i) => <ProductCard lang={lang} produit={p} loading={i < 2 ? 'eager' : 'lazy'} badge={badges[p.slug]?.[lang]} />)}
+    </div>
+  </section>
+
+  <!-- 4. La formule, en bloc de couleur -->
+  <section class="wrap">
+    <div class="offre">
+      <div class="offre__pic">
+        <Image src={trio} alt={fr ? 'Crêpes La Sestry, La Choco, pastels et bissap sur la table' : 'Блины La Sestry, La Choco, пастели и биссап на столе'} widths={[420, 640, 860]} sizes="(max-width: 860px) 100vw, 45vw" format="webp" quality={78} />
+      </div>
+      <div class="offre__txt">
+        <p class="eyebrow">{fr ? 'La formule repas' : 'Набор на обед'}</p>
+        <h2>{gf.nom[lang]}</h2>
+        <p class="offre__desc">{gf.accroche[lang]}. {fr ? 'Le repas complet, dans une seule boîte.' : 'Полноценный обед в одной коробке.'}</p>
+        <p class="offre__price">
+          <b>{gfFormat.prix}</b><span>₽</span>
+          {gfFormat.prixBarre && <s>{gfFormat.prixBarre} ₽</s>}
+          {gfFormat.prixBarre && <em>{fr ? `${gfFormat.prixBarre - gfFormat.prix!} ₽ d’économie` : `экономия ${gfFormat.prixBarre - gfFormat.prix!} ₽`}</em>}
+        </p>
+        <div class="cta">
+          <a class="btn btn--main" href={lienWhatsApp(`${contact.messageParDefaut[lang]}${fr ? ' ! Je voudrais commander : ' : '! Хочу заказать: '}${gf.nom[lang]}`)} target="_blank" rel="noopener">{fr ? 'Commander la formule' : 'Заказать набор'}</a>
+          <a class="more" href={path(lang, 'carte') + '#formule'}>{fr ? 'Les autres formules' : 'Другие наборы'} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Comment ça marche -->
+  <section class="wrap section">
+    <div class="head head--center">
+      <p class="eyebrow">{fr ? 'Comment ça marche' : 'Как это работает'}</p>
+      <h2>{fr ? 'Commander en 3 étapes' : 'Заказ в 3 шага'}</h2>
+    </div>
+    <ol class="etapes">
+      {etapes.map((e, i) => (
+        <li>
+          <span class="num" aria-hidden="true">{i + 1}</span>
+          <h3>{e.t}</h3>
+          <p>{e.d}</p>
+        </li>
+      ))}
+    </ol>
+  </section>
+
+  <!-- 6. L'histoire -->
+  <section class="histoire">
+    <div class="wrap histoire__grid">
+      <div class="histoire__pic">
+        <Image src={sac} alt={fr ? 'Une des sœurs tient deux sacs de commande avec le prénom du client écrit à la main' : 'Одна из сестёр держит два пакета с заказами, на которых от руки написано имя клиента'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={80} />
+      </div>
+      <div class="histoire__txt">
         <p class="eyebrow">{t(lang, 'nav.histoire')}</p>
         <h2>{accroche.titre[lang]}</h2>
-        <p class="soeurs__txt">{accroche.texte[lang]}</p>
-        <a class="link" href={path(lang, 'histoire')}>{fr ? 'Lire leur histoire →' : 'Читать их историю →'}</a>
+        <p>{accroche.texte[lang]}</p>
+        <a class="btn btn--ghost" href={path(lang, 'histoire')}>{fr ? 'Lire leur histoire' : 'Читать их историю'}</a>
       </div>
     </div>
   </section>
 
-  <section class="wrap section">
-    <div class="head">
-      <p class="eyebrow">{fr ? 'Les incontournables' : 'Самое любимое'}</p>
-      <h2>{fr ? 'Ce que nos clients reprennent chaque semaine.' : 'То, что заказывают каждую неделю.'}</h2>
-    </div>
-    <div class="cards">
-      {vedettes.map((p) => <ProductCard lang={lang} produit={p} />)}
-    </div>
-    <a class="link" href={path(lang, 'carte')}>{fr ? 'Toute la carte, les formules et les prix →' : 'Всё меню, наборы и цены →'}</a>
-  </section>
-
-  <section class="wrap section week">
-    <div class="head">
-      <p class="eyebrow">{fr ? 'Notre semaine' : 'Наша неделя'}</p>
-      <h2>{fr ? 'On cuisine seulement ce qui est commandé.' : 'Готовим только то, что заказано.'}</h2>
-    </div>
-    <WeekStrip lang={lang} />
-  </section>
-
+  <!-- 7. Les promesses -->
   <section class="wrap section promesses">
     {promesses.map((p) => (
       <div>
-        <span class="dot hex-shape" aria-hidden="true"></span>
+        <Mark size="34px" />
         <h3>{p.titre[lang]}</h3>
         <p>{p.texte[lang]}</p>
       </div>
     ))}
   </section>
 
+  <!-- 8. Dernier appel -->
   <section class="wrap">
     <div class="band">
       <div>
@@ -102,65 +194,119 @@ const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap'].map(trouver).fil
 </Base>
 
 <style>
+  .nowrap { white-space: nowrap; }
+  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+
+  /* 1. Accueil : texte à gauche, photo pleine hauteur jusqu'au bord droit */
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-    gap: clamp(24px, 5vw, 64px);
-    align-items: center;
-    padding-block: var(--space-8) calc(var(--space-8) + 40px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    min-height: min(82vh, 760px);
   }
-  .hero__text { display: grid; gap: var(--space-5); min-width: 0; }
-  .nowrap { white-space: nowrap; }
+  .hero__text {
+    display: grid; gap: var(--space-5); align-content: center; min-width: 0;
+    padding: var(--space-7) clamp(24px, 5vw, 72px) var(--space-7) max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+  }
+  .hero h1 { font-size: clamp(2.4rem, 1.6rem + 2.6vw, 4rem); letter-spacing: -0.01em; }
   .hero h1 em { display: block; font-style: normal; color: var(--miel-ink); }
-  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); }
-  .comb {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
-    max-width: 470px;
-    width: 100%;
-    justify-self: end;
+  .trust { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; font-weight: 650; color: var(--muted); }
+  .trust li { display: flex; align-items: center; gap: 7px; }
+  .trust li::before { content: ''; width: 16px; height: 16px; border-radius: 50%; background: var(--miel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-5' fill='none' stroke='%232a1408' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat; flex: none; }
+  .hero__pic { position: relative; min-height: 420px; overflow: hidden; background: var(--alveole); }
+  .hero__pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
+  .tag {
+    position: absolute; left: 30%; bottom: 14%;
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); color: var(--ink); text-decoration: none;
+    padding: 10px 14px 10px 10px; border-radius: 12px;
+    box-shadow: 0 10px 30px rgb(42 20 8 / 0.25);
+    transition: transform 0.2s ease;
   }
-  .comb > :global(:nth-child(2)) { transform: translateY(50%); }
-  .comb > :global(:nth-child(3)) { margin-top: -18%; }
-  .comb > :global(:nth-child(4)) { transform: translateY(50%); margin-top: -18%; }
+  .tag:hover { transform: translateY(-2px); }
+  .tag__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 4px rgb(255 255 255 / 0.5), 0 0 0 1.5px var(--choco) inset; position: absolute; left: -34px; top: -26px; }
+  .tag__txt { display: grid; line-height: 1.2; }
+  .tag__txt b { font-size: 0.95rem; color: var(--choco); }
+  .tag__txt small { color: var(--muted); font-size: 0.78rem; }
+  .tag__price { font-weight: 850; font-size: 1.25rem; color: var(--choco); padding-left: 12px; border-left: 1px solid var(--line); }
 
-  .soeurs { background: var(--alveole); padding-block: var(--space-8); }
-  .soeurs__grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: clamp(20px, 5vw, 56px); align-items: center; }
-  .soeurs h2 { max-width: 20ch; }
-  .soeurs__txt { font-size: var(--step-1); line-height: 1.5; max-width: 52ch; color: var(--ink); }
-  .link { font-weight: 750; color: var(--choco); text-decoration: none; justify-self: start; }
-  .link:hover { text-decoration: underline; }
+  /* 2. Rayons */
+  .rayons { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4); padding-block: var(--space-7) 0; }
+  .rayons a { display: grid; justify-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; color: var(--choco); text-align: center; }
+  .rayon__pic { width: 100%; max-width: 128px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--alveole); outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 0.15s; }
+  .rayon__pic :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .rayons a:hover .rayon__pic { outline-color: var(--miel); }
 
-  .head { display: grid; gap: var(--space-2); margin-bottom: var(--space-6); max-width: 40ch; }
-  .head h2 { font-size: var(--step-2); }
-  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin-bottom: var(--space-5); }
+  /* 3. Produits */
+  .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: var(--space-3); margin-bottom: var(--space-6); }
+  .head h2 { font-size: var(--step-3); margin-top: 4px; }
+  .head--center { justify-content: center; text-align: center; flex-direction: column; align-items: center; }
+  .more { font-weight: 750; color: var(--choco); text-decoration: none; white-space: nowrap; }
+  .more:hover { text-decoration: underline; }
+  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); }
 
-  .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); padding-top: 0; }
-  .promesses > div { display: grid; gap: var(--space-2); align-content: start; }
-  .promesses p { color: var(--muted); font-size: var(--step--1); }
-  .dot { width: 22px; height: 25px; background: var(--miel); }
+  /* 4. Bloc formule */
+  .offre {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    background: var(--miel); color: var(--on-miel);
+    border-radius: 20px; overflow: hidden;
+  }
+  .offre__pic { position: relative; min-height: 380px; }
+  .offre__pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .offre__txt { padding: clamp(28px, 5vw, 64px); display: grid; gap: var(--space-4); align-content: center; }
+  .offre .eyebrow { color: var(--on-miel); opacity: 0.75; }
+  .offre h2 { color: var(--on-miel); font-size: var(--step-3); }
+  .offre__desc { font-size: var(--step-1); line-height: 1.45; max-width: 34ch; }
+  .offre__price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .offre__price b { font-size: clamp(2.6rem, 2rem + 2vw, 3.6rem); font-weight: 900; line-height: 1; letter-spacing: -0.03em; }
+  .offre__price > span { font-weight: 850; font-size: 1.4rem; margin-left: -6px; }
+  .offre__price s { opacity: 0.7; font-weight: 650; }
+  .offre__price em { font-style: normal; font-weight: 800; font-size: 0.82rem; background: var(--choco); color: var(--on-choco); padding: 4px 10px; border-radius: 4px; }
+  .offre .more { color: var(--on-miel); }
 
+  /* 5. Étapes */
+  .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
+  .etapes li { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 32px); display: grid; gap: var(--space-2); align-content: start; }
+  .num { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--choco); color: var(--on-choco); font-family: var(--font-display); font-size: 1.3rem; margin-bottom: var(--space-2); }
+  .etapes h3 { font-size: var(--step-1); }
+  .etapes p { color: var(--muted); font-size: 0.95rem; }
+
+  /* 6. Histoire */
+  .histoire { background: var(--alveole); padding-block: var(--space-8); }
+  .histoire__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 6vw, 80px); align-items: center; }
+  .histoire__pic { aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; max-height: 620px; }
+  .histoire__pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .histoire__txt { display: grid; gap: var(--space-5); justify-items: start; }
+  .histoire__txt h2 { font-size: var(--step-3); }
+  .histoire__txt p { font-size: var(--step-1); line-height: 1.55; max-width: 46ch; }
+
+  /* 7. Promesses */
+  .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 4vw, 48px); }
+  .promesses > div { display: grid; gap: var(--space-3); align-content: start; }
+  .promesses p { color: var(--muted); font-size: 0.95rem; }
+
+  /* 8. Bandeau final */
   .band {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-5);
-    align-items: center;
-    justify-content: space-between;
-    background: var(--choco);
-    color: var(--on-choco);
-    border-radius: calc(var(--radius) * 1.5);
-    padding: clamp(24px, 4vw, 44px);
+    display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between;
+    background: var(--choco); color: var(--on-choco);
+    border-radius: 20px; padding: clamp(28px, 5vw, 56px);
   }
-  .band h2 { color: var(--on-choco); font-size: var(--step-2); }
+  .band h2 { color: var(--on-choco); font-size: var(--step-3); }
   .band p { margin-top: var(--space-2); opacity: 0.8; }
   .band > div { min-width: 0; flex: 1 1 320px; }
 
+  @media (max-width: 980px) {
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
   @media (max-width: 860px) {
-    .hero { grid-template-columns: minmax(0, 1fr); padding-bottom: calc(var(--space-8) + 60px); }
-    .comb { justify-self: start; max-width: min(320px, 82vw); }
-    .cards { grid-template-columns: minmax(0, 1fr); }
-    .promesses { grid-template-columns: minmax(0, 1fr); }
-    .soeurs__grid { grid-template-columns: minmax(0, 1fr); }
+    .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
+    .hero__pic { order: -1; min-height: 0; aspect-ratio: 4 / 3.4; }
+    .hero__text { padding: var(--space-6) var(--gutter) var(--space-4); }
+    .tag { left: auto; right: 16px; bottom: 16px; }
+    .tag__dot { display: none; }
+    .rayons { grid-template-columns: repeat(5, 92px); overflow-x: auto; scrollbar-width: none; padding-top: var(--space-5); }
+    .offre, .histoire__grid { grid-template-columns: minmax(0, 1fr); }
+    .offre__pic { min-height: 0; aspect-ratio: 4 / 3; }
+    .histoire__pic { aspect-ratio: 4 / 4.2; }
+    .etapes, .promesses { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

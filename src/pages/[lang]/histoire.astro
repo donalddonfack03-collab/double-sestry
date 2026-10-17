@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
-import Hex from '../../components/Hex.astro';
+import { Image } from 'astro:assets';
+import sac from '../../assets/photos/sac.jpg';
 import Mark from '../../components/Mark.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
@@ -21,7 +22,7 @@ const fr = lang === 'fr';
         <li><b>{fr ? 'La recette' : 'Рецепт'}</b>{fr ? 'celle de leur maman' : 'мамин'}</li>
       </ul>
     </div>
-    <Hex photo="sac.jpg" alt={fr ? 'Une des sœurs tient deux sacs de commande avec « Bon appétit » et le prénom du client écrits à la main' : 'Одна из сестёр держит два пакета с заказами, на которых от руки написано «Приятного аппетита» и имя клиента'} width={340} loading="eager" />
+    <div class="portrait"><Image src={sac} widths={[340, 520, 700]} sizes="(max-width: 860px) 100vw, 420px" loading="eager" format="webp" quality={80} alt={fr ? 'Une des sœurs tient deux sacs de commande avec « Bon appétit » et le prénom du client écrits à la main' : 'Одна из сестёр держит два пакета с заказами, на которых от руки написано «Приятного аппетита» и имя клиента'} /></div>
   </header>
 
   <article class="wrap chapters">
@@ -73,12 +74,14 @@ const fr = lang === 'fr';
 <style>
   .top {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
     gap: clamp(24px, 5vw, 72px);
     align-items: center;
     padding-block: var(--space-8);
   }
   .top__txt { gap: var(--space-5); }
+  .portrait { aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; }
+  .portrait :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
   .facts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); }
   .facts li { display: grid; color: var(--ink); }
   .facts b { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--miel-ink); }
@@ -120,7 +123,7 @@ const fr = lang === 'fr';
 
   @media (max-width: 860px) {
     .top { grid-template-columns: minmax(0, 1fr); }
-    .top :global(.hex) { max-width: 240px; }
+    .portrait { order: -1; aspect-ratio: 1; }
     .promesses { grid-template-columns: minmax(0, 1fr); }
     .chapter { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
   }
