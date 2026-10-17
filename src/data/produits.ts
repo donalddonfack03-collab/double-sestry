@@ -75,7 +75,7 @@ export const produits: Produit[] = [
       ru: '2 дня в холодильнике. Разогреть 1 минуту на сковороде или в микроволновке без крышки.',
     },
     photo: 'crepes.jpg',
-    photoAlt: { fr: 'Crêpes La Sestry pliées en enveloppe dans leur boîte', ru: 'Блины La Sestry, сложенные конвертом, в коробке' },
+    photoAlt: { fr: 'Quatre crêpes La Sestry pliées en carré dans une assiette', ru: 'Четыре блина La Sestry, сложенные квадратиком, на тарелке' },
   },
   {
     slug: 'la-choco',
@@ -97,7 +97,7 @@ export const produits: Produit[] = [
     traces: [],
     conservation: deuxJours,
     photo: 'choco.jpg',
-    photoAlt: { fr: 'Crêpes La Choco roulées et coupées en spirales', ru: 'Блины La Choco, нарезанные рулетиками' },
+    photoAlt: { fr: 'Crêpes La Choco roulées, avec des traits de chocolat, dans leur boîte', ru: 'Свёрнутые блины La Choco с шоколадными полосками в коробке' },
   },
   {
     slug: 'lotus',
@@ -161,7 +161,7 @@ export const produits: Produit[] = [
     traces: [],
     conservation: { fr: '3 jours au frais. Bien agiter avant de servir.', ru: '3 дня в холодильнике. Перед подачей взболтать.' },
     photo: 'bissap.jpg',
-    photoAlt: { fr: 'Bouteille de bissap rouge', ru: 'Бутылка красного биссапа' },
+    photoAlt: { fr: 'Verre et bouteille de bissap au bord de la fenêtre', ru: 'Стакан и бутылка биссапа на подоконнике' },
   },
   {
     slug: 'grande-faim',
