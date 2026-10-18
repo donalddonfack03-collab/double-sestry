@@ -21,6 +21,10 @@ const collage = !src ? (p.inclus ?? []).map(trouver).map((x) => img(x?.photo)).f
 const sizes = '(max-width: 560px) 80vw, (max-width: 900px) 45vw, 380px';
 const href = path(lang, `carte/${p.slug}`);
 const addIdx = depuis === null || p.surMesure ? -1 : p.formats.findIndex((f) => f.prix === depuis);
+const formule = p.categorie === 'formule';
+// L'unité est écrite à côté du prix (« 150 ₽ la crêpe ») : la photo montre souvent plusieurs pièces.
+const unite = addIdx >= 0 && !formule ? p.formats[addIdx].libelle[lang] : undefined;
+const autres = unite ? p.formats.filter((f, i) => i !== addIdx && f.prix !== null) : [];
 ---
 <article class="tile">
   <a class:list={['pic', !src && !collage.length && `pic--${p.categorie}`]} href={href} tabindex="-1" aria-hidden="true">
@@ -44,12 +48,16 @@ const addIdx = depuis === null || p.surMesure ? -1 : p.formats.findIndex((f) => 
         <span class="devis">{t(lang, 'produit.surDevis')}</span>
       ) : (
         <>
-          {(p.formats.length > 1 || p.surMesure) && <small>{fr ? 'dès' : 'от'}</small>}
+          {(p.surMesure || (formule && p.formats.length > 1)) && <small>{fr ? 'dès' : 'от'}</small>}
           <b>{depuis}</b><span class="cur">₽</span>
+          {unite && <span class="unit">{fr ? unite : `за ${unite}`}</span>}
           {barre && <s>{prix(barre)}</s>}
         </>
       )}
     </p>
+    {autres.length > 0 && (
+      <p class="packs">{autres.map((f) => (fr ? `${f.libelle.fr} : ${prix(f.prix!)}` : `${f.libelle.ru} — ${prix(f.prix!)}`)).join(' · ')}</p>
+    )}
     {addIdx >= 0 ? (
       <button class="add" type="button" data-add={p.slug} data-f={addIdx} aria-label={`${fr ? 'Ajouter au panier' : 'В корзину'} : ${p.nom[lang]}`}>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
@@ -91,7 +99,7 @@ const addIdx = depuis === null || p.surMesure ? -1 : p.formats.findIndex((f) => 
   }
   .badge--deal { left: auto; right: 12px; background: #c8372d; color: #fff; }
   .txt {
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'h h' 'a a' 'p b';
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'h h' 'a a' 'p b' 'k k';
     column-gap: 10px; row-gap: 4px; align-content: start; min-width: 0;
   }
   h3 { grid-area: h; font-family: var(--font-display); font-weight: var(--display-weight); font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.55rem); color: var(--choco); line-height: 1.15; }
@@ -104,6 +112,8 @@ const addIdx = depuis === null || p.surMesure ? -1 : p.formats.findIndex((f) => 
   .price small { font-size: 0.8rem; font-weight: 650; margin-right: 3px; color: var(--muted); }
   .price b { font-size: 1.6rem; font-weight: 850; line-height: 1; letter-spacing: -0.02em; }
   .price .cur { font-weight: 800; font-size: 0.95rem; }
+  .price .unit { margin-left: 5px; font-size: 0.92rem; font-weight: 650; color: var(--ink); }
+  .packs { grid-area: k; font-size: 0.84rem; color: var(--muted); font-variant-numeric: tabular-nums; }
   .price s { margin-left: 8px; color: var(--muted); font-size: 0.85rem; }
   .devis { font-weight: 750; color: var(--miel-ink); font-size: 0.92rem; }
   .add {
