@@ -20,14 +20,13 @@ export function etablissement(lang: Lang, site: URL) {
     servesCuisine: lang === 'fr' ? ['Crêpes', 'Cuisine congolaise', 'Fait maison'] : ['Блины', 'Конголезская кухня', 'Домашняя кухня'],
     priceRange: `${Math.min(...prixConnus)}–${Math.max(...prixConnus)} RUB`,
     currenciesAccepted: 'RUB',
-    paymentAccepted: lang === 'fr' ? 'Espèces, virement' : 'Наличные, перевод',
+    paymentAccepted: lang === 'fr' ? 'Virement' : 'Перевод',
     address: { '@type': 'PostalAddress', streetAddress: lang === 'fr' ? 'Bezhitskaya 16 b' : 'ул. Бежицкая, 16Б', addressLocality: marque.ville[lang], addressCountry: 'RU' },
     areaServed: marque.ville[lang],
     hasMenu: new URL(path(lang, 'carte'), site).href,
     openingHoursSpecification: [
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '08:00', closes: '20:00' },
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '08:00', closes: '10:00' },
-      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '15:00', closes: '21:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '12:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Sunday', opens: '09:00' },
     ],
     founder: [
       { '@type': 'Person', name: lang === 'fr' ? 'Ria' : 'Рия' },

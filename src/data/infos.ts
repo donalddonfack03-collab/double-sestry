@@ -29,14 +29,14 @@ export const semaine: { jour: T; quoi: T; type: 'commande' | 'prepa' | 'cuisine'
   { jour: { fr: 'Mer', ru: 'Ср' }, quoi: { fr: 'Vous commandez', ru: 'Вы заказываете' }, type: 'commande' },
   { jour: { fr: 'Jeu', ru: 'Чт' }, quoi: { fr: 'Vous commandez', ru: 'Вы заказываете' }, type: 'commande' },
   { jour: { fr: 'Ven', ru: 'Пт' }, quoi: { fr: 'Dernier jour, jusqu’à 20 h 30', ru: 'Последний день, до 20:30' }, type: 'commande' },
-  { jour: { fr: 'Sam', ru: 'Сб' }, quoi: { fr: 'On cuisine · retrait 8 h – 20 h', ru: 'Готовим · выдача 8:00–20:00' }, type: 'cuisine' },
-  { jour: { fr: 'Dim', ru: 'Вс' }, quoi: { fr: 'Retrait 8 h – 10 h et 15 h – 21 h', ru: 'Выдача 8:00–10:00 и 15:00–21:00' }, type: 'cuisine' },
+  { jour: { fr: 'Sam', ru: 'Сб' }, quoi: { fr: 'On cuisine · retrait dès 12 h', ru: 'Готовим · выдача с 12:00' }, type: 'cuisine' },
+  { jour: { fr: 'Dim', ru: 'Вс' }, quoi: { fr: 'Retrait dès 9 h', ru: 'Выдача с 9:00' }, type: 'cuisine' },
 ];
 
 export const retrait = {
   creneaux: [
-    { jour: { fr: 'Samedi', ru: 'Суббота' } as T, heures: ['8:00 – 20:00'] },
-    { jour: { fr: 'Dimanche', ru: 'Воскресенье' } as T, heures: ['8:00 – 10:00', '15:00 – 21:00'] },
+    { jour: { fr: 'Samedi', ru: 'Суббота' } as T, heures: ['dès 12:00'] },
+    { jour: { fr: 'Dimanche', ru: 'Воскресенье' } as T, heures: ['dès 9:00'] },
   ],
   lieu: {
     fr: 'Devant notre cité étudiante : Bezhitskaya 16 b, Briansk.',
@@ -74,8 +74,8 @@ export const parcours: { titre: T; texte: T }[] = [
   {
     titre: { fr: 'Vous choisissez', ru: 'Вы выбираете' },
     texte: {
-      fr: 'Sur le site, dans notre catalogue WhatsApp ou par message, jusqu’au vendredi 20 h 30.',
-      ru: 'На сайте, в каталоге WhatsApp или сообщением — до пятницы, 20:30.',
+      fr: 'Avec notre formulaire de commande, sur le site, dans le catalogue WhatsApp ou par message, jusqu’au vendredi 20 h 30.',
+      ru: 'Через нашу форму заказа, на сайте, в каталоге WhatsApp или сообщением — до пятницы, 20:30.',
     },
   },
   {
@@ -95,8 +95,11 @@ export const parcours: { titre: T; texte: T }[] = [
   {
     titre: { fr: 'Vous récupérez', ru: 'Вы забираете' },
     texte: {
-      fr: 'Devant la cité, Bezhitskaya 16 b. Prévenez 10 min avant, ou envoyez un Yandex Go.',
-      ru: 'У общежития, ул. Бежицкая, 16Б. Напишите за 10 минут или вызовите Яндекс Go.',
+      fr: 'Devant la cité, Bezhitskaya 16 b : samedi dès 12 h, dimanche dès 9 h. Prévenez 10 min avant, ou envoyez un Yandex Go.',
+      ru: 'У общежития, ул. Бежицкая, 16Б: в субботу с 12:00, в воскресенье с 9:00. Напишите за 10 минут или вызовите Яндекс Go.',
     },
   },
 ];
+
+/** Le formulaire de commande Google Forms (une porte d'entrée parmi d'autres). */
+export const formulaire = 'https://docs.google.com/forms/d/e/1FAIpQLSdBIybD6_8LSrrKEScxXgXDdsmGT2hsc83HN-eclBhAnc8oQg/viewform';

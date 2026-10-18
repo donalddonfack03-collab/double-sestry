@@ -62,8 +62,8 @@ const textes = fr
       <div class="total"><span>{textes.total}</span><b data-cart-total>0 ₽</b></div>
       <fieldset class="day">
         <legend>{fr ? 'Jour de retrait' : 'День выдачи'}</legend>
-        <label><input type="radio" name="ds-jour" value="samedi" checked /><span>{fr ? 'Samedi' : 'Суббота'}<small>8:00 – 20:00</small></span></label>
-        <label><input type="radio" name="ds-jour" value="dimanche" /><span>{fr ? 'Dimanche' : 'Воскресенье'}<small>8–10, 15–21</small></span></label>
+        <label><input type="radio" name="ds-jour" value="samedi" checked /><span>{fr ? 'Samedi' : 'Суббота'}<small>{fr ? 'dès 12:00' : 'с 12:00'}</small></span></label>
+        <label><input type="radio" name="ds-jour" value="dimanche" /><span>{fr ? 'Dimanche' : 'Воскресенье'}<small>{fr ? 'dès 9:00' : 'с 9:00'}</small></span></label>
       </fieldset>
       <label class="name">
         <span>{fr ? 'Votre prénom (on l’écrit sur le sac)' : 'Ваше имя (напишем на пакете)'}</span>

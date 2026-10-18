@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import WeekStrip from '../../components/WeekStrip.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, colon, type Lang } from '../../i18n/ui';
-import { contact, retrait, paiement, livraison, parcours, reponse } from '../../data/infos';
+import { contact, retrait, paiement, livraison, parcours, reponse, formulaire } from '../../data/infos';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
@@ -83,7 +83,7 @@ const faq = [
         <span class="num" id="phone">{contact.telephone}</span>
         <button type="button" class="copy" data-copy={`+${contact.whatsapp}`} data-done={fr ? 'Copié' : 'Скопировано'}>{fr ? 'Copier' : 'Копировать'}</button>
       </div>
-      <WhatsAppButton lang={lang} />
+      <div class="btns"><WhatsAppButton lang={lang} /><a class="btn btn--ghost" href={formulaire} target="_blank" rel="noopener">{fr ? 'Remplir le formulaire de commande' : 'Заполнить форму заказа'}</a></div>
       <dl class="pay">
         <div><dt>{fr ? 'Paiement' : 'Оплата'}{colon(lang)}</dt><dd>{paiement[lang]}</dd></div>
         <div><dt>{fr ? 'Livraison' : 'Доставка'}{colon(lang)}</dt><dd>{livraison[lang]}</dd></div>
@@ -153,6 +153,7 @@ const faq = [
   .map { display: inline-block; margin-top: -6px; font-weight: 700; color: var(--choco); font-size: 0.9rem; }
   .slots tr:last-child th, .slots tr:last-child td { border-bottom: 0; }
   .muted { color: var(--muted); }
+  .btns { display: flex; flex-wrap: wrap; gap: var(--space-3); }
   .num-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
   .num { font-size: var(--step-2); font-weight: 750; color: var(--choco); font-variant-numeric: tabular-nums; user-select: all; }
   .copy { font: inherit; font-weight: 650; font-size: var(--step--1); padding: 6px 14px; border-radius: var(--radius-pill); border: 1.5px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
