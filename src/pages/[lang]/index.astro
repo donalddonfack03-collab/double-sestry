@@ -24,7 +24,7 @@ import gateauCitron from '../../assets/photos/gateau-citron.jpg';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
 const fr = lang === 'fr';
-const vedettes = ['la-sestry', 'la-choco', 'lotus', 'pastels', 'bissap', 'grande-faim', 'douceur'].map(trouver).filter((p): p is Produit => !!p);
+const vedettes = ['la-sestry', 'la-choco', 'lotus', 'pastels', 'bissap', 'grande-faim', 'douceur-complete', 'mini-douceur'].map(trouver).filter((p): p is Produit => !!p);
 const badges: Record<string, { fr: string; ru: string }> = {
   'la-sestry': { fr: 'Signature', ru: 'Фирменный' },
 };
