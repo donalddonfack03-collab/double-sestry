@@ -20,7 +20,7 @@ const src = img(p.photo);
 const collage = !src ? (p.inclus ?? []).map(trouver).map((x) => img(x?.photo)).filter((x): x is ImageMetadata => !!x) : [];
 const sizes = '(max-width: 560px) 80vw, (max-width: 900px) 45vw, 380px';
 const href = path(lang, `carte/${p.slug}`);
-const addIdx = depuis === null ? -1 : p.formats.findIndex((f) => f.prix === depuis);
+const addIdx = depuis === null || p.surMesure ? -1 : p.formats.findIndex((f) => f.prix === depuis);
 ---
 <article class="tile">
   <a class:list={['pic', !src && !collage.length && `pic--${p.categorie}`]} href={href} tabindex="-1" aria-hidden="true">
@@ -44,7 +44,7 @@ const addIdx = depuis === null ? -1 : p.formats.findIndex((f) => f.prix === depu
         <span class="devis">{t(lang, 'produit.surDevis')}</span>
       ) : (
         <>
-          {p.formats.length > 1 && <small>{fr ? 'dès' : 'от'}</small>}
+          {(p.formats.length > 1 || p.surMesure) && <small>{fr ? 'dès' : 'от'}</small>}
           <b>{depuis}</b><span class="cur">₽</span>
           {barre && <s>{prix(barre)}</s>}
         </>
@@ -79,7 +79,7 @@ const addIdx = depuis === null ? -1 : p.formats.findIndex((f) => f.prix === depu
   .collage :global(img) { min-height: 0; }
   .flat { height: 100%; display: grid; place-content: center; justify-items: center; gap: 16px; padding: 20px; text-align: center; }
   .flat span { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--step-2); line-height: 1.1; color: var(--choco); text-wrap: balance; }
-  .pic--sucre { background: #f3d9c9; }
+  .pic--sucre { background: var(--peche); }
   .pic--surCommande { background: var(--miel); }
   .pic--surCommande .flat span { color: var(--on-miel); }
   .badge {

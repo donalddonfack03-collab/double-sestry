@@ -9,7 +9,7 @@ import ProductCard from '../../../components/ProductCard.astro';
 import WhatsAppButton from '../../../components/WhatsAppButton.astro';
 import { langs, t, path, colon, bang, type Lang, type UiKey } from '../../../i18n/ui';
 import { enVente, trouver, type Produit } from '../../../data/produits';
-import { contact, retrait } from '../../../data/infos';
+import { contact, retrait, messageBox } from '../../../data/infos';
 import { produit as produitSchema } from '../../../lib/schema';
 
 export function getStaticPaths() {
@@ -23,7 +23,7 @@ const fr = lang === 'fr';
 const categories: Record<Produit['categorie'], UiKey> = {
   sale: 'carte.sale', sucre: 'carte.sucre', boisson: 'carte.boisson', formule: 'carte.formule', surCommande: 'carte.surCommande',
 };
-const message = `${contact.messageParDefaut[lang]}${bang(lang)} ${fr ? 'Je voudrais commander' : 'Хочу заказать'}${colon(lang)} ${p.nom[lang]}`;
+const message = p.slug === 'box-anniversaire' ? messageBox[lang] : `${contact.messageParDefaut[lang]}${bang(lang)} ${fr ? 'Je voudrais commander' : 'Хочу заказать'}${colon(lang)} ${p.nom[lang]}`;
 const inclus = (p.inclus ?? []).map(trouver).filter((x): x is Produit => !!x);
 const dansFormules = enVente.filter((f) => f.inclus?.includes(p.slug));
 const autres = enVente
@@ -54,9 +54,9 @@ const hexLabel = p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim(
         <h1>{p.nom[lang]}</h1>
         <p class="desc">{p.description[lang]}</p>
       </div>
-      {(p.formats.every((f) => f.prix === null) || p.formats.some((f) => f.prixBarre)) && <Prices lang={lang} formats={p.formats} size="lg" />}
+      {(p.surMesure || p.formats.every((f) => f.prix === null) || p.formats.some((f) => f.prixBarre)) && <Prices lang={lang} formats={p.formats} size="lg" depuis={p.surMesure} />}
       <div class="order">
-        {p.formats.some((f) => f.prix !== null) ? (
+        {!p.surMesure && p.formats.some((f) => f.prix !== null) ? (
           <div class="adds">
             {p.formats.map((f, i) => f.prix !== null && (
               <button class="addf" type="button" data-add={p.slug} data-f={i}>

@@ -18,6 +18,7 @@
   --on-choco: #fef7ee;     /* texte posé sur le chocolat */
   --on-miel: #2a1408;      /* texte posé sur le miel */
   --rose: #e9a0a6;         /* réservé à la mascotte panda */
+  --peche: #f3d9c9;        /* fond des blocs fête et sucré */
   --shadow: 0 1px 2px rgb(84 31 18 / 0.06), 0 8px 24px rgb(84 31 18 / 0.08);
 
   /* Typographie */
@@ -69,6 +70,7 @@
     --muted: #c8ad97;
     --miel: #e2a64b;
     --miel-ink: #f0be6a;
+    --peche: #3a2219;
     --on-choco: #1c110c;
     --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
     color-scheme: dark;

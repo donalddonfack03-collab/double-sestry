@@ -58,3 +58,9 @@ export const livraison: T = {
   fr: 'Vous commandez un coursier (Yandex Go) qui passe devant la cité. Paiement par virement avant l’envoi.',
   ru: 'Вы вызываете курьера (Яндекс Go) к общежитию. Оплата переводом до отправки.',
 };
+
+/** Message pré-rempli pour composer une box anniversaire sur WhatsApp. */
+export const messageBox: T = {
+  fr: 'Bonjour Double Sestry ! Je voudrais composer une box anniversaire.\nDate : \nNombre de personnes : \nProduits souhaités : \nPrénom et message à écrire : \nGâteau (marbré, citron, yaourt ou sans) : ',
+  ru: 'Здравствуйте, Double Sestry! Хочу собрать праздничный бокс.\nДата: \nКоличество гостей: \nКакие блюда: \nИмя и надпись: \nКекс (мраморный, лимонный, йогуртовый или без): ',
+};

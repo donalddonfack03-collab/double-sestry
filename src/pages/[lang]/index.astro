@@ -5,7 +5,7 @@ import Mark from '../../components/Mark.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, retrait, contact, lienWhatsApp } from '../../data/infos';
+import { marque, retrait, contact, lienWhatsApp, messageBox } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
 import { etablissement } from '../../lib/schema';
@@ -16,6 +16,10 @@ import crepes from '../../assets/photos/crepes.jpg';
 import choco from '../../assets/photos/choco.jpg';
 import pastels from '../../assets/photos/pastels.jpg';
 import bissap from '../../assets/photos/bissap.jpg';
+import boxBurgers from '../../assets/photos/box-burgers.jpg';
+import boxMix from '../../assets/photos/box-mix.jpg';
+import boxSale from '../../assets/photos/box-sale.jpg';
+import gateauCitron from '../../assets/photos/gateau-citron.jpg';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
@@ -34,6 +38,7 @@ const rayons = [
   { img: pastels, label: fr ? 'Pastels' : 'Пастели', href: path(lang, 'carte/pastels') },
   { img: bissap, label: fr ? 'Bissap' : 'Биссап', href: path(lang, 'carte') + '#boisson' },
   { img: trio, label: fr ? 'Formules' : 'Наборы', href: path(lang, 'carte') + '#formule' },
+  { img: boxSale, label: fr ? 'Anniversaires' : 'Праздники', href: '#anniversaires' },
 ];
 
 const etapes = [
@@ -155,6 +160,32 @@ const etapes = [
     </div>
   </section>
 
+  <!-- 4 bis. Anniversaires -->
+  <section class="wrap section" id="anniversaires">
+    <div class="anniv">
+      <div class="anniv__pics">
+        <Image class="p1" src={boxBurgers} alt={fr ? 'Box anniversaire : mini-burgers, wraps et mini hot-dogs' : 'Праздничный бокс: мини-бургеры, роллы и мини хот-доги'} widths={[400, 600, 800]} sizes="(max-width: 860px) 60vw, 30vw" format="webp" quality={78} />
+        <Image class="p2" src={boxMix} alt={fr ? 'Box de feuilletés, gâteau marbré et mini-pizzas' : 'Бокс со слойками, мраморным кексом и мини-пиццами'} widths={[300, 500]} sizes="(max-width: 860px) 40vw, 18vw" format="webp" quality={76} />
+        <Image class="p3" src={gateauCitron} alt={fr ? 'Gâteau au citron coupé en tranches' : 'Лимонный кекс, нарезанный ломтиками'} widths={[300, 500]} sizes="(max-width: 860px) 40vw, 18vw" format="webp" quality={76} />
+      </div>
+      <div class="anniv__txt">
+        <p class="eyebrow">{fr ? 'Anniversaires et fêtes' : 'Дни рождения и праздники'}</p>
+        <h2>{fr ? 'La box d’anniversaire, composée par vous.' : 'Праздничный бокс, который собираете вы.'}</h2>
+        <ul class="checks">
+          <li><span>{fr ? 'Vous choisissez les produits : mini-burgers, wraps, mini hot-dogs, pastels, crêpes, feuilletés…' : 'Выбираете блюда: мини-бургеры, роллы, мини хот-доги, пастели, блины, слойки…'}</span></li>
+          <li><span>{fr ? 'Pour le nombre de personnes que vous voulez.' : 'На нужное количество гостей.'}</span></li>
+          <li><span>{fr ? 'Avec le prénom et le message de votre choix.' : 'С именем и надписью на ваш выбор.'}</span></li>
+          <li><span>{fr ? <>Et un gâteau maison si vous voulez : marbré, citron ou yaourt, <b>dès 700 ₽</b>.</> : <>И домашний кекс по желанию: мраморный, лимонный или йогуртовый, <b>от 700 ₽</b>.</>}</span></li>
+        </ul>
+        <p class="anniv__note">{fr ? 'À commander au moins 48 h à l’avance. On vous donne le prix selon votre composition.' : 'Заказ минимум за 48 часов. Цену назовём по вашему составу.'}</p>
+        <div class="cta">
+          <a class="btn btn--main" href={lienWhatsApp(messageBox[lang])} target="_blank" rel="noopener">{fr ? 'Composer ma box sur WhatsApp' : 'Собрать бокс в WhatsApp'}</a>
+          <a class="more" href={path(lang, 'carte/gateaux')}>{fr ? 'Les gâteaux' : 'Кексы'} <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 5. Comment ça marche -->
   <section class="wrap section">
     <div class="head head--center">
@@ -247,7 +278,7 @@ const etapes = [
   .tag__price { font-weight: 850; font-size: 1.25rem; color: var(--choco); padding-left: 12px; border-left: 1px solid var(--line); }
 
   /* 2. Rayons */
-  .rayons { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-4); padding-block: var(--space-7) 0; }
+  .rayons { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-4); padding-block: var(--space-7) 0; }
   .rayons a { display: grid; justify-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; color: var(--choco); text-align: center; }
   .rayon__pic { width: 100%; max-width: 128px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--alveole); outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 0.15s; }
   .rayon__pic :global(img) { width: 100%; height: 100%; object-fit: cover; }
@@ -293,6 +324,19 @@ const etapes = [
   .offre__price em { font-style: normal; font-weight: 800; font-size: 0.82rem; background: var(--choco); color: var(--on-choco); padding: 4px 10px; border-radius: 4px; }
   .offre .more { color: var(--on-miel); }
 
+  /* 4 bis. Anniversaires */
+  .anniv { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; background: var(--peche); border-radius: 20px; padding: clamp(18px, 3vw, 36px); }
+  .anniv__pics { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; aspect-ratio: 1 / 1; }
+  .anniv__pics :global(img) { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; min-height: 0; }
+  .anniv__pics :global(.p1) { grid-row: span 2; }
+  .anniv__txt { display: grid; gap: var(--space-4); align-content: center; padding-right: clamp(0px, 2vw, 24px); }
+  .anniv h2 { font-size: var(--step-3); }
+  .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .checks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; line-height: 1.45; }
+  .checks li::before { content: ''; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: var(--choco) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-5' fill='none' stroke='%23fef7ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat; }
+  .checks b { color: var(--choco); }
+  .anniv__note { font-size: 0.9rem; color: var(--muted); }
+
   /* 5. Étapes */
   .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
   .etapes li { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 32px); display: grid; gap: var(--space-2); align-content: start; }
@@ -332,8 +376,8 @@ const etapes = [
     .tag__dot { display: none; }
     .row { grid-auto-columns: 78vw; gap: 16px; }
     .arrows { display: none; }
-    .rayons { grid-template-columns: repeat(5, 92px); overflow-x: auto; scrollbar-width: none; padding-top: var(--space-5); }
-    .offre, .histoire__grid { grid-template-columns: minmax(0, 1fr); }
+    .rayons { grid-template-columns: repeat(6, 92px); overflow-x: auto; scrollbar-width: none; padding-top: var(--space-5); }
+    .offre, .histoire__grid, .anniv { grid-template-columns: minmax(0, 1fr); }
     .offre__pic { min-height: 0; aspect-ratio: 4 / 3; }
     .histoire__pic { aspect-ratio: 4 / 4.2; }
     .etapes, .promesses { grid-template-columns: minmax(0, 1fr); }

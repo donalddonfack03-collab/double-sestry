@@ -3,8 +3,8 @@
 import { t, type Lang } from '../i18n/ui';
 import { prix, type Format } from '../data/produits';
 
-interface Props { lang: Lang; formats: Format[]; size?: 'md' | 'lg' }
-const { lang, formats, size = 'md' } = Astro.props;
+interface Props { lang: Lang; formats: Format[]; size?: 'md' | 'lg'; depuis?: boolean }
+const { lang, formats, size = 'md', depuis = false } = Astro.props;
 ---
 <ul class:list={['prices', `prices--${size}`]}>
   {formats.map((f) => (
@@ -13,7 +13,7 @@ const { lang, formats, size = 'md' } = Astro.props;
       {f.prix === null ? (
         <strong>{t(lang, 'produit.surDevis')}</strong>
       ) : (
-        <strong>{prix(f.prix)}</strong>
+        <strong>{depuis && (lang === 'fr' ? 'dès ' : 'от ')}{prix(f.prix)}</strong>
       )}
       {f.prixBarre && <s aria-label={`${t(lang, 'produit.auLieuDe')} ${prix(f.prixBarre)}`}>{prix(f.prixBarre)}</s>}
     </li>

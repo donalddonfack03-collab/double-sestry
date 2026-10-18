@@ -45,6 +45,8 @@ export interface Produit {
   /** Nom du fichier dans src/assets/photos/ ; absente = alvéole de couleur avec le nom. */
   photo?: string;
   photoAlt?: T;
+  /** Prix de départ seulement : le prix final se fixe sur WhatsApp (pas d'ajout au panier). */
+  surMesure?: boolean;
   /** Pour les formules : les slugs des produits inclus. */
   inclus?: string[];
 }
@@ -215,32 +217,37 @@ export const produits: Produit[] = [
     inclus: ['la-choco', 'lotus', 'bissap'],
   },
   {
-    slug: 'gateau-au-yaourt',
+    slug: 'gateaux',
     categorie: 'surCommande',
     disponible: true,
-    nom: { fr: 'Gâteau au yaourt', ru: 'Йогуртовый торт' },
-    accroche: { fr: 'Sur commande, 48 h à l’avance', ru: 'Под заказ, за 48 часов' },
+    nom: { fr: 'Gâteaux maison', ru: 'Домашние кексы' },
+    accroche: { fr: 'Marbré, citron ou yaourt · 48 h à l’avance', ru: 'Мраморный, лимонный или йогуртовый · за 48 часов' },
     description: {
-      fr: 'Le gâteau simple et moelleux des anniversaires et des réunions de famille. Écrivez-nous au moins 48 heures avant la date souhaitée.',
-      ru: 'Простой и нежный торт для дней рождения и семейных встреч. Напишите нам минимум за 48 часов до нужной даты.',
+      fr: 'Les gâteaux simples et moelleux des anniversaires et des réunions de famille : marbré chocolat-vanille, citron ou yaourt. Le prix dépend de la taille. Écrivez-nous au moins 48 heures avant la date souhaitée.',
+      ru: 'Простые и нежные кексы для дней рождения и семейных встреч: мраморный шоколадно-ванильный, лимонный или йогуртовый. Цена зависит от размера. Напишите нам минимум за 48 часов до нужной даты.',
     },
-    formats: [{ libelle: { fr: 'le gâteau', ru: 'торт' }, prix: null }],
+    formats: [{ libelle: { fr: 'le gâteau', ru: 'кекс' }, prix: 700 }],
+    surMesure: true,
     contient: ['gluten', 'lait', 'oeufs'],
     traces: ['noisette'],
+    photo: 'gateau-marbre.jpg',
+    photoAlt: { fr: 'Gâteau marbré chocolat-vanille, avec deux tranches coupées', ru: 'Мраморный шоколадно-ванильный кекс с двумя отрезанными ломтиками' },
   },
   {
     slug: 'box-anniversaire',
     categorie: 'surCommande',
     disponible: true,
     nom: { fr: 'Box anniversaire', ru: 'Праздничный бокс' },
-    accroche: { fr: 'Sur commande, 48 h à l’avance', ru: 'Под заказ, за 48 часов' },
+    accroche: { fr: 'Composée par vous · 48 h à l’avance', ru: 'Собираете сами · за 48 часов' },
     description: {
-      fr: 'Un assortiment de nos produits à partager, préparé pour une fête. On compose la box avec vous selon le nombre d’invités.',
-      ru: 'Ассорти из наших блюд для праздника. Собираем бокс вместе с вами в зависимости от числа гостей.',
+      fr: 'Une box à partager pour un anniversaire ou une fête, que vous composez vous-même : vous choisissez les produits (mini-burgers, wraps, mini hot-dogs, pastels, crêpes, feuilletés, gâteaux…), le nombre de personnes, et le prénom et le message à écrire. On vous donne le prix sur WhatsApp selon votre composition.',
+      ru: 'Бокс для дня рождения или праздника, который вы собираете сами: выбираете блюда (мини-бургеры, роллы, мини хот-доги, пастели, блины, слойки, кексы…), количество гостей, имя и надпись. Цену назовём в WhatsApp по вашему составу.',
     },
     formats: [{ libelle: { fr: 'la box', ru: 'бокс' }, prix: null }],
     contient: ['gluten', 'lait', 'oeufs', 'moutarde', 'noisette', 'soja'],
     traces: [],
+    photo: 'box-burgers.jpg',
+    photoAlt: { fr: 'Box anniversaire : mini-burgers, wraps et mini hot-dogs', ru: 'Праздничный бокс: мини-бургеры, роллы и мини хот-доги' },
   },
   {
     slug: 'tiramisu',

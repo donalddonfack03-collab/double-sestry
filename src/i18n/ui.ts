@@ -22,7 +22,7 @@ export const ui = {
   'produit.traces': { fr: 'Traces possibles', ru: 'Возможны следы' },
   'produit.aucunAllergene': { fr: 'Aucun allergène majeur', ru: 'Без основных аллергенов' },
   'produit.conservation': { fr: 'Conservation', ru: 'Хранение' },
-  'produit.surDevis': { fr: 'Prix sur demande', ru: 'Цена по запросу' },
+  'produit.surDevis': { fr: 'Prix selon composition', ru: 'Цена по составу' },
   'produit.auLieuDe': { fr: 'au lieu de', ru: 'вместо' },
   'produit.retourCarte': { fr: '← Retour à la carte', ru: '← Назад в меню' },
   'carte.sale': { fr: 'Salé', ru: 'Солёное' },
