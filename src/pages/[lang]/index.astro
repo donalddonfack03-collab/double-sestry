@@ -5,7 +5,7 @@ import Mark from '../../components/Mark.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, retrait, contact, lienWhatsApp, messageBox } from '../../data/infos';
+import { marque, retrait, contact, lienWhatsApp, messageBox, parcours } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
 import { etablissement } from '../../lib/schema';
@@ -41,20 +41,7 @@ const rayons = [
   { img: boxSale, label: fr ? 'Anniversaires' : 'Праздники', href: '#anniversaires' },
 ];
 
-const etapes = [
-  {
-    t: fr ? 'Vous écrivez sur WhatsApp' : 'Пишете в WhatsApp',
-    d: fr ? `Du lundi au ${retrait.finCommandes.fr}. On vous confirme la commande et l’heure.` : `С понедельника до ${retrait.finCommandes.ru}. Мы подтверждаем заказ и время.`,
-  },
-  {
-    t: fr ? 'On cuisine samedi matin' : 'Готовим в субботу утром',
-    d: fr ? 'Seulement ce qui a été commandé. Votre prénom est écrit à la main sur le sac.' : 'Только то, что заказано. Ваше имя пишем от руки на пакете.',
-  },
-  {
-    t: fr ? 'Vous récupérez devant la cité' : 'Забираете у общежития',
-    d: fr ? 'Samedi 8 h – 20 h, dimanche 8 h – 10 h et 15 h – 21 h. Prévenez 10 minutes avant.' : 'Сб 8:00–20:00, вс 8:00–10:00 и 15:00–21:00. Напишите за 10 минут.',
-  },
-];
+const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
 ---
 <Base
   lang={lang}
@@ -190,7 +177,7 @@ const etapes = [
   <section class="wrap section">
     <div class="head head--center">
       <p class="eyebrow">{fr ? 'Comment ça marche' : 'Как это работает'}</p>
-      <h2>{fr ? 'Commander en 3 étapes' : 'Заказ в 3 шага'}</h2>
+      <h2>{fr ? 'Commander en 4 étapes' : 'Заказ в 4 шага'}</h2>
     </div>
     <ol class="etapes">
       {etapes.map((e, i) => (
@@ -339,7 +326,7 @@ const etapes = [
   .anniv__note { font-size: 0.9rem; color: var(--muted); }
 
   /* 5. Étapes */
-  .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
+  .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
   .etapes li { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 32px); display: grid; gap: var(--space-2); align-content: start; }
   .num { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--choco); color: var(--on-choco); font-family: var(--font-display); font-size: 1.3rem; margin-bottom: var(--space-2); }
   .etapes h3 { font-size: var(--step-1); }
@@ -369,6 +356,7 @@ const etapes = [
   .band p { margin-top: var(--space-2); opacity: 0.8; }
   .band > div { min-width: 0; flex: 1 1 320px; }
 
+  @media (max-width: 520px) { .etapes { grid-template-columns: minmax(0, 1fr) !important; } }
   @media (max-width: 860px) {
     .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
     .hero__pic { order: -1; min-height: 0; aspect-ratio: 4 / 3.4; }
@@ -381,6 +369,7 @@ const etapes = [
     .offre, .histoire__grid, .anniv { grid-template-columns: minmax(0, 1fr); }
     .offre__pic { min-height: 0; aspect-ratio: 4 / 3; }
     .histoire__pic { aspect-ratio: 4 / 4.2; }
-    .etapes, .promesses { grid-template-columns: minmax(0, 1fr); }
+    .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .promesses { grid-template-columns: minmax(0, 1fr); }
   }
 </style>

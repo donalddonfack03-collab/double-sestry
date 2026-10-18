@@ -3,30 +3,13 @@ import Base from '../../layouts/Base.astro';
 import WeekStrip from '../../components/WeekStrip.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, colon, type Lang } from '../../i18n/ui';
-import { contact, retrait, paiement, livraison } from '../../data/infos';
+import { contact, retrait, paiement, livraison, parcours, reponse } from '../../data/infos';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
 const fr = lang === 'fr';
 
-const etapes = [
-  {
-    titre: { fr: 'Lisez le menu', ru: 'Посмотрите меню' },
-    texte: { fr: 'Il sort chaque lundi dans notre statut WhatsApp et sur ce site.', ru: 'Каждый понедельник — в статусе WhatsApp и на этом сайте.' },
-  },
-  {
-    titre: { fr: 'Écrivez-nous', ru: 'Напишите нам' },
-    texte: { fr: 'Sur WhatsApp, jusqu’au vendredi soir : ce que vous voulez, le jour et l’heure du retrait.', ru: 'В WhatsApp до вечера пятницы: что хотите, день и время получения.' },
-  },
-  {
-    titre: { fr: 'On confirme', ru: 'Мы подтверждаем' },
-    texte: { fr: 'On vous répond avec le montant et l’adresse exacte du retrait.', ru: 'Отвечаем суммой и точным адресом выдачи.' },
-  },
-  {
-    titre: { fr: 'Vous récupérez', ru: 'Вы забираете' },
-    texte: retrait.prevenir,
-  },
-];
+const etapes = parcours;
 
 const faq = [
   {
@@ -47,7 +30,15 @@ const faq = [
   },
   {
     q: { fr: 'Vous faites des commandes pour une fête ?', ru: 'Можно заказать на праздник?' },
-    r: { fr: 'Oui : gâteau au yaourt et box anniversaire, à commander 48 h à l’avance. Écrivez-nous pour le prix.', ru: 'Да: йогуртовый торт и праздничный бокс, заказ за 48 часов. Напишите нам, чтобы узнать цену.' },
+    r: { fr: 'Oui : gâteaux maison (dès 700 ₽) et box anniversaire composée par vous, à commander au moins 48 h à l’avance. Écrivez-nous la date, le nombre de personnes et ce que vous voulez, on vous donne le prix.', ru: 'Да: домашние кексы (от 700 ₽) и праздничный бокс, который вы собираете сами, — заказ минимум за 48 часов. Напишите дату, количество гостей и что хотите — мы назовём цену.' },
+  },
+  {
+    q: { fr: 'Pourquoi payer au moment de la confirmation ?', ru: 'Почему оплата при подтверждении?' },
+    r: { fr: 'On cuisine seulement ce qui est commandé, avec des produits achetés pour vous. Le virement valide la commande et nous permet de faire les courses le vendredi soir.', ru: 'Мы готовим только то, что заказано, из продуктов, купленных под ваш заказ. Перевод подтверждает заказ, и мы можем закупиться в пятницу вечером.' },
+  },
+  {
+    q: { fr: 'J’ai commandé, quand est-ce qu’on me répond ?', ru: 'Я заказал(а). Когда мне ответят?' },
+    r: reponse,
   },
 ];
 ---
@@ -55,12 +46,13 @@ const faq = [
   lang={lang}
   title={t(lang, 'nav.commander')}
   description={fr
-    ? 'Commandez sur WhatsApp jusqu’au vendredi soir, récupérez le week-end devant la cité à Briansk. Paiement par virement ou en espèces.'
-    : 'Заказывайте в WhatsApp до вечера пятницы и забирайте на выходных у общежития в Брянске. Оплата переводом или наличными.'}
+    ? 'Commandez jusqu’au vendredi 20 h 30, payez par virement à la confirmation, récupérez le week-end devant la cité, Bezhitskaya 16 b à Briansk.'
+    : 'Заказ до пятницы, 20:30, оплата переводом при подтверждении, выдача на выходных у общежития: ул. Бежицкая, 16Б, Брянск.'}
 >
   <header class="wrap intro">
     <p class="eyebrow">{t(lang, 'nav.commander')}</p>
-    <h1>{fr ? 'On commande avant vendredi soir, on récupère le week-end.' : 'Заказ — до вечера пятницы, получение — на выходных.'}</h1>
+    <h1>{fr ? 'Commander chez Double Sestry, en 4 étapes.' : 'Как заказать в Double Sestry: 4 шага.'}</h1>
+    <p class="lead">{fr ? 'Jusqu’au vendredi 20 h 30 pour le week-end. Gâteaux et box : au moins 48 h à l’avance.' : 'До пятницы, 20:30 — на выходные. Кексы и боксы — минимум за 48 часов.'}</p>
   </header>
 
   <section class="wrap">
@@ -82,10 +74,11 @@ const faq = [
           <tr><th scope="row">{fr ? 'Où' : 'Где'}</th><td>{retrait.lieu[lang]}</td></tr>
         </tbody>
       </table>
+      <a class="map" href="https://yandex.ru/maps/?text=%D0%91%D1%80%D1%8F%D0%BD%D1%81%D0%BA%2C%20%D1%83%D0%BB.%20%D0%91%D0%B5%D0%B6%D0%B8%D1%86%D0%BA%D0%B0%D1%8F%2C%2016%D0%91" target="_blank" rel="noopener">{fr ? 'Voir sur Yandex Maps' : 'Открыть в Яндекс Картах'} →</a>
     </div>
     <div class="card">
       <h2>{fr ? 'Nous écrire' : 'Написать нам'}</h2>
-      <p class="muted">{fr ? 'Sur WhatsApp, en français ou en russe.' : 'В WhatsApp, по-русски или по-французски.'}</p>
+      <p class="muted">{fr ? 'Sur WhatsApp, en français ou en russe.' : 'В WhatsApp, по-русски или по-французски.'} {reponse[lang]}</p>
       <div class="num-row">
         <span class="num" id="phone">{contact.telephone}</span>
         <button type="button" class="copy" data-copy={`+${contact.whatsapp}`} data-done={fr ? 'Copié' : 'Скопировано'}>{fr ? 'Copier' : 'Копировать'}</button>
@@ -157,6 +150,7 @@ const faq = [
   .slots th { text-align: left; color: var(--choco); font-weight: 750; width: 36%; vertical-align: top; padding: 10px 0; border-bottom: 1px solid var(--line); }
   .slots td { padding: 10px 0; border-bottom: 1px solid var(--line); }
   .slots td span { display: block; }
+  .map { display: inline-block; margin-top: -6px; font-weight: 700; color: var(--choco); font-size: 0.9rem; }
   .slots tr:last-child th, .slots tr:last-child td { border-bottom: 0; }
   .muted { color: var(--muted); }
   .num-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }

@@ -21,7 +21,7 @@ export function etablissement(lang: Lang, site: URL) {
     priceRange: `${Math.min(...prixConnus)}–${Math.max(...prixConnus)} RUB`,
     currenciesAccepted: 'RUB',
     paymentAccepted: lang === 'fr' ? 'Espèces, virement' : 'Наличные, перевод',
-    address: { '@type': 'PostalAddress', addressLocality: marque.ville[lang], addressCountry: 'RU' },
+    address: { '@type': 'PostalAddress', streetAddress: lang === 'fr' ? 'Bezhitskaya 16 b' : 'ул. Бежицкая, 16Б', addressLocality: marque.ville[lang], addressCountry: 'RU' },
     areaServed: marque.ville[lang],
     hasMenu: new URL(path(lang, 'carte'), site).href,
     openingHoursSpecification: [

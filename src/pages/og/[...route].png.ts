@@ -14,7 +14,7 @@ export function getStaticPaths() {
       { params: { route: lang }, props: { lang, eyebrow: fr ? 'Fait maison · Briansk' : 'Домашняя кухня · Брянск', title: marque.slogan[lang], photo: 'crepes.jpg', badge: fr ? 'Crêpes · Pastels · Bissap' : 'Блины · Пастели · Биссап' } },
       { params: { route: `${lang}/carte` }, props: { lang, eyebrow: t(lang, 'nav.carte'), title: fr ? 'Peu de produits, faits avec soin.' : 'Немного блюд, но каждое — с заботой.', subtitle: fr ? 'Prix, allergènes et conservation de chaque produit.' : 'Цены, аллергены и сроки хранения.', photo: 'pastels.jpg' } },
       { params: { route: `${lang}/histoire` }, props: { lang, eyebrow: t(lang, 'nav.histoire'), title: accroche.titre[lang], photo: 'sac.jpg' } },
-      { params: { route: `${lang}/commander` }, props: { lang, eyebrow: t(lang, 'nav.commander'), title: fr ? 'Commandez avant vendredi soir.' : 'Заказ до вечера пятницы.', subtitle: fr ? 'Retrait le week-end devant la cité.' : 'Выдача на выходных у общежития.', photo: 'bissap.jpg', badge: 'WhatsApp' } },
+      { params: { route: `${lang}/commander` }, props: { lang, eyebrow: t(lang, 'nav.commander'), title: fr ? 'Commandez avant vendredi 20 h 30.' : 'Заказ до пятницы, 20:30.', subtitle: fr ? 'Retrait le week-end devant la cité.' : 'Выдача на выходных у общежития.', photo: 'bissap.jpg', badge: 'WhatsApp' } },
     );
     for (const p of enVente) {
       const prixConnus = p.formats.map((f) => f.prix).filter((x): x is number => x !== null);

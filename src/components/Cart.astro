@@ -1,6 +1,6 @@
 ---
 // Le panier. Le client ajoute des produits, voit le total, puis envoie la commande toute rédigée sur WhatsApp.
-// Pas de paiement en ligne : la confirmation se fait toujours sur WhatsApp, comme avant.
+// Pas de paiement en ligne : la confirmation se fait sur WhatsApp, puis le client paie par virement.
 // Le contenu du panier est gardé dans le navigateur du client (localStorage), rien n'est envoyé ailleurs.
 import { enVente } from '../data/produits';
 import { contact, retrait } from '../data/infos';
@@ -75,8 +75,8 @@ const textes = fr
       </a>
       <p class="hint">
         {fr
-          ? `Rien n’est payé ici. Ria et Emma vous confirment la commande sur WhatsApp. Commandes jusqu’au ${retrait.finCommandes.fr}.`
-          : `Здесь ничего не оплачивается. Рия и Эмма подтвердят заказ в WhatsApp. Заказы до ${retrait.finCommandes.ru}.`}
+          ? `Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider. Commandes jusqu’au ${retrait.finCommandes.fr}.`
+          : `Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ. Заказы до ${retrait.finCommandes.ru}.`}
       </p>
     </div>
   </div>
