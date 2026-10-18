@@ -18,24 +18,26 @@ const depuis = prixConnus.length ? Math.min(...prixConnus) : null;
 const barre = p.formats.find((f) => f.prix === depuis)?.prixBarre;
 const src = img(p.photo);
 const collage = !src ? (p.inclus ?? []).map(trouver).map((x) => img(x?.photo)).filter((x): x is ImageMetadata => !!x) : [];
-const sizes = '(max-width: 560px) 50vw, (max-width: 900px) 33vw, 280px';
+const sizes = '(max-width: 560px) 80vw, (max-width: 900px) 45vw, 380px';
+const href = path(lang, `carte/${p.slug}`);
+const addIdx = depuis === null ? -1 : p.formats.findIndex((f) => f.prix === depuis);
 ---
-<a class="tile" href={path(lang, `carte/${p.slug}`)}>
-  <div class:list={['pic', !src && !collage.length && `pic--${p.categorie}`]}>
+<article class="tile">
+  <a class:list={['pic', !src && !collage.length && `pic--${p.categorie}`]} href={href} tabindex="-1" aria-hidden="true">
     {src ? (
-      <Image src={src} alt={p.photoAlt?.[lang] ?? ''} widths={[280, 420, 560]} sizes={sizes} loading={loading} format="webp" quality={78} />
+      <Image src={src} alt={p.photoAlt?.[lang] ?? ''} widths={[320, 480, 640, 800]} sizes={sizes} loading={loading} format="webp" quality={78} />
     ) : collage.length ? (
       <div class:list={['collage', `collage--${collage.length}`]}>
-        {collage.map((c) => <Image src={c} alt="" widths={[200, 320]} sizes="(max-width: 560px) 25vw, 160px" loading={loading} format="webp" quality={72} />)}
+        {collage.map((c) => <Image src={c} alt="" widths={[240, 400]} sizes="(max-width: 560px) 40vw, 200px" loading={loading} format="webp" quality={72} />)}
       </div>
     ) : (
       <div class="flat"><Mark size="34%" /><span>{p.nom[lang]}</span></div>
     )}
     {badge && <span class="badge">{badge}</span>}
     {barre && <span class="badge badge--deal">−{barre - depuis!} ₽</span>}
-  </div>
+  </a>
   <div class="txt">
-    <h3>{p.nom[lang]}</h3>
+    <h3><a href={href}>{p.nom[lang]}</a></h3>
     <p class="acc">{p.accroche[lang]}</p>
     <p class="price">
       {depuis === null ? (
@@ -48,44 +50,71 @@ const sizes = '(max-width: 560px) 50vw, (max-width: 900px) 33vw, 280px';
         </>
       )}
     </p>
+    {addIdx >= 0 ? (
+      <button class="add" type="button" data-add={p.slug} data-f={addIdx} aria-label={`${fr ? 'Ajouter au panier' : 'В корзину'} : ${p.nom[lang]}`}>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
+        <span>{fr ? 'Ajouter' : 'В корзину'}</span>
+      </button>
+    ) : (
+      <a class="add add--ghost" href={href}>{fr ? 'Demander' : 'Узнать'}</a>
+    )}
   </div>
-</a>
+</article>
 
 <style>
-  .tile { display: grid; grid-template-rows: auto 1fr; gap: 12px; text-decoration: none; color: var(--ink); min-width: 0; }
+  .tile { display: grid; grid-template-rows: auto 1fr; gap: 14px; color: var(--ink); min-width: 0; }
   .pic {
-    position: relative;
+    position: relative; display: block;
     aspect-ratio: 4 / 5;
-    border-radius: 10px;
+    border-radius: 6px;
     overflow: hidden;
     background: var(--alveole);
   }
-  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s cubic-bezier(.2,.7,.2,1); }
+  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(.2,.7,.2,1); }
   .tile:hover .pic :global(img) { transform: scale(1.04); }
   .collage { display: grid; height: 100%; gap: 3px; background: var(--creme); }
   .collage--2 { grid-template-columns: 1fr 1fr; }
   .collage--3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
   .collage--3 > :global(:first-child) { grid-row: span 2; }
   .collage :global(img) { min-height: 0; }
-  .flat { height: 100%; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 16px; text-align: center; }
-  .flat span { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--step-1); line-height: 1.1; color: var(--choco); text-wrap: balance; }
+  .flat { height: 100%; display: grid; place-content: center; justify-items: center; gap: 16px; padding: 20px; text-align: center; }
+  .flat span { font-family: var(--font-display); font-weight: var(--display-weight); font-size: var(--step-2); line-height: 1.1; color: var(--choco); text-wrap: balance; }
   .pic--sucre { background: #f3d9c9; }
   .pic--surCommande { background: var(--miel); }
   .pic--surCommande .flat span { color: var(--on-miel); }
   .badge {
-    position: absolute; top: 10px; left: 10px;
+    position: absolute; top: 12px; left: 12px;
     background: var(--creme); color: var(--choco);
-    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.04em;
-    padding: 4px 9px; border-radius: 4px;
+    font-size: 0.74rem; font-weight: 800; letter-spacing: 0.04em;
+    padding: 5px 10px; border-radius: 4px;
   }
-  .badge--deal { left: auto; right: 10px; background: #c8372d; color: #fff; }
-  .txt { display: grid; gap: 3px; align-content: start; min-width: 0; }
-  h3 { font-family: var(--font-body); font-weight: 800; font-size: 1.02rem; color: var(--choco); line-height: 1.25; }
-  .acc { color: var(--muted); font-size: 0.88rem; line-height: 1.35; }
-  .price { margin-top: 6px; display: flex; align-items: baseline; gap: 3px; color: var(--choco); font-variant-numeric: tabular-nums; }
+  .badge--deal { left: auto; right: 12px; background: #c8372d; color: #fff; }
+  .txt {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'h h' 'a a' 'p b';
+    column-gap: 10px; row-gap: 4px; align-content: start; min-width: 0;
+  }
+  h3 { grid-area: h; font-family: var(--font-display); font-weight: var(--display-weight); font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.55rem); color: var(--choco); line-height: 1.15; }
+  h3 a { text-decoration: none; color: inherit; }
+  h3 a::after { content: ''; position: absolute; inset: 0; }
+  .tile { position: relative; }
+  h3 a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; }
+  .acc { grid-area: a; color: var(--muted); font-size: 0.92rem; line-height: 1.35; }
+  .price { grid-area: p; align-self: center; margin-top: 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px; color: var(--choco); font-variant-numeric: tabular-nums; }
   .price small { font-size: 0.8rem; font-weight: 650; margin-right: 3px; color: var(--muted); }
   .price b { font-size: 1.6rem; font-weight: 850; line-height: 1; letter-spacing: -0.02em; }
   .price .cur { font-weight: 800; font-size: 0.95rem; }
   .price s { margin-left: 8px; color: var(--muted); font-size: 0.85rem; }
-  .devis { font-weight: 750; color: var(--miel-ink); }
+  .devis { font-weight: 750; color: var(--miel-ink); font-size: 0.92rem; }
+  .add {
+    grid-area: b; align-self: center; margin-top: 8px; position: relative; z-index: 1;
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--choco); color: var(--on-choco); border: 0; cursor: pointer;
+    font: inherit; font-weight: 750; font-size: 0.88rem; text-decoration: none;
+    padding: 9px 14px; border-radius: 999px; transition: transform 0.15s ease, background-color 0.15s;
+  }
+  .add:hover { background: var(--miel); color: var(--on-miel); }
+  .add svg { width: 18px; height: 18px; }
+  .add--ghost { background: transparent; color: var(--choco); box-shadow: inset 0 0 0 1.5px var(--choco); }
+  .add:global(.pop) { animation: pop 0.35s ease; }
+  @keyframes pop { 40% { transform: scale(1.12); } }
 </style>

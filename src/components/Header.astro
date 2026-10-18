@@ -1,7 +1,7 @@
 ---
 import Mark from './Mark.astro';
 import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
-import { contact, lienWhatsApp, retrait } from '../data/infos';
+import { retrait } from '../data/infos';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -40,10 +40,11 @@ const isCurrent = (slug: string) =>
         <a href={switchLang(current, l)} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
       ))}
     </div>
-    <a class="order" href={lienWhatsApp(contact.messageParDefaut[lang])} target="_blank" rel="noopener">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z" /></svg>
-      {t(lang, 'nav.commander')}
-    </a>
+    <button class="order" type="button" data-cart-open aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
+      <span>{t(lang, 'nav.commander')}</span>
+      <span class="count" data-cart-count hidden>0</span>
+    </button>
   </div>
 </header>
 
@@ -59,11 +60,17 @@ const isCurrent = (slug: string) =>
     display: inline-flex; align-items: center; gap: 8px;
     background: var(--miel); color: var(--on-miel);
     font-weight: 800; font-size: 0.92rem; text-decoration: none;
-    padding: 9px 16px; border-radius: var(--radius-pill);
-    transition: transform 0.15s ease;
+    padding: 9px 16px; border-radius: var(--radius-pill); border: 0; cursor: pointer; font-family: inherit;
+    transition: transform 0.15s ease; position: relative;
   }
   .order:hover { transform: translateY(-1px); }
-  .order svg { width: 17px; height: 17px; }
+  .order svg { width: 19px; height: 19px; }
+  .count {
+    min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
+    background: var(--choco); color: var(--on-choco); font-size: 0.75rem; font-weight: 800;
+    display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; margin-right: -6px;
+  }
+  .count[hidden] { display: none; }
   .site-header {
     position: sticky;
     top: 0;

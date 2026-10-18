@@ -88,7 +88,7 @@ const sections: { cat: Categorie; titre: UiKey; texte: { fr: string; ru: string 
   .cat__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-5); margin-bottom: var(--space-5); padding-top: var(--space-4); border-top: 1px solid var(--line); }
   .cat__head h2 { font-size: var(--step-3); }
   .cat__head p { color: var(--muted); font-size: var(--step--1); }
-  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px) clamp(14px, 2vw, 24px); }
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(32px, 4vw, 48px) clamp(16px, 2.4vw, 32px); }
   .note {
     margin-top: var(--space-7);
     display: flex;
@@ -106,6 +106,6 @@ const sections: { cat: Categorie; titre: UiKey; texte: { fr: string; ru: string 
   .note__cta { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
   .link { font-weight: 750; color: var(--choco); text-decoration: none; }
   .link:hover { text-decoration: underline; }
-  @media (max-width: 980px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-  @media (max-width: 680px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 560px) { .grid { grid-template-columns: minmax(0, 1fr); } }
 </style>

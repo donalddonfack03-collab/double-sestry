@@ -20,7 +20,7 @@ import bissap from '../../assets/photos/bissap.jpg';
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
 const fr = lang === 'fr';
-const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap'].map(trouver).filter((p): p is Produit => !!p);
+const vedettes = ['la-sestry', 'la-choco', 'pastels', 'bissap', 'grande-faim', 'douceur'].map(trouver).filter((p): p is Produit => !!p);
 const badges: Record<string, { fr: string; ru: string }> = {
   'la-sestry': { fr: 'Signature', ru: 'Фирменный' },
 };
@@ -101,19 +101,36 @@ const etapes = [
     ))}
   </nav>
 
-  <!-- 3. Les produits -->
-  <section class="wrap section produits">
-    <div class="head">
+  <!-- 3. Les produits : grandes photos en rangée, façon Magnolia -->
+  <section class="section produits">
+    <div class="wrap head">
       <div>
         <p class="eyebrow">{fr ? 'Les incontournables' : 'Самое любимое'}</p>
         <h2>{fr ? 'Ce qu’on cuisine ce week-end' : 'Что готовим в эти выходные'}</h2>
       </div>
-      <a class="more" href={path(lang, 'carte')}>{fr ? 'Toute la carte' : 'Всё меню'} <span aria-hidden="true">→</span></a>
+      <div class="head__right">
+        <a class="more" href={path(lang, 'carte')}>{fr ? 'Toute la carte' : 'Всё меню'} <span aria-hidden="true">→</span></a>
+        <div class="arrows">
+          <button type="button" data-row="-1" aria-label={fr ? 'Précédent' : 'Назад'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
+          <button type="button" data-row="1" aria-label={fr ? 'Suivant' : 'Вперёд'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
+        </div>
+      </div>
     </div>
-    <div class="grid">
-      {vedettes.map((p, i) => <ProductCard lang={lang} produit={p} loading={i < 2 ? 'eager' : 'lazy'} badge={badges[p.slug]?.[lang]} />)}
+    <div class="row" data-row-track>
+      {vedettes.map((p, i) => <ProductCard lang={lang} produit={p} loading={i < 3 ? 'eager' : 'lazy'} badge={badges[p.slug]?.[lang]} />)}
     </div>
   </section>
+  <script>
+    const track = document.querySelector<HTMLElement>('[data-row-track]');
+    document.querySelectorAll<HTMLButtonElement>('[data-row]').forEach((b) =>
+      b.addEventListener('click', () => {
+        if (!track) return;
+        const tile = track.firstElementChild as HTMLElement | null;
+        const step = tile ? tile.offsetWidth + 24 : 360;
+        track.scrollBy({ left: step * Number(b.dataset.row), behavior: 'smooth' });
+      }),
+    );
+  </script>
 
   <!-- 4. La formule, en bloc de couleur -->
   <section class="wrap">
@@ -242,7 +259,20 @@ const etapes = [
   .head--center { justify-content: center; text-align: center; flex-direction: column; align-items: center; }
   .more { font-weight: 750; color: var(--choco); text-decoration: none; white-space: nowrap; }
   .more:hover { text-decoration: underline; }
-  .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(14px, 2vw, 24px); }
+  .head__right { display: flex; align-items: center; gap: 20px; }
+  .arrows { display: flex; gap: 8px; }
+  .arrows button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--choco); color: var(--on-choco); cursor: pointer; display: grid; place-items: center; transition: transform 0.15s; }
+  .arrows button:hover { transform: scale(1.06); }
+  .arrows svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .row {
+    display: grid; grid-auto-flow: column; grid-auto-columns: clamp(270px, 27vw, 380px); gap: 24px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    padding-bottom: 6px;
+  }
+  .row::-webkit-scrollbar { display: none; }
+  .row > :global(*) { scroll-snap-align: start; }
 
   /* 4. Bloc formule */
   .offre {
@@ -294,15 +324,14 @@ const etapes = [
   .band p { margin-top: var(--space-2); opacity: 0.8; }
   .band > div { min-width: 0; flex: 1 1 320px; }
 
-  @media (max-width: 980px) {
-    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
   @media (max-width: 860px) {
     .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
     .hero__pic { order: -1; min-height: 0; aspect-ratio: 4 / 3.4; }
     .hero__text { padding: var(--space-6) var(--gutter) var(--space-4); }
     .tag { left: auto; right: 16px; bottom: 16px; }
     .tag__dot { display: none; }
+    .row { grid-auto-columns: 78vw; gap: 16px; }
+    .arrows { display: none; }
     .rayons { grid-template-columns: repeat(5, 92px); overflow-x: auto; scrollbar-width: none; padding-top: var(--space-5); }
     .offre, .histoire__grid { grid-template-columns: minmax(0, 1fr); }
     .offre__pic { min-height: 0; aspect-ratio: 4 / 3; }

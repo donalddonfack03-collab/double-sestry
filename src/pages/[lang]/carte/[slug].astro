@@ -54,9 +54,21 @@ const hexLabel = p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim(
         <h1>{p.nom[lang]}</h1>
         <p class="desc">{p.description[lang]}</p>
       </div>
-      <Prices lang={lang} formats={p.formats} size="lg" />
+      {(p.formats.every((f) => f.prix === null) || p.formats.some((f) => f.prixBarre)) && <Prices lang={lang} formats={p.formats} size="lg" />}
       <div class="order">
-        <WhatsAppButton lang={lang} message={message} />
+        {p.formats.some((f) => f.prix !== null) ? (
+          <div class="adds">
+            {p.formats.map((f, i) => f.prix !== null && (
+              <button class="addf" type="button" data-add={p.slug} data-f={i}>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
+                <span>{fr ? 'Ajouter' : 'Добавить'} · {f.libelle[lang]}</span>
+                <b>{f.prix} ₽</b>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <WhatsAppButton lang={lang} message={message} />
+        )}
         <p class="hint">
           {p.categorie === 'surCommande'
             ? (fr ? 'À commander au moins 48 h à l’avance.' : 'Заказывайте минимум за 48 часов.')
@@ -105,6 +117,17 @@ const hexLabel = p.nom[lang].includes(':') ? p.nom[lang].split(':').pop()!.trim(
   .infos { display: grid; gap: var(--space-6); min-width: 0; max-width: 60ch; }
   .desc { font-size: var(--step-1); line-height: 1.55; color: var(--ink); }
   .order { display: grid; gap: var(--space-2); justify-items: start; }
+  .adds { display: flex; flex-wrap: wrap; gap: 10px; }
+  .addf {
+    display: inline-flex; align-items: center; gap: 9px;
+    background: var(--choco); color: var(--on-choco); border: 0; cursor: pointer;
+    font: inherit; font-weight: 700; padding: 12px 18px; border-radius: 999px; transition: background-color 0.15s;
+  }
+  .addf:hover { background: var(--miel); color: var(--on-miel); }
+  .addf svg { width: 19px; height: 19px; }
+  .addf b { font-weight: 850; padding-left: 9px; border-left: 1px solid currentColor; }
+  .addf:global(.pop) { animation: pop 0.35s ease; }
+  @keyframes pop { 40% { transform: scale(1.06); } }
   .hint { color: var(--muted); font-size: var(--step--1); }
   .inclus h2 { font-size: var(--step-1); margin-bottom: var(--space-2); }
   .inclus ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
