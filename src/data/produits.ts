@@ -119,6 +119,8 @@ export const produits: Produit[] = [
     contient: ['gluten', 'lait', 'oeufs', 'soja'],
     traces: ['noisette'],
     conservation: deuxJours,
+    photo: 'lotus.jpg',
+    photoAlt: { fr: 'Crêpe Lotus nappée de crème Lotus et de sauce blanche, avec un biscuit et de la chantilly, dans sa boîte', ru: 'Блин Lotus с кремом Lotus и белым соусом, с печеньем и взбитыми сливками, в коробке' },
   },
   {
     slug: 'pastels',
