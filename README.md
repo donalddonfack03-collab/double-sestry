@@ -66,7 +66,7 @@ Vérifier avant d'envoyer : `npm run check` puis `npm run build`.
 Le site est publié automatiquement sur **GitHub Pages** à chaque envoi sur la branche `main`
 (`.github/workflows/deploy.yml`), à l'adresse :
 
-**https://donalddonfack03-collab.github.io/double-sestry/**
+**https://lamaisondesdouceurs.com/**
 
 Pour passer plus tard à un nom de domaine (par exemple `doublesestry.ru`) : dans `astro.config.mjs`,
 mettre `site: 'https://doublesestry.ru'`, supprimer la ligne `base`, ajouter un fichier `public/CNAME`

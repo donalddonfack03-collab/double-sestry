@@ -4,10 +4,9 @@ import sitemap from '@astrojs/sitemap';
 
 // https://docs.astro.build/en/reference/configuration-reference/
 export default defineConfig({
-  // Adresse du site. Option B (actuelle) : GitHub Pages, dans le sous-dossier /double-sestry.
-  // Pour passer à un nom de domaine (option A) : site: 'https://doublesestry.ru' et supprimer `base`.
-  site: 'https://donalddonfack03-collab.github.io',
-  base: '/double-sestry',
+  // Adresse du site : le nom de domaine, servi par GitHub Pages (fichier public/CNAME).
+  // L'ancienne adresse donalddonfack03-collab.github.io/double-sestry/ redirige ici automatiquement.
+  site: 'https://lamaisondesdouceurs.com',
   i18n: {
     defaultLocale: 'fr',
     locales: ['fr', 'ru'],
