@@ -28,8 +28,7 @@ const textes = fr
       ajoute: 'Ajouté au panier',
       retirer: 'Retirer',
       auLieuDe: 'au lieu de',
-      prochain: 'week-end prochain',
-      siPossible: 'ce week-end si possible, sinon le suivant',
+      derniereMinute: 'dernière minute, à confirmer',
       moins: 'Un de moins',
       plus: 'Un de plus',
     }
@@ -43,8 +42,7 @@ const textes = fr
       ajoute: 'Добавлено в корзину',
       retirer: 'Убрать',
       auLieuDe: 'вместо',
-      prochain: 'следующие выходные',
-      siPossible: 'на эти выходные, если возможно, иначе на следующие',
+      derniereMinute: 'срочный заказ, нужно подтверждение',
       moins: 'На один меньше',
       plus: 'На один больше',
     };
@@ -71,8 +69,8 @@ const textes = fr
     <div class="foot" data-cart-foot>
       <p class="closed si-clos">
         {fr
-          ? 'La clôture de vendredi 20 h 30 est passée. Pour ce week-end, c’est selon disponibilité : on vous le confirme sur WhatsApp.'
-          : 'Приём заказов закрылся в пятницу в 20:30. На эти выходные — по наличию: подтвердим в WhatsApp.'}
+          ? 'Commande de dernière minute : envoyez-la, on vous confirme sur WhatsApp selon disponibilité.'
+          : 'Срочный заказ: отправьте его — подтвердим в WhatsApp, по наличию.'}
       </p>
       <div class="total"><span>{textes.total}</span><b data-cart-total>0 ₽</b></div>
       <fieldset class="day">
@@ -93,8 +91,9 @@ const textes = fr
       </a>
       <p class="hint">
         {fr
-          ? `Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider. Commandes jusqu’au ${retrait.finCommandes.fr}.`
-          : `Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ. Заказы до ${retrait.finCommandes.ru}.`}
+          ? 'Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider.'
+          : 'Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ.'}
+        <span class="si-ouvert">{fr ? `Commandes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы до ${retrait.finCommandes.ru}.`}</span>
       </p>
     </div>
   </div>
@@ -139,9 +138,8 @@ const textes = fr
 
   function message() {
     const choisi = ($<HTMLInputElement>('input[name="ds-jour"]:checked')?.value === 'dimanche') ? textes.dimanche : textes.samedi;
-    // Après la clôture, la dernière minute reste possible ; mais le dimanche, le samedi est déjà passé.
-    const mention = choisi === textes.samedi && estDimanche() ? textes.prochain : textes.siPossible;
-    const jour = commandesCloses() ? `${choisi} (${mention})` : choisi;
+    // Après la clôture, la commande reste pour ce week-end : les sœurs confirment selon ce qui est disponible.
+    const jour = commandesCloses() ? `${choisi} (${textes.derniereMinute})` : choisi;
     const prenom = $<HTMLInputElement>('input[name="ds-prenom"]').value.trim();
     const lignes = panier.map((l) => {
       const p = catalogue[l.s]; const d = detailLigne(catalogue, l);
@@ -195,8 +193,15 @@ const textes = fr
     $<HTMLElement>('#ds-prenom-erreur').hidden = !visible;
     champPrenom().setAttribute('aria-invalid', String(visible));
   }
+  // Le dimanche, le samedi est passé : seul le dimanche reste proposé.
+  function majJours() {
+    const samedi = $<HTMLInputElement>('input[name="ds-jour"][value="samedi"]');
+    samedi.disabled = estDimanche();
+    if (samedi.disabled && samedi.checked) $<HTMLInputElement>('input[name="ds-jour"][value="dimanche"]').checked = true;
+  }
   // Sans prénom, le lien ne mène nulle part : le prénom est écrit sur le sac.
   function majLien() {
+    majJours();
     const pret = champPrenom().value.trim() !== '';
     $<HTMLAnchorElement>('[data-cart-send]').href = pret ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(message())}` : '#';
     if (pret) erreurPrenom(false);
@@ -290,6 +295,7 @@ const textes = fr
   .day span { display: grid; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; font-weight: 700; color: var(--choco); }
   .day small { font-weight: 500; color: var(--muted); font-size: 0.78rem; }
   .day input:checked + span { border-color: var(--choco); box-shadow: inset 0 0 0 1px var(--choco); background: var(--alveole); }
+  .day input:disabled + span { opacity: 0.45; cursor: not-allowed; }
   .day input:focus-visible + span { outline: 2.5px solid var(--miel); outline-offset: 2px; }
   .name { display: grid; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
   .name input { font: inherit; font-size: 1rem; font-weight: 500; color: var(--ink); background: var(--creme); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; }
