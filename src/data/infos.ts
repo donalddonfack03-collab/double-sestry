@@ -3,6 +3,10 @@ import type { T } from '../i18n/ui';
 
 export const marque = {
   nom: 'Double Sestry',
+  /** La signature, écrite en français dans les deux langues (c'est un nom de marque). */
+  signature: 'La Maison des Douceurs',
+  /** Le nom complet du site. */
+  nomComplet: 'Double Sestry · La Maison des Douceurs',
   ville: { fr: 'Briansk', ru: 'Брянск' } as T,
   slogan: {
     fr: 'Cuisiné par deux sœurs. Le week-end, sur commande.',
@@ -74,8 +78,8 @@ export const parcours: { titre: T; texte: T }[] = [
   {
     titre: { fr: 'Vous choisissez', ru: 'Вы выбираете' },
     texte: {
-      fr: 'Avec notre formulaire de commande, sur le site, dans le catalogue WhatsApp ou par message, jusqu’au vendredi 20 h 30.',
-      ru: 'Через нашу форму заказа, на сайте, в каталоге WhatsApp или сообщением — до пятницы, 20:30.',
+      fr: 'Ajoutez vos douceurs au panier, puis envoyez la commande sur WhatsApp en un clic, jusqu’au vendredi 20 h 30.',
+      ru: 'Добавьте вкусное в корзину и отправьте заказ в WhatsApp одним нажатием — до пятницы, 20:30.',
     },
   },
   {

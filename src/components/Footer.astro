@@ -12,6 +12,7 @@ const { lang } = Astro.props;
       <Mark size="46px" />
       <div>
         <p class="name">Double Sestry</p>
+        <p class="sig">{marque.signature}</p>
         <p class="muted">{lang === 'fr' ? 'Fait maison à' : 'Домашняя кухня,'} {marque.ville[lang]}</p>
       </div>
     </div>
@@ -32,6 +33,7 @@ const { lang } = Astro.props;
   .grid { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: space-between; }
   .id { display: flex; gap: var(--space-3); align-items: center; }
   .name { font-family: 'Young Serif', Georgia, serif; color: var(--choco); font-size: 1.15rem; }
+  .sig { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--miel-ink); }
   .muted { color: var(--muted); font-size: var(--step--1); }
   nav { display: flex; gap: var(--space-5); flex-wrap: wrap; }
   nav a { color: var(--muted); text-decoration: none; font-weight: 650; }

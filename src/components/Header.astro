@@ -1,7 +1,7 @@
 ---
 import Mark from './Mark.astro';
 import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
-import { retrait } from '../data/infos';
+import { retrait, marque } from '../data/infos';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -29,11 +29,14 @@ const isCurrent = (slug: string) =>
 </div>
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href={path(lang)} aria-label="Double Sestry">
+    <a class="brand" href={path(lang)} aria-label={marque.nomComplet}>
       <Mark size="40px" />
-      <span>Double Sestry</span>
+      <span class="brand__txt"><span>Double Sestry</span><small>{marque.signature}</small></span>
     </a>
-    <nav class="nav" aria-label={lang === 'fr' ? 'Menu principal' : 'Главное меню'}>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label={fr ? 'Menu' : 'Меню'}>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+    </button>
+    <nav class="nav" id="menu" aria-label={lang === 'fr' ? 'Menu principal' : 'Главное меню'}>
       {nav.map(([slug, key]) => (
         <a href={path(lang, slug)} aria-current={isCurrent(slug) ? 'page' : undefined}>{key === 'nav.infos' ? <><span class="long">{t(lang, key)}</span><span class="short">{fr ? 'Infos' : 'Инфо'}</span></> : t(lang, key)}</a>
       ))}
@@ -43,7 +46,7 @@ const isCurrent = (slug: string) =>
         <a href={switchLang(current, l)} hreflang={l} lang={l} aria-current={l === lang ? 'true' : undefined}>{l.toUpperCase()}</a>
       ))}
     </div>
-    <button class="order" type="button" data-cart-open aria-haspopup="dialog">
+    <button class="order" type="button" data-cart-open aria-haspopup="dialog" aria-label={t(lang, 'nav.commander')}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
       <span>{t(lang, 'nav.commander')}</span>
       <span class="count" data-cart-count hidden>0</span>
@@ -56,6 +59,12 @@ const isCurrent = (slug: string) =>
   // Bascule les textes « ouvert / clos » selon l'heure de Briansk, y compris sur une page restée ouverte.
   const actualiser = () => { document.documentElement.dataset.commandes = commandesCloses() ? 'closes' : 'ouvertes'; };
   actualiser();
+  const bouton = document.querySelector<HTMLButtonElement>('.burger')!;
+  const entete = document.querySelector<HTMLElement>('.site-header')!;
+  const ouvrir = (oui: boolean) => { entete.classList.toggle('menu-ouvert', oui); bouton.setAttribute('aria-expanded', String(oui)); };
+  bouton.addEventListener('click', () => ouvrir(bouton.getAttribute('aria-expanded') !== 'true'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') ouvrir(false); });
+  document.addEventListener('click', (e) => { if (!entete.contains(e.target as Node)) ouvrir(false); });
   setInterval(actualiser, 30_000);
   document.addEventListener('visibilitychange', actualiser);
 </script>
@@ -64,9 +73,9 @@ const isCurrent = (slug: string) =>
   :global(html[data-commandes='closes']) .pulse { background: var(--miel); animation: none; }
   .skip { position: absolute; left: -9999px; }
   .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--choco); color: var(--on-choco); padding: 8px 14px; border-radius: 6px; }
-  .announce { background: var(--choco); color: var(--on-choco); font-size: 0.86rem; text-align: center; }
+  .announce { background: #4a1a0f; color: #fef3e2; font-size: 0.86rem; text-align: center; } /* identique en clair et en sombre */
   .announce .wrap { padding-block: 8px; display: flex; justify-content: center; align-items: center; gap: 10px; }
-  .announce b { color: var(--miel); font-weight: 750; }
+  .announce b { color: #f4c65d; font-weight: 750; }
   .pulse { width: 8px; height: 8px; border-radius: 50%; background: #5bd17a; box-shadow: 0 0 0 0 rgb(91 209 122 / 0.6); animation: pulse 2s infinite; flex: none; }
   @keyframes pulse { 70% { box-shadow: 0 0 0 8px rgb(91 209 122 / 0); } 100% { box-shadow: 0 0 0 0 rgb(91 209 122 / 0); } }
   .order {
@@ -81,7 +90,7 @@ const isCurrent = (slug: string) =>
   .count {
     min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px;
     background: var(--choco); color: var(--on-choco); font-size: 0.75rem; font-weight: 800;
-    display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; margin-right: -6px;
+    display: inline-grid; place-items: center; font-variant-numeric: tabular-nums; margin-right: -6px; margin-block: -3px;
   }
   .count[hidden] { display: none; }
   .site-header {
@@ -95,7 +104,9 @@ const isCurrent = (slug: string) =>
   }
   .bar { display: flex; align-items: center; gap: var(--space-4); padding-block: 10px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .brand span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .brand__txt { display: grid; line-height: 1.05; }
+  .brand__txt span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .brand__txt small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--miel-ink); margin-top: 3px; }
   .nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
   .nav a[aria-current='page'] { background: var(--alveole); color: var(--choco); }
   .short { display: none; }
@@ -119,15 +130,30 @@ const isCurrent = (slug: string) =>
   }
   .lang a[aria-current='true'] { background: var(--miel); color: var(--on-miel); }
 
-  @media (max-width: 640px) {
-    .bar { row-gap: 6px; }
-    .order { margin-left: auto; }
-    .nav { order: 3; flex: 1 1 60%; min-width: 0; margin-left: -11px; overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
-    .nav a { white-space: nowrap; padding: 6px 10px; font-size: 0.9rem; }
+  .burger { display: none; }
+  /* Téléphone : une seule ligne, le menu s'ouvre à la demande. */
+  @media (max-width: 860px) {
+    .bar { gap: 8px; flex-wrap: wrap; padding-block: 8px; }
+    .brand { margin-right: auto; min-width: 0; gap: 8px; }
+    .brand__txt span { font-size: 1.02rem; white-space: nowrap; }
+    .brand__txt small { font-size: 0.66rem; letter-spacing: 0; text-transform: none; white-space: nowrap; }
+    /* Un seul bouton : celui de l'autre langue. */
+    .lang a { min-width: 44px; min-height: 42px; display: grid; place-items: center; padding: 0; }
+    .lang a[aria-current='true'] { display: none; }
+    .order { width: 44px; height: 44px; padding: 0; justify-content: center; }
+    .order > span:not(.count) { display: none; }
+    .count { position: absolute; top: -4px; right: -4px; margin: 0; }
+    .burger { display: grid; place-items: center; order: 5; width: 44px; height: 44px; border: 0; border-radius: 50%; background: var(--alveole); color: var(--choco); cursor: pointer; }
+    .burger svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+    .nav { display: none; order: 6; flex-basis: 100%; margin: 0; flex-direction: column; }
+    .menu-ouvert .nav { display: flex; }
+    .nav a { min-height: 48px; display: flex; align-items: center; font-size: 1.05rem; }
     .long { display: none; }
     .short { display: inline; }
-    .lang { order: 4; }
-    .order { padding: 8px 13px; font-size: 0.86rem; }
-    .announce { font-size: 0.78rem; }
+    .announce { font-size: 0.74rem; }
+    .announce .wrap { padding-block: 6px; }
   }
+  @media (max-width: 359px) { .brand__txt { display: none; } }
+  /* Sans JavaScript, le menu reste visible. */
+  @media (max-width: 860px) and (scripting: none) { .nav { display: flex; } .burger { display: none; } }
 </style>

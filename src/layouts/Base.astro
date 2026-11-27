@@ -6,6 +6,7 @@ import Footer from '../components/Footer.astro';
 import Cart from '../components/Cart.astro';
 import { langs, switchLang, withBase, type Lang } from '../i18n/ui';
 import { ogPath } from '../lib/og';
+import { marque } from '../data/infos';
 
 interface Props {
   lang: Lang;
@@ -20,7 +21,7 @@ interface Props {
 }
 const { lang, title, description, noindex = false, jsonLd, ogType = 'website' } = Astro.props;
 const current = Astro.url.pathname;
-const pageTitle = title === 'Double Sestry' ? title : `${title} · Double Sestry`;
+const pageTitle = title === marque.nomComplet ? title : `${title} · ${marque.nom}`;
 const canonical = new URL(current, Astro.site).href;
 const ogImage = new URL(ogPath(current), Astro.site).href;
 const locales: Record<Lang, string> = { fr: 'fr_FR', ru: 'ru_RU' };
@@ -45,7 +46,7 @@ const locales: Record<Lang, string> = { fr: 'fr_FR', ru: 'ru_RU' };
         <link rel="sitemap" href={withBase('sitemap-index.xml')} />
 
         <!-- Aperçu du lien sur WhatsApp, Telegram, VK, Facebook… -->
-        <meta property="og:site_name" content="Double Sestry" />
+        <meta property="og:site_name" content={marque.nomComplet} />
         <meta property="og:type" content={ogType} />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={description} />
