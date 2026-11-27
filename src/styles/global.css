@@ -129,3 +129,8 @@ a { color: inherit; text-underline-offset: 0.18em; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Textes qui changent après la clôture des commandes (voir src/lib/semaine.ts). */
+.si-clos { display: none !important; }
+html[data-commandes='closes'] .si-ouvert { display: none !important; }
+html[data-commandes='closes'] .si-clos { display: revert !important; }

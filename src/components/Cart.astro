@@ -11,7 +11,11 @@ const { lang } = Astro.props;
 const fr = lang === 'fr';
 
 const catalogue = Object.fromEntries(
-  enVente.map((p) => [p.slug, { nom: p.nom[lang], formats: p.formats.map((f) => ({ l: f.libelle[lang], p: f.prix })) }]),
+  enVente.map((p) => [p.slug, {
+    nom: p.nom[lang],
+    choix: p.choixObligatoire,
+    formats: p.formats.map((f) => ({ l: f.libelle[lang], p: f.prix, n: f.pieces })),
+  }]),
 );
 const textes = fr
   ? {
@@ -23,6 +27,8 @@ const textes = fr
       dimanche: 'dimanche',
       ajoute: 'Ajouté au panier',
       retirer: 'Retirer',
+      auLieuDe: 'au lieu de',
+      derniereMinute: 'dernière minute, à confirmer',
       moins: 'Un de moins',
       plus: 'Un de plus',
     }
@@ -35,6 +41,8 @@ const textes = fr
       dimanche: 'воскресенье',
       ajoute: 'Добавлено в корзину',
       retirer: 'Убрать',
+      auLieuDe: 'вместо',
+      derniereMinute: 'срочный заказ, нужно подтверждение',
       moins: 'На один меньше',
       plus: 'На один больше',
     };
@@ -59,6 +67,11 @@ const textes = fr
     <ul class="lines" data-cart-lines></ul>
 
     <div class="foot" data-cart-foot>
+      <p class="closed si-clos">
+        {fr
+          ? 'Commande de dernière minute : envoyez-la, on vous confirme sur WhatsApp selon disponibilité.'
+          : 'Срочный заказ: отправьте его — подтвердим в WhatsApp, по наличию.'}
+      </p>
       <div class="total"><span>{textes.total}</span><b data-cart-total>0 ₽</b></div>
       <fieldset class="day">
         <legend>{fr ? 'Jour de retrait' : 'День выдачи'}</legend>
@@ -67,51 +80,71 @@ const textes = fr
       </fieldset>
       <label class="name">
         <span>{fr ? 'Votre prénom (on l’écrit sur le sac)' : 'Ваше имя (напишем на пакете)'}</span>
-        <input type="text" name="ds-prenom" autocomplete="given-name" maxlength="40" />
+        <input type="text" name="ds-prenom" autocomplete="given-name" maxlength="40" required aria-describedby="ds-prenom-erreur" />
       </label>
+      <p class="error" id="ds-prenom-erreur" role="alert" hidden>
+        {fr ? 'Indiquez votre prénom pour envoyer la commande.' : 'Укажите имя, чтобы отправить заказ.'}
+      </p>
       <a class="btn btn--main send" data-cart-send href="#" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z" /></svg>
         {fr ? 'Envoyer sur WhatsApp' : 'Отправить в WhatsApp'}
       </a>
       <p class="hint">
         {fr
-          ? `Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider. Commandes jusqu’au ${retrait.finCommandes.fr}.`
-          : `Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ. Заказы до ${retrait.finCommandes.ru}.`}
+          ? 'Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider.'
+          : 'Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ.'}
+        <span class="si-ouvert">{fr ? `Commandes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы до ${retrait.finCommandes.ru}.`}</span>
       </p>
     </div>
+  </div>
+</dialog>
+
+<dialog class="choice" id="ds-choix" aria-labelledby="ds-choix-title">
+  <div class="choice__in">
+    <header>
+      <h2 id="ds-choix-title"></h2>
+      <button class="x" type="button" data-choice-close aria-label={fr ? 'Fermer' : 'Закрыть'}>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+      </button>
+    </header>
+    <p>{fr ? 'Quelle version voulez-vous ?' : 'Какой вариант хотите?'}</p>
+    <div class="choice__list" data-choice-list></div>
   </div>
 </dialog>
 
 <div class="toast" data-cart-toast role="status" aria-live="polite"></div>
 
 <script>
-  type Ligne = { s: string; f: number; q: number };
+  import { normaliser, detailLigne, totalPanier, indexUnite, type Ligne } from '../lib/panier';
+  import { commandesCloses, estDimanche } from '../lib/semaine';
   const data = JSON.parse(document.getElementById('ds-catalogue')!.textContent!);
   const { catalogue, textes, whatsapp } = data;
   const KEY = 'ds-panier';
   const dlg = document.getElementById('ds-cart') as HTMLDialogElement;
+  const choix = document.getElementById('ds-choix') as HTMLDialogElement;
   const $ = <T extends Element>(s: string) => dlg.querySelector(s) as T;
   const prix = (n: number) => `${n.toLocaleString('fr-FR').replace(/\s/g, ' ')} ₽`;
 
   function lire(): Ligne[] {
     try {
-      const v = JSON.parse(localStorage.getItem(KEY) || '[]');
-      return Array.isArray(v) ? v.filter((l) => catalogue[l.s]?.formats[l.f]?.p != null && l.q > 0) : [];
+      return normaliser(JSON.parse(localStorage.getItem(KEY) || '[]'), catalogue);
     } catch { return []; }
   }
   let panier: Ligne[] = lire();
   function garder() { try { localStorage.setItem(KEY, JSON.stringify(panier)); } catch {} }
 
-  function total() { return panier.reduce((t, l) => t + catalogue[l.s].formats[l.f].p * l.q, 0); }
+  function total() { return totalPanier(catalogue, panier); }
   function nombre() { return panier.reduce((t, l) => t + l.q, 0); }
 
   function message() {
-    const jour = ($<HTMLInputElement>('input[name="ds-jour"]:checked')?.value === 'dimanche') ? textes.dimanche : textes.samedi;
+    const choisi = ($<HTMLInputElement>('input[name="ds-jour"]:checked')?.value === 'dimanche') ? textes.dimanche : textes.samedi;
+    // Après la clôture, la commande reste pour ce week-end : les sœurs confirment selon ce qui est disponible.
+    const jour = commandesCloses() ? `${choisi} (${textes.derniereMinute})` : choisi;
     const prenom = $<HTMLInputElement>('input[name="ds-prenom"]').value.trim();
     const lignes = panier.map((l) => {
-      const p = catalogue[l.s]; const f = p.formats[l.f];
-      const fmt = p.formats.length > 1 ? ` (${f.l})` : '';
-      return `• ${l.q} × ${p.nom}${fmt} : ${prix(f.p * l.q)}`;
+      const p = catalogue[l.s]; const d = detailLigne(catalogue, l);
+      const fmt = p.formats.length > 1 ? ` (${d.libelle})` : '';
+      return `• ${l.q} × ${p.nom}${fmt} : ${prix(d.prix)}`;
     });
     return [textes.bonjour, ...lignes, '', `${textes.total} : ${prix(total())}`, `${textes.retrait} : ${jour}`, prenom ? `${textes.prenom} : ${prenom}` : '']
       .filter((x, i, a) => !(x === '' && i === a.length - 1)).join('\n');
@@ -127,10 +160,10 @@ const textes = fr
     ($<HTMLElement>('[data-cart-foot]')).hidden = n === 0;
     const ul = $<HTMLUListElement>('[data-cart-lines]');
     ul.replaceChildren(...panier.map((l, i) => {
-      const p = catalogue[l.s]; const f = p.formats[l.f];
+      const p = catalogue[l.s]; const d = detailLigne(catalogue, l);
       const li = document.createElement('li');
       li.innerHTML = `
-        <div class="l__txt"><b></b><small></small></div>
+        <div class="l__txt"><b></b><small></small><button type="button" class="l__del">${textes.retirer}</button></div>
         <div class="qty">
           <button type="button" data-d="-1" aria-label="${textes.moins}">−</button>
           <span aria-live="polite"></span>
@@ -138,10 +171,14 @@ const textes = fr
         </div>
         <b class="l__prix"></b>`;
       li.querySelector('.l__txt b')!.textContent = p.nom;
-      li.querySelector('.l__txt small')!.textContent = `${f.l} · ${prix(f.p)}`;
+      const parPieces = indexUnite(catalogue, l.s) === l.f;
+      li.querySelector('.l__txt small')!.textContent = !parPieces || l.q === 1
+        ? `${d.libelle} · ${prix(p.formats[l.f].p)}`
+        : d.prix < d.plein ? `${d.libelle} · ${textes.auLieuDe} ${prix(d.plein)}` : d.libelle;
       li.querySelector('.qty span')!.textContent = String(l.q);
-      li.querySelector('.l__prix')!.textContent = prix(f.p * l.q);
-      li.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+      li.querySelector('.l__prix')!.textContent = prix(d.prix);
+      li.querySelector('.l__del')!.addEventListener('click', () => { panier.splice(i, 1); garder(); rendre(); });
+      li.querySelectorAll<HTMLButtonElement>('.qty button').forEach((b) => b.addEventListener('click', () => {
         l.q += Number(b.dataset.d);
         if (l.q <= 0) panier.splice(i, 1);
         garder(); rendre();
@@ -151,9 +188,31 @@ const textes = fr
     $<HTMLElement>('[data-cart-total]').textContent = prix(total());
     majLien();
   }
-  function majLien() {
-    $<HTMLAnchorElement>('[data-cart-send]').href = `https://wa.me/${whatsapp}?text=${encodeURIComponent(message())}`;
+  const champPrenom = () => $<HTMLInputElement>('input[name="ds-prenom"]');
+  function erreurPrenom(visible: boolean) {
+    $<HTMLElement>('#ds-prenom-erreur').hidden = !visible;
+    champPrenom().setAttribute('aria-invalid', String(visible));
   }
+  // Le dimanche, le samedi est passé : seul le dimanche reste proposé.
+  function majJours() {
+    const samedi = $<HTMLInputElement>('input[name="ds-jour"][value="samedi"]');
+    samedi.disabled = estDimanche();
+    if (samedi.disabled && samedi.checked) $<HTMLInputElement>('input[name="ds-jour"][value="dimanche"]').checked = true;
+  }
+  // Sans prénom, le lien ne mène nulle part : le prénom est écrit sur le sac.
+  function majLien() {
+    majJours();
+    const pret = champPrenom().value.trim() !== '';
+    $<HTMLAnchorElement>('[data-cart-send]').href = pret ? `https://wa.me/${whatsapp}?text=${encodeURIComponent(message())}` : '#';
+    if (pret) erreurPrenom(false);
+  }
+  $<HTMLAnchorElement>('[data-cart-send]').addEventListener('click', (e) => {
+    majLien();
+    if (champPrenom().value.trim()) return;
+    e.preventDefault();
+    erreurPrenom(true);
+    champPrenom().focus();
+  });
   dlg.addEventListener('input', majLien);
   dlg.addEventListener('change', majLien);
 
@@ -164,15 +223,30 @@ const textes = fr
     clearTimeout(tTimer); tTimer = window.setTimeout(() => el.classList.remove('on'), 2200);
   }
 
+  function proposer(s: string) {
+    const p = catalogue[s];
+    choix.querySelector('h2')!.textContent = p.nom;
+    choix.querySelector('[data-choice-list]')!.replaceChildren(...p.formats.map((f: { l: string; p: number }, i: number) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.add = s; b.dataset.f = String(i);
+      b.append(Object.assign(document.createElement('span'), { textContent: f.l }), Object.assign(document.createElement('b'), { textContent: prix(f.p) }));
+      return b;
+    }));
+    choix.showModal();
+  }
+
   document.addEventListener('click', (e) => {
     const t = e.target as HTMLElement;
+    const demande = t.closest<HTMLElement>('[data-choose]');
+    if (demande) { e.preventDefault(); proposer(demande.dataset.choose!); return; }
+    if (t.closest('[data-choice-close]') || t === choix) { choix.close(); return; }
     const add = t.closest<HTMLElement>('[data-add]');
     if (add) {
       e.preventDefault();
       const s = add.dataset.add!; const f = Number(add.dataset.f || 0);
-      const l = panier.find((x) => x.s === s && x.f === f);
-      if (l) l.q += 1; else panier.push({ s, f, q: 1 });
+      panier = normaliser([...panier, { s, f, q: 1 }], catalogue);
       garder(); rendre();
+      if (choix.open) choix.close();
       toast(`${textes.ajoute} · ${catalogue[s].nom}`);
       add.classList.remove('pop'); void add.offsetWidth; add.classList.add('pop');
       return;
@@ -193,7 +267,7 @@ const textes = fr
   .cart::backdrop { background: rgb(28 17 12 / 0.45); }
   .cart[open] { animation: slide 0.28s cubic-bezier(.2,.8,.2,1); }
   @keyframes slide { from { transform: translateX(40px); opacity: 0; } }
-  .cart__in { display: flex; flex-direction: column; height: 100%; }
+  .cart__in { display: flex; flex-direction: column; height: 100%; overflow-y: auto; }
   .cart__head { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--line); }
   .cart__head h2 { font-size: var(--step-2); }
   .x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--alveole); cursor: pointer; display: grid; place-items: center; color: var(--choco); }
@@ -201,7 +275,7 @@ const textes = fr
   .empty { flex: 1; display: grid; place-content: center; justify-items: center; gap: 14px; padding: 24px; text-align: center; color: var(--muted); }
   .empty svg { width: 56px; height: 56px; stroke: var(--miel); stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
   .empty[hidden], .foot[hidden] { display: none; }
-  .lines { list-style: none; margin: 0; padding: 6px 22px; flex: 1; overflow-y: auto; }
+  .lines { list-style: none; margin: 0; padding: 6px 22px; flex: 1; min-height: 104px; overflow-y: auto; }
   .lines :global(li) { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
   .lines :global(.l__txt) { display: grid; min-width: 0; }
   .lines :global(.l__txt b) { color: var(--choco); font-weight: 750; }
@@ -221,11 +295,27 @@ const textes = fr
   .day span { display: grid; border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; font-weight: 700; color: var(--choco); }
   .day small { font-weight: 500; color: var(--muted); font-size: 0.78rem; }
   .day input:checked + span { border-color: var(--choco); box-shadow: inset 0 0 0 1px var(--choco); background: var(--alveole); }
+  .day input:disabled + span { opacity: 0.45; cursor: not-allowed; }
   .day input:focus-visible + span { outline: 2.5px solid var(--miel); outline-offset: 2px; }
   .name { display: grid; gap: 6px; font-size: 0.8rem; font-weight: 700; color: var(--muted); }
   .name input { font: inherit; font-size: 1rem; font-weight: 500; color: var(--ink); background: var(--creme); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; }
   .name input:focus { outline: none; border-color: var(--miel); }
   .send { justify-content: center; padding-block: 1em; }
+  .name input[aria-invalid='true'] { border-color: #c8372d; }
+  .error { margin: -8px 0 0; font-size: 0.8rem; font-weight: 700; color: #c8372d; }
+  .error[hidden] { display: none; }
+  .closed { margin: 0; font-size: 0.82rem; font-weight: 650; color: var(--choco); background: var(--alveole); border-radius: 10px; padding: 10px 12px; }
+  .lines :global(.l__del) { justify-self: start; border: 0; background: none; padding: 4px 0 0; font: inherit; font-size: 0.78rem; color: var(--muted); text-decoration: underline; cursor: pointer; }
+
+  .choice { width: min(380px, calc(100vw - 32px)); padding: 0; border: 0; border-radius: 16px; background: var(--creme); color: var(--ink); box-shadow: 0 20px 60px rgb(42 20 8 / 0.3); }
+  .choice::backdrop { background: rgb(28 17 12 / 0.45); }
+  .choice__in { display: grid; gap: 12px; padding: 20px; }
+  .choice header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .choice h2 { font-size: var(--step-2); }
+  .choice p { margin: 0; color: var(--muted); }
+  .choice__list { display: grid; gap: 10px; }
+  .choice__list :global(button) { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 52px; padding: 12px 16px; border: 1.5px solid var(--choco); border-radius: 12px; background: var(--surface); color: var(--choco); font: inherit; font-weight: 700; text-align: left; cursor: pointer; }
+  .choice__list :global(button:hover) { background: var(--alveole); }
   .hint { font-size: 0.78rem; color: var(--muted); text-align: center; }
 
   .toast {
