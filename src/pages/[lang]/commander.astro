@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import WeekStrip from '../../components/WeekStrip.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, colon, type Lang } from '../../i18n/ui';
-import { contact, retrait, paiement, livraison, parcours, reponse, formulaire } from '../../data/infos';
+import { contact, retrait, paiement, livraison, parcours, reponse } from '../../data/infos';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
@@ -83,7 +83,7 @@ const faq = [
         <span class="num" id="phone">{contact.telephone}</span>
         <button type="button" class="copy" data-copy={`+${contact.whatsapp}`} data-done={fr ? 'Copié' : 'Скопировано'}>{fr ? 'Copier' : 'Копировать'}</button>
       </div>
-      <div class="btns"><WhatsAppButton lang={lang} /><a class="btn btn--ghost" href={formulaire} target="_blank" rel="noopener">{fr ? 'Remplir le formulaire de commande' : 'Заполнить форму заказа'}</a></div>
+      <div class="btns"><a class="btn btn--main" href={path(lang, 'carte')}>{fr ? 'Choisir mes douceurs' : 'Выбрать вкусное'}</a><WhatsAppButton lang={lang} variant="ghost" label={fr ? 'Poser une question' : 'Задать вопрос'} /></div>
       <dl class="pay">
         <div><dt>{fr ? 'Paiement' : 'Оплата'}{colon(lang)}</dt><dd>{paiement[lang]}</dd></div>
         <div><dt>{fr ? 'Livraison' : 'Доставка'}{colon(lang)}</dt><dd>{livraison[lang]}</dd></div>

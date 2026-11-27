@@ -1,0 +1,122 @@
+---
+// Tuile de la page d'accueil : un aplat de couleur propre à chaque produit, la photo en grand, le prix.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import Mark from './Mark.astro';
+import { path, type Lang } from '../i18n/ui';
+import { prix, trouver, type Produit } from '../data/produits';
+
+const photos = import.meta.glob<{ default: ImageMetadata }>('../assets/photos/*.{jpg,jpeg,png,webp}', { eager: true });
+const img = (f?: string) => (f ? photos[`../assets/photos/${f}`]?.default : undefined);
+
+// Une couleur par produit : fond, puis couleur du texte (contraste d'au moins 4,5).
+const teintes: Record<string, [string, string]> = {
+  'la-sestry': ['#e8a53a', '#2a1408'],
+  'la-choco': ['#4a1a0f', '#fef3e2'],
+  lotus: ['#95491a', '#fff6ea'],
+  pastels: ['#a8350f', '#fff4ec'],
+  bissap: ['#8a1538', '#fff0f3'],
+  'grande-faim': ['#f4c65d', '#2a1408'],
+  'douceur-complete': ['#efb4a4', '#2a1408'],
+  'mini-douceur': ['#f5dcb8', '#2a1408'],
+};
+
+interface Props { lang: Lang; produit: Produit; taille?: 'normale' | 'grande' | 'formule'; badge?: string; loading?: 'lazy' | 'eager' }
+const { lang, produit: p, taille = 'normale', badge, loading = 'lazy' } = Astro.props;
+const fr = lang === 'fr';
+const [fond, texte] = teintes[p.slug] ?? ['#f5dcb8', '#2a1408'];
+const connus = p.formats.map((f) => f.prix).filter((x): x is number => x !== null);
+const depuis = Math.min(...connus);
+const idx = p.formats.findIndex((f) => f.prix === depuis);
+const formule = p.categorie === 'formule';
+const unite = formule ? undefined : p.formats[idx].libelle[lang];
+const autres = formule ? [] : p.formats.filter((f, i) => i !== idx && f.prix !== null);
+const src = img(p.photo);
+// Dans un montage, la bouteille passe en premier : elle occupe la grande case verticale.
+const inclus = [...(p.inclus ?? [])].sort((a, b) => Number(b === 'bissap') - Number(a === 'bissap'));
+const collage = !src ? inclus.map(trouver).map((x) => img(x?.photo)).filter((x): x is ImageMetadata => !!x) : [];
+const grande = taille === 'grande';
+const href = path(lang, `carte/${p.slug}`);
+---
+<article class:list={['tuile', `tuile--${taille}`]} style={`--fond:${fond};--texte:${texte}`}>
+  <a class="pic" href={href} tabindex="-1" aria-hidden="true">
+    {src ? (
+      <Image src={src} alt="" widths={grande || formule ? [480, 720, 1000, 1254] : [320, 480, 640]} sizes={grande ? '(max-width: 760px) 100vw, 760px' : formule ? '(max-width: 760px) 100vw, 400px' : '(max-width: 760px) 50vw, 280px'} loading={loading} format="webp" quality={80} />
+    ) : collage.length ? (
+      <div class:list={['collage', `collage--${collage.length}`]}>
+        {collage.map((c) => <Image src={c} alt="" widths={[240, 400]} sizes="(max-width: 760px) 30vw, 200px" loading={loading} format="webp" quality={74} />)}
+      </div>
+    ) : <Mark size="40%" />}
+    {badge && <span class="badge">{badge}</span>}
+  </a>
+  <div class="txt">
+    <h3><a href={href}>{p.nom[lang]}</a></h3>
+    <p class="acc">{p.accroche[lang]}</p>
+    {autres.length > 0 && (
+      <p class="packs">{autres.map((f) => <span>{fr ? `${f.libelle.fr} : ${prix(f.prix!)}` : `${f.libelle.ru} — ${prix(f.prix!)}`}</span>)}</p>
+    )}
+    <div class="bas">
+      <p class="prix">
+        {formule && p.formats.length > 1 && <small>{fr ? 'dès' : 'от'}</small>}
+        <b>{depuis} ₽</b>
+        {unite && <small>{fr ? unite : `за ${unite}`}</small>}
+      </p>
+      <button
+        type="button"
+        class="add"
+        {...(p.choixObligatoire ? { 'data-choose': p.slug } : { 'data-add': p.slug, 'data-f': idx })}
+        aria-label={`${p.choixObligatoire ? (fr ? 'Choisir la version' : 'Выбрать вариант') : (fr ? 'Ajouter au panier' : 'В корзину')} : ${p.nom[lang]}`}
+      >{p.choixObligatoire ? (fr ? 'Choisir' : 'Выбрать') : (fr ? 'Ajouter' : 'В корзину')}</button>
+    </div>
+  </div>
+</article>
+
+<style>
+  .tuile { display: flex; flex-direction: column; min-width: 0; background: var(--fond); color: var(--texte); border-radius: 22px; overflow: hidden; }
+  .pic { position: relative; display: grid; place-items: center; aspect-ratio: 1; overflow: hidden; }
+  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s cubic-bezier(.2,.7,.2,1); }
+  .tuile:hover .pic > :global(img) { transform: scale(1.06); }
+  .collage { display: grid; width: 100%; height: 100%; gap: 4px; background: var(--fond); grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); position: absolute; inset: 0; }
+  .collage--2 { grid-template-rows: minmax(0, 1fr); }
+  .collage--3 > :global(:first-child) { grid-row: span 2; object-position: 24% 50%; }
+  .collage :global(img) { min-height: 0; }
+  .badge { position: absolute; top: 14px; left: 14px; background: #fef7ee; color: #4a1a0f; font-size: 0.78rem; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; padding: 7px 12px; border-radius: 999px; }
+  .txt { flex: 1; display: flex; flex-direction: column; gap: 6px; padding: 18px; }
+  .tuile--formule .badge { top: auto; bottom: 12px; left: 12px; }
+  h3 { color: inherit; font-size: clamp(1.25rem, 1rem + 1vw, 1.7rem); }
+  h3 a { color: inherit; text-decoration: none; }
+  h3 a:hover { text-decoration: underline; text-decoration-thickness: 2px; }
+  .acc, .packs { font-size: 0.88rem; line-height: 1.35; }
+  .packs { display: flex; flex-wrap: wrap; gap: 2px 12px; font-variant-numeric: tabular-nums; }
+  .packs span { white-space: nowrap; }
+  .bas { margin-top: auto; padding-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .prix { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px; font-variant-numeric: tabular-nums; }
+  .prix b { font-size: 1.75rem; font-weight: 850; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
+  .prix small { font-size: 0.82rem; font-weight: 650; }
+  .add { min-height: 44px; padding: 0 20px; border: 0; border-radius: 999px; background: var(--texte); color: var(--fond); font: inherit; font-weight: 800; font-size: 0.92rem; cursor: pointer; transition: transform 0.15s ease; }
+  .add:hover { transform: translateY(-2px); }
+  .add:global(.pop) { animation: pop 0.35s ease; }
+  @keyframes pop { 40% { transform: scale(1.12); } }
+  /* La signature : toute la largeur, la photo à gauche, l'aplat de couleur à droite. */
+  .tuile--grande { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); }
+  .tuile--grande .pic { aspect-ratio: auto; min-height: clamp(280px, 34vw, 460px); }
+  .tuile--grande .pic :global(img) { position: absolute; inset: 0; }
+  .tuile--grande .txt { justify-content: center; gap: 14px; padding: clamp(24px, 3.4vw, 52px); }
+  .tuile--grande .bas { margin-top: 0; }
+  .tuile--grande h3 { font-size: clamp(2.2rem, 1.2rem + 3vw, 4.2rem); line-height: 1; }
+  .tuile--grande .acc { font-size: 1.05rem; }
+  .tuile--grande .prix b { font-size: 2.4rem; }
+  @media (min-width: 761px) and (max-width: 1000px) { .tuile--grande .bas { flex-direction: column; align-items: flex-start; } }
+
+  @media (max-width: 760px) {
+    .tuile { border-radius: 16px; }
+    .tuile--normale .txt { padding: 12px; gap: 4px; }
+    .tuile--normale h3 { font-size: 1.1rem; }
+    .tuile--normale .acc, .tuile--normale .packs { font-size: 0.76rem; }
+    .tuile--normale .prix b { font-size: 1.4rem; }
+    .tuile--normale .add { width: 100%; }
+    .tuile--grande { display: flex; }
+    .tuile--grande .pic { aspect-ratio: 6 / 5; min-height: 0; }
+    .tuile--grande .txt { gap: 6px; padding: 18px; }
+  }
+</style>

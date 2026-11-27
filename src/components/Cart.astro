@@ -112,6 +112,12 @@ const textes = fr
   </div>
 </dialog>
 
+<button class="barre" type="button" data-cart-open data-cart-bar aria-haspopup="dialog" hidden>
+  <span class="barre__n" data-cart-count>0</span>
+  <span>{fr ? 'Voir mon panier' : 'Моя корзина'}</span>
+  <b data-cart-bar-total></b>
+</button>
+
 <div class="toast" data-cart-toast role="status" aria-live="polite"></div>
 
 <script>
@@ -186,6 +192,10 @@ const textes = fr
       return li;
     }));
     $<HTMLElement>('[data-cart-total]').textContent = prix(total());
+    const barre = document.querySelector<HTMLElement>('[data-cart-bar]')!;
+    barre.hidden = n === 0;
+    barre.querySelector('[data-cart-bar-total]')!.textContent = prix(total());
+    document.body.classList.toggle('avec-barre', n > 0);
     majLien();
   }
   const champPrenom = () => $<HTMLInputElement>('input[name="ds-prenom"]');
@@ -318,6 +328,20 @@ const textes = fr
   .choice__list :global(button:hover) { background: var(--alveole); }
   .hint { font-size: 0.78rem; color: var(--muted); text-align: center; }
 
+  .barre { display: none; }
+  @media (max-width: 760px) {
+    .barre:not([hidden]) {
+      position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 40;
+      display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 20px 0 12px;
+      border: 0; border-radius: 999px; background: #e8a53a; color: #2a1408; font: inherit; font-weight: 800; cursor: pointer;
+      box-shadow: 0 10px 30px rgb(0 0 0 / 0.3);
+    }
+    .barre__n { min-width: 32px; height: 32px; padding: 0 8px; border-radius: 16px; display: grid; place-items: center; background: #2a1408; color: #fef3e2; font-size: 0.85rem; }
+    .barre__n[hidden] { display: none; }
+    .barre b { margin-left: auto; font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+    :global(body.avec-barre) { padding-bottom: 84px; }
+    :global(body.avec-barre) .toast { bottom: 84px; }
+  }
   .toast {
     position: fixed; left: 50%; bottom: 24px; z-index: 60;
     transform: translate(-50%, 20px); opacity: 0; pointer-events: none;

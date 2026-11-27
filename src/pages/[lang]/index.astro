@@ -1,45 +1,26 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import Mark from '../../components/Mark.astro';
-import ProductCard from '../../components/ProductCard.astro';
-import WhatsAppButton from '../../components/WhatsAppButton.astro';
+import Tuile from '../../components/Tuile.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, retrait, contact, lienWhatsApp, messageBox, parcours, formulaire } from '../../data/infos';
+import { marque, retrait, lienWhatsApp, messageBox, parcours } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
 import { etablissement } from '../../lib/schema';
 import table from '../../assets/photos/table.jpg';
-import trio from '../../assets/photos/trio.jpg';
 import sac from '../../assets/photos/sac.jpg';
-import crepes from '../../assets/photos/crepes.jpg';
-import choco from '../../assets/photos/choco.jpg';
-import pastels from '../../assets/photos/pastels.jpg';
-import bissap from '../../assets/photos/bissap.jpg';
 import boxBurgers from '../../assets/photos/box-burgers.jpg';
 import boxMix from '../../assets/photos/box-mix.jpg';
-import boxSale from '../../assets/photos/box-sale.jpg';
 import gateauCitron from '../../assets/photos/gateau-citron.jpg';
 
 export const getStaticPaths = langPaths;
 const lang = Astro.params.lang as Lang;
 const fr = lang === 'fr';
-const vedettes = ['la-sestry', 'la-choco', 'lotus', 'pastels', 'bissap', 'grande-faim', 'douceur-complete', 'mini-douceur'].map(trouver).filter((p): p is Produit => !!p);
+const produitsPhares = ['la-sestry', 'la-choco', 'lotus', 'pastels', 'bissap'].map(trouver).filter((p): p is Produit => !!p);
+const formules = ['grande-faim', 'douceur-complete', 'mini-douceur'].map(trouver).filter((p): p is Produit => !!p);
 const badges: Record<string, { fr: string; ru: string }> = {
   'la-sestry': { fr: 'Signature', ru: 'Фирменный' },
 };
-const gf = trouver('grande-faim')!;
-const gfFormat = gf.formats[0];
-const sestry = trouver('la-sestry')!;
-
-const rayons = [
-  { img: crepes, label: fr ? 'Crêpes salées' : 'Солёные блины', href: path(lang, 'carte') + '#sale' },
-  { img: choco, label: fr ? 'Crêpes sucrées' : 'Сладкие блины', href: path(lang, 'carte') + '#sucre' },
-  { img: pastels, label: fr ? 'Pastels' : 'Пастели', href: path(lang, 'carte/pastels') },
-  { img: bissap, label: fr ? 'Bissap' : 'Биссап', href: path(lang, 'carte') + '#boisson' },
-  { img: trio, label: fr ? 'Formules' : 'Наборы', href: path(lang, 'carte') + '#formule' },
-  { img: boxSale, label: fr ? 'Anniversaires' : 'Праздники', href: '#anniversaires' },
-];
 
 const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
 ---
@@ -51,99 +32,48 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     ? 'Crêpes, pastels et bissap faits maison par deux sœurs de Pointe-Noire, à Briansk. Le week-end, sur commande, retrait devant la cité.'
     : 'Блины, пастели и биссап от двух сестёр из Пуэнт-Нуара, в Брянске. По выходным, под заказ, выдача у общежития.'}
 >
-  <!-- 1. Grande photo d'accueil -->
+  <!-- 1. Accueil : la photo et une promesse en très grand -->
   <section class="hero">
+    <div class="hero__pic">
+      <Image src={table} alt={fr ? 'Plateau de crêpes salées, de pastels et de crêpes au chocolat avec du bissap' : 'Поднос: солёные блины, пастели, шоколадные блины и биссап'} widths={[480, 720, 1000, 1254]} sizes="(max-width: 860px) 100vw, 50vw" loading="eager" fetchpriority="high" format="webp" quality={82} />
+    </div>
     <div class="hero__text">
-      <p class="eyebrow">{fr ? 'Fait maison' : 'Домашняя кухня'} · {marque.ville[lang]}</p>
+      <p class="hero__eyebrow">{fr ? 'La maison des douceurs' : 'Дом вкусных радостей'} · {marque.ville[lang]}</p>
       <h1>
-        {fr ? 'Les crêpes de deux sœurs,' : 'Блины от двух сестёр,'}
-        <em>{fr ? <>faites le <span class="nowrap">week-end</span>.</> : 'по выходным.'}</em>
+        {fr ? 'La semaine est chargée.' : 'Будни трудные.'}
+        <em>{fr ? <>Le <span class="nowrap">week-end</span> sera doux.</> : 'Выходные\u00a0— вкусные.'}</em>
       </h1>
-      <p class="lead">
+      <p class="hero__lead">
         {fr
-          ? 'Crêpes, pastels et bissap préparés sur commande pour le week-end, en petites quantités, avec la recette de leur maman.'
-          : 'Блины, пастели и биссап под заказ на выходные, небольшими партиями, по маминому рецепту.'}
+          ? 'Crêpes, pastels et bissap faits sur commande par deux sœurs.'
+          : 'Блины, пастели и биссап под заказ от двух сестёр.'}
       </p>
       <div class="cta">
-        <WhatsAppButton lang={lang} variant="main" />
-        <a class="btn btn--ghost" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
+        <a class="btn btn--miel btn--xl" href="#douceurs">{fr ? 'Choisir mes douceurs' : 'Выбрать вкусное'}</a>
+        <a class="hero__link" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')} <span aria-hidden="true">→</span></a>
       </div>
-      <ul class="trust">
-        <li>{fr ? 'Fait sur commande' : 'Под заказ'}</li>
-        <li>{fr ? 'Recette de maman' : 'Мамин рецепт'}</li>
-        <li>{fr ? 'Dès 120 ₽ la crêpe' : 'От 120 ₽ за блин'}</li>
-      </ul>
-    </div>
-    <div class="hero__pic">
-      <Image src={table} alt={fr ? 'Crêpes La Sestry, La Choco et un verre de bissap au bord d’une fenêtre ensoleillée' : 'Блины La Sestry, La Choco и стакан биссапа на солнечном подоконнике'} widths={[480, 720, 1000]} sizes="(max-width: 860px) 100vw, 50vw" loading="eager" fetchpriority="high" format="webp" quality={80} />
-      <a class="tag" href={path(lang, 'carte/la-sestry')}>
-        <span class="tag__txt"><b>La Sestry</b><small>{sestry.accroche[lang].split('·')[0].trim()}</small></span>
-        <span class="tag__price">150 ₽<small>{fr ? 'la crêpe' : 'за 1 шт.'}</small></span>
-      </a>
+      <p class="hero__facts">{fr ? 'Dès 120 ₽ la crêpe · Retrait samedi et dimanche' : 'Блины от 120 ₽ · Выдача в субботу и воскресенье'}</p>
     </div>
   </section>
 
-  <!-- 2. Rayons, façon catalogue -->
-  <nav class="wrap rayons" aria-label={fr ? 'Parcourir la carte' : 'Разделы меню'}>
-    {rayons.map((r) => (
-      <a href={r.href}>
-        <span class="rayon__pic"><Image src={r.img} alt="" widths={[120, 200]} sizes="100px" format="webp" quality={70} /></span>
-        <span>{r.label}</span>
-      </a>
-    ))}
-  </nav>
-
-  <!-- 3. Les produits : grandes photos en rangée, façon Magnolia -->
-  <section class="section produits">
-    <div class="wrap head">
-      <div>
-        <p class="eyebrow">{fr ? 'Les incontournables' : 'Самое любимое'}</p>
-        <h2>{fr ? 'Ce qu’on cuisine ce week-end' : 'Что готовим в эти выходные'}</h2>
-      </div>
-      <div class="head__right">
-        <a class="more" href={path(lang, 'carte')}>{fr ? 'Toute la carte' : 'Всё меню'} <span aria-hidden="true">→</span></a>
-        <div class="arrows">
-          <button type="button" data-row="-1" aria-label={fr ? 'Précédent' : 'Назад'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg></button>
-          <button type="button" data-row="1" aria-label={fr ? 'Suivant' : 'Вперёд'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg></button>
-        </div>
-      </div>
+  <!-- 2. Toute l'offre d'un coup d'œil : une couleur par produit -->
+  <section class="wrap section" id="douceurs">
+    <div class="titre">
+      <h2>{fr ? 'Choisissez votre douceur' : 'Выберите своё вкусное'}</h2>
+      <a class="more" href={path(lang, 'carte')}>{fr ? 'Toute la carte' : 'Всё меню'} <span aria-hidden="true">→</span></a>
     </div>
-    <div class="row" data-row-track>
-      {vedettes.map((p, i) => <ProductCard lang={lang} produit={p} loading={i < 3 ? 'eager' : 'lazy'} badge={badges[p.slug]?.[lang]} />)}
+    <div class="grille">
+      {produitsPhares.map((p, i) => <Tuile lang={lang} produit={p} taille={i === 0 ? 'grande' : 'normale'} badge={badges[p.slug]?.[lang]} loading={i === 0 ? 'eager' : 'lazy'} />)}
     </div>
   </section>
-  <script>
-    const track = document.querySelector<HTMLElement>('[data-row-track]');
-    document.querySelectorAll<HTMLButtonElement>('[data-row]').forEach((b) =>
-      b.addEventListener('click', () => {
-        if (!track) return;
-        const tile = track.firstElementChild as HTMLElement | null;
-        const step = tile ? tile.offsetWidth + 24 : 360;
-        track.scrollBy({ left: step * Number(b.dataset.row), behavior: 'smooth' });
-      }),
-    );
-  </script>
 
-  <!-- 4. La formule, en bloc de couleur -->
-  <section class="wrap">
-    <div class="offre">
-      <div class="offre__pic">
-        <Image src={trio} alt={fr ? 'Crêpes La Sestry, La Choco, pastels et bissap sur la table' : 'Блины La Sestry, La Choco, пастели и биссап на столе'} widths={[420, 640, 860]} sizes="(max-width: 860px) 100vw, 45vw" format="webp" quality={78} />
-      </div>
-      <div class="offre__txt">
-        <p class="eyebrow">{fr ? 'La formule repas' : 'Набор на обед'}</p>
-        <h2>{gf.nom[lang]}</h2>
-        <p class="offre__desc">{gf.accroche[lang]}. {fr ? 'Le repas complet, dans une seule boîte.' : 'Полноценный обед в одной коробке.'}</p>
-        <p class="offre__price">
-          <b>{gfFormat.prix}</b><span>₽</span>
-          {gfFormat.prixBarre && <s>{gfFormat.prixBarre} ₽</s>}
-          {gfFormat.prixBarre && <em>{fr ? `${gfFormat.prixBarre - gfFormat.prix!} ₽ d’économie` : `экономия ${gfFormat.prixBarre - gfFormat.prix!} ₽`}</em>}
-        </p>
-        <div class="cta">
-          <a class="btn btn--main" href={lienWhatsApp(`${contact.messageParDefaut[lang]}${fr ? ' ! Je voudrais commander : ' : '! Хочу заказать: '}${gf.nom[lang]}`)} target="_blank" rel="noopener">{fr ? 'Commander la formule' : 'Заказать набор'}</a>
-          <a class="more" href={path(lang, 'carte') + '#formule'}>{fr ? 'Les autres formules' : 'Другие наборы'} <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
+  <!-- 3. Les formules -->
+  <section class="wrap" id="formules">
+    <div class="titre">
+      <h2>{fr ? 'Les formules' : 'Наборы'}</h2>
+    </div>
+    <div class="formules">
+      {formules.map((p) => <Tuile lang={lang} produit={p} taille="formule" />)}
     </div>
   </section>
 
@@ -175,7 +105,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
 
   <!-- 5. Comment ça marche -->
   <section class="wrap section">
-    <div class="head head--center">
+    <div class="titre titre--centre">
       <p class="eyebrow">{fr ? 'Comment ça marche' : 'Как это работает'}</p>
       <h2>{fr ? 'Commander en 4 étapes' : 'Заказ в 4 шага'}</h2>
     </div>
@@ -188,7 +118,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
         </li>
       ))}
     </ol>
-    <p class="forme"><a class="btn btn--ghost" href={formulaire} target="_blank" rel="noopener">{fr ? 'Remplir le formulaire de commande' : 'Заполнить форму заказа'}</a></p>
+    <p class="forme"><a class="btn btn--ghost" href="#douceurs">{fr ? 'Choisir mes douceurs' : 'Выбрать вкусное'}</a></p>
   </section>
 
   <!-- 6. L'histoire -->
@@ -210,7 +140,6 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   <section class="wrap section promesses">
     {promesses.map((p) => (
       <div>
-        <Mark size="34px" />
         <h3>{p.titre[lang]}</h3>
         <p>{p.texte[lang]}</p>
       </div>
@@ -225,154 +154,120 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
         <h2 class="si-clos">{fr ? 'Une envie de dernière minute ? Écrivez-nous, selon disponibilité.' : 'Хотите заказать в последний момент? Напишите нам — по наличию.'}</h2>
         <p>{retrait.prevenir[lang]}</p>
       </div>
-      <WhatsAppButton lang={lang} variant="miel" />
+      <a class="btn btn--miel btn--xl" href="#douceurs">{fr ? 'Choisir mes douceurs' : 'Выбрать вкусное'}</a>
     </div>
   </section>
 </Base>
 
 <style>
   .nowrap { white-space: nowrap; }
-  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+  .cta { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-5); align-items: center; }
+  .btn--xl { padding: 1.05em 1.7em; font-size: 1.08rem; font-weight: 850; }
+  .more { font-weight: 800; color: var(--choco); text-decoration: none; white-space: nowrap; }
+  .more:hover { text-decoration: underline; }
 
-  /* 1. Accueil : texte à gauche, photo pleine hauteur jusqu'au bord droit */
-  .hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    min-height: min(82vh, 760px);
-  }
+  /* 1. Accueil : un grand aplat chocolat et la photo. Les couleurs sont fixes, de jour comme de nuit. */
+  .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); min-height: min(86vh, 780px); background: #4a1a0f; color: #fef3e2; }
   .hero__text {
     display: grid; gap: var(--space-5); align-content: center; min-width: 0;
-    padding: var(--space-7) clamp(24px, 5vw, 72px) var(--space-7) max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
+    padding: var(--space-7) clamp(24px, 4vw, 64px) var(--space-7) clamp(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)), 160px);
   }
-  .hero h1 { font-size: clamp(2.4rem, 1.6rem + 2.6vw, 4rem); letter-spacing: -0.01em; }
-  .hero h1 em { display: block; font-style: normal; color: var(--miel-ink); }
-  .trust { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px 20px; font-size: 0.88rem; font-weight: 650; color: var(--muted); }
-  .trust li { display: flex; align-items: center; gap: 7px; }
-  .trust li::before { content: ''; width: 16px; height: 16px; border-radius: 50%; background: var(--miel) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-5' fill='none' stroke='%232a1408' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat; flex: none; }
-  .hero__pic { position: relative; min-height: 420px; overflow: hidden; background: var(--alveole); }
-  .hero__pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 60%; }
-  .tag {
-    position: absolute; left: 30%; bottom: 14%;
-    display: flex; align-items: center; gap: 12px;
-    background: var(--surface); color: var(--ink); text-decoration: none;
-    padding: 10px 14px 10px 10px; border-radius: 12px;
-    box-shadow: 0 10px 30px rgb(42 20 8 / 0.25);
-    transition: transform 0.2s ease;
-  }
-  .tag:hover { transform: translateY(-2px); }
-  .tag__dot { width: 14px; height: 14px; border-radius: 50%; background: var(--surface); box-shadow: 0 0 0 4px rgb(255 255 255 / 0.5), 0 0 0 1.5px var(--choco) inset; position: absolute; left: -34px; top: -26px; }
-  .tag__txt { display: grid; line-height: 1.2; }
-  .tag__txt b { font-size: 0.95rem; color: var(--choco); }
-  .tag__txt small { color: var(--muted); font-size: 0.78rem; }
-  .tag__price { display: grid; line-height: 1.05; font-weight: 850; font-size: 1.25rem; color: var(--choco); padding-left: 12px; border-left: 1px solid var(--line); }
-  .tag__price small { font-size: 0.72rem; font-weight: 600; color: var(--muted); }
+  .hero__eyebrow { font-size: 0.82rem; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #f4c65d; }
+  .hero h1 { color: #fef3e2; font-size: clamp(2.7rem, 0.6rem + 5.2vw, 6rem); line-height: 1; letter-spacing: -0.015em; }
+  .hero h1 em { display: block; font-style: normal; color: #f2b247; }
+  .hero__lead { font-size: var(--step-1); max-width: 32ch; line-height: 1.45; }
+  .hero__link { font-weight: 800; text-underline-offset: 0.3em; }
+  .hero__facts { font-size: 0.92rem; font-weight: 650; opacity: 0.85; }
+  .hero__pic { order: 2; position: relative; min-height: 420px; overflow: hidden; }
+  .hero__pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 18%; }
 
-  /* 2. Rayons */
-  .rayons { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: var(--space-4); padding-block: var(--space-7) 0; }
-  .rayons a { display: grid; justify-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 0.92rem; color: var(--choco); text-align: center; }
-  .rayon__pic { width: 100%; max-width: 128px; aspect-ratio: 1; border-radius: 50%; overflow: hidden; background: var(--alveole); outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 0.15s; }
-  .rayon__pic :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .rayons a:hover .rayon__pic { outline-color: var(--miel); }
+  /* 2 et 3. Grilles de produits */
+  .titre { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: var(--space-3); margin-bottom: var(--space-6); }
+  .titre h2 { font-size: clamp(2.2rem, 1.2rem + 3.4vw, 4.2rem); line-height: 1; }
+  .titre--centre { flex-direction: column; align-items: center; text-align: center; }
+  .grille { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .grille > :global(:first-child) { grid-column: 1 / -1; }
+  .formules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 
-  /* 3. Produits */
-  .head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: var(--space-3); margin-bottom: var(--space-6); }
-  .head h2 { font-size: var(--step-3); margin-top: 4px; }
-  .head--center { justify-content: center; text-align: center; flex-direction: column; align-items: center; }
-  .more { font-weight: 750; color: var(--choco); text-decoration: none; white-space: nowrap; }
-  .more:hover { text-decoration: underline; }
-  .head__right { display: flex; align-items: center; gap: 20px; }
-  .arrows { display: flex; gap: 8px; }
-  .arrows button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--choco); color: var(--on-choco); cursor: pointer; display: grid; place-items: center; transition: transform 0.15s; }
-  .arrows button:hover { transform: scale(1.06); }
-  .arrows svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
-  .row {
-    display: grid; grid-auto-flow: column; grid-auto-columns: clamp(270px, 27vw, 380px); gap: 24px;
-    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-    padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
-    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2 + var(--gutter)));
-    padding-bottom: 6px;
-  }
-  .row::-webkit-scrollbar { display: none; }
-  .row > :global(*) { scroll-snap-align: start; }
 
-  /* 4. Bloc formule */
-  .offre {
-    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    background: var(--miel); color: var(--on-miel);
-    border-radius: 20px; overflow: hidden;
-  }
-  .offre__pic { position: relative; min-height: 380px; }
-  .offre__pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .offre__txt { padding: clamp(28px, 5vw, 64px); display: grid; gap: var(--space-4); align-content: center; }
-  .offre .eyebrow { color: var(--on-miel); opacity: 0.75; }
-  .offre h2 { color: var(--on-miel); font-size: var(--step-3); }
-  .offre__desc { font-size: var(--step-1); line-height: 1.45; max-width: 34ch; }
-  .offre__price { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
-  .offre__price b { font-size: clamp(2.6rem, 2rem + 2vw, 3.6rem); font-weight: 900; line-height: 1; letter-spacing: -0.03em; }
-  .offre__price > span { font-weight: 850; font-size: 1.4rem; margin-left: -6px; }
-  .offre__price s { opacity: 0.7; font-weight: 650; }
-  .offre__price em { font-style: normal; font-weight: 800; font-size: 0.82rem; background: var(--choco); color: var(--on-choco); padding: 4px 10px; border-radius: 4px; }
-  .offre .more { color: var(--on-miel); }
-
-  /* 4 bis. Anniversaires */
-  .anniv { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; background: var(--peche); border-radius: 20px; padding: clamp(18px, 3vw, 36px); }
-  .anniv__pics { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; aspect-ratio: 1 / 1; }
-  .anniv__pics :global(img) { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; min-height: 0; }
+  /* 4. Anniversaires */
+  .anniv { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: clamp(28px, 5vw, 64px); align-items: center; background: #8a1538; color: #fff0f3; border-radius: 28px; padding: clamp(14px, 3vw, 36px); }
+  .anniv__pics { display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; aspect-ratio: 1; }
+  .anniv__pics :global(img) { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; min-height: 0; }
   .anniv__pics :global(.p1) { grid-row: span 2; }
-  .anniv__txt { display: grid; gap: var(--space-4); align-content: center; padding-right: clamp(0px, 2vw, 24px); }
-  .anniv h2 { font-size: var(--step-3); }
+  .anniv__txt { display: grid; gap: var(--space-4); align-content: center; padding: 6px clamp(4px, 2vw, 24px) 10px; }
+  .anniv .eyebrow { color: #ffc9d5; }
+  .anniv h2 { color: #fff0f3; font-size: clamp(2rem, 1.3rem + 2.4vw, 3.4rem); }
   .checks { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-  .checks li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; line-height: 1.45; }
-  .checks li::before { content: ''; width: 22px; height: 22px; margin-top: 1px; border-radius: 50%; background: var(--choco) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.3l2.2 2.2 4.8-5' fill='none' stroke='%23fef7ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/100% no-repeat; }
-  .checks b { color: var(--choco); }
-  .anniv__note { font-size: 0.9rem; color: var(--muted); }
+  .checks li { display: grid; grid-template-columns: 12px 1fr; gap: 12px; line-height: 1.45; }
+  .checks li::before { content: ''; width: 12px; height: 14px; margin-top: 5px; background: #f4c65d; clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%); }
+  .anniv__note { font-size: 0.9rem; opacity: 0.85; }
+  .anniv .btn--main { background: #fff0f3; color: #8a1538; }
+  .anniv .more { color: #fff0f3; }
 
   /* 5. Étapes */
-  .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5); counter-reset: none; }
-  .etapes li { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: clamp(20px, 3vw, 32px); display: grid; gap: var(--space-2); align-content: start; }
-  .num { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--choco); color: var(--on-choco); font-family: var(--font-display); font-size: 1.3rem; margin-bottom: var(--space-2); }
-  .etapes h3 { font-size: var(--step-1); }
+  .etapes { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+  .etapes li { background: #f4c65d; color: #2a1408; border-radius: 22px; padding: clamp(20px, 2.4vw, 30px); display: grid; gap: var(--space-2); align-content: start; }
+  .num { font-family: var(--font-display); font-size: 4.2rem; line-height: 0.9; margin-bottom: var(--space-3); }
+  .etapes h3 { color: #2a1408; font-size: var(--step-1); }
+  .etapes p { font-size: 0.95rem; }
   .forme { display: flex; justify-content: center; margin-top: var(--space-6); }
-  .etapes p { color: var(--muted); font-size: 0.95rem; }
 
   /* 6. Histoire */
   .histoire { background: var(--alveole); padding-block: var(--space-8); }
   .histoire__grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(28px, 6vw, 80px); align-items: center; }
-  .histoire__pic { aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; max-height: 620px; }
+  .histoire__pic { aspect-ratio: 4 / 5; border-radius: 28px; overflow: hidden; max-height: 620px; }
   .histoire__pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
   .histoire__txt { display: grid; gap: var(--space-5); justify-items: start; }
-  .histoire__txt h2 { font-size: var(--step-3); }
+  .histoire__txt h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.4rem); }
   .histoire__txt p { font-size: var(--step-1); line-height: 1.55; max-width: 46ch; }
 
   /* 7. Promesses */
   .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 4vw, 48px); }
-  .promesses > div { display: grid; gap: var(--space-3); align-content: start; }
-  .promesses p { color: var(--muted); font-size: 0.95rem; }
+  .promesses > div { display: grid; gap: var(--space-3); align-content: start; border-top: 4px solid var(--miel); padding-top: var(--space-4); }
+  .promesses h3 { font-size: var(--step-2); }
+  .promesses p { color: var(--muted); }
 
-  /* 8. Bandeau final */
-  .band {
-    display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between;
-    background: var(--choco); color: var(--on-choco);
-    border-radius: 20px; padding: clamp(28px, 5vw, 56px);
-  }
-  .band h2 { color: var(--on-choco); font-size: var(--step-3); }
-  .band p { margin-top: var(--space-2); opacity: 0.8; }
+  /* 8. Dernier appel */
+  .band { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between; background: #4a1a0f; color: #fef3e2; border-radius: 28px; padding: clamp(28px, 5vw, 64px); }
+  .band h2 { color: #fef3e2; font-size: clamp(2rem, 1.3rem + 2.4vw, 3.4rem); }
+  .band p { margin-top: var(--space-3); opacity: 0.85; }
   .band > div { min-width: 0; flex: 1 1 320px; }
 
-  @media (max-width: 520px) { .etapes { grid-template-columns: minmax(0, 1fr) !important; } }
-  @media (max-width: 860px) {
-    .hero { grid-template-columns: minmax(0, 1fr); min-height: 0; }
-    .hero__pic { order: -1; min-height: 0; aspect-ratio: 4 / 3.4; }
-    .hero__text { padding: var(--space-6) var(--gutter) var(--space-4); }
-    .tag { left: auto; right: 16px; bottom: 16px; }
-    .tag__dot { display: none; }
-    .row { grid-auto-columns: 78vw; gap: 16px; }
-    .arrows { display: none; }
-    .rayons { grid-template-columns: repeat(6, 92px); overflow-x: auto; scrollbar-width: none; padding-top: var(--space-5); }
-    .offre, .histoire__grid, .anniv { grid-template-columns: minmax(0, 1fr); }
-    .offre__pic { min-height: 0; aspect-ratio: 4 / 3; }
-    .histoire__pic { aspect-ratio: 4 / 4.2; }
+  @media (max-width: 1000px) {
+    .grille { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .formules { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .formules > :global(:first-child) { grid-column: span 2; }
     .etapes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 860px) {
+    /* Sur téléphone : la photo des plats reste dégagée, le titre et le bouton sont juste dessous. */
+    .hero { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(230px, 1fr) auto; min-height: calc(100svh - 112px); }
+    .hero__pic { order: 0; min-height: 0; }
+    .hero__pic :global(img) { object-position: 50% 72%; }
+    .hero__text { align-content: start; gap: 10px; padding: 18px var(--gutter) 20px; }
+    .hero__eyebrow { font-size: 0.72rem; }
+    .hero h1 { font-size: clamp(2rem, 9.4vw, 3.6rem); }
+    .hero__lead { font-size: 0.98rem; }
+    .hero .cta { margin-top: 4px; }
+    .hero .btn--xl { width: 100%; justify-content: center; }
+    .hero__link, .hero__facts { display: none; }
+    .histoire__grid, .anniv { grid-template-columns: minmax(0, 1fr); }
+    .histoire__pic { aspect-ratio: 4 / 4.2; }
     .promesses { grid-template-columns: minmax(0, 1fr); }
   }
+  @media (max-width: 860px) and (max-height: 620px) {
+    /* Très petits écrans : on garde la photo, le titre et le bouton. */
+    .hero { grid-template-rows: minmax(150px, 1fr) auto; }
+    .hero__eyebrow, .hero__lead { display: none; }
+    .hero__text { padding-block: 14px; }
+    .hero h1 { font-size: 1.75rem; }
+  }
+  @media (max-width: 760px) {
+    .grille, .formules { gap: 10px; }
+    .grille > :global(:first-child) { grid-column: 1 / -1; }
+    .formules { grid-template-columns: minmax(0, 1fr); }
+    .formules > :global(:first-child) { grid-column: auto; }
+  }
+  @media (max-width: 520px) { .etapes { grid-template-columns: minmax(0, 1fr); } }
 </style>

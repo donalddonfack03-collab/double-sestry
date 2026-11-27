@@ -63,7 +63,7 @@ const sections: { cat: Categorie; titre: UiKey; texte: { fr: string; ru: string 
         </p>
       </div>
       <div class="note__cta">
-        <WhatsAppButton lang={lang} variant="main" />
+        <WhatsAppButton lang={lang} variant="main" label={fr ? 'Poser une question' : 'Задать вопрос'} />
         <a class="link" href={path(lang, 'commander')}>{fr ? 'Comment commander →' : 'Как заказать →'}</a>
       </div>
     </div>
@@ -106,6 +106,12 @@ const sections: { cat: Categorie; titre: UiKey; texte: { fr: string; ru: string 
   .note__cta { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
   .link { font-weight: 750; color: var(--choco); text-decoration: none; }
   .link:hover { text-decoration: underline; }
+  /* Grand écran : le titre de la rubrique à gauche, les produits sur deux colonnes à droite (plus de case vide). */
+  @media (min-width: 901px) {
+    .cat { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.4fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+    .cat__head { flex-direction: column; gap: var(--space-2); position: sticky; top: 96px; margin-bottom: 0; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
   @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 560px) { .grid { grid-template-columns: minmax(0, 1fr); } }
 </style>
