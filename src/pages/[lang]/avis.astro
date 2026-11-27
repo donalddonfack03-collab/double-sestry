@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import AvisListe from '../../components/AvisListe.astro';
+import Etoiles from '../../components/Etoiles.astro';
+import WhatsAppButton from '../../components/WhatsAppButton.astro';
+import { langPaths, t, path, type Lang } from '../../i18n/ui';
+import { avis, moyenne, nombreNotes } from '../../data/avis';
+
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+const fr = lang === 'fr';
+const moyenneTxt = String(moyenne).replace('.', ',');
+---
+<Base
+  lang={lang}
+  title={t(lang, 'nav.avis')}
+  description={fr
+    ? 'Ce que les clients de Double Sestry nous ont écrit sur WhatsApp après avoir goûté nos crêpes, pastels et bissap.'
+    : 'Что клиенты Double Sestry написали нам в WhatsApp, попробовав наши блины, пастели и биссап.'}
+>
+  <header class="wrap top">
+    <p class="eyebrow">{t(lang, 'nav.avis')}</p>
+    <h1>{fr ? 'Ils ont goûté, ils nous ont écrit.' : 'Попробовали — и написали нам.'}</h1>
+    {nombreNotes > 0 && (
+      <div class="score">
+        <span class="score__n">{moyenneTxt}<small>/5</small></span>
+        <div class="score__d">
+          <Etoiles note={moyenne} lang={lang} taille="1.6rem" />
+          <span>{fr ? `Note moyenne sur ${nombreNotes} avis` : `Средняя оценка по ${nombreNotes} отзывам`}</span>
+        </div>
+      </div>
+    )}
+    <p class="lead">
+      {fr
+        ? 'Extraits de messages reçus sur WhatsApp après livraison, publiés avec l’accord de nos clients. Rien n’est inventé.'
+        : 'Отрывки из сообщений в WhatsApp после получения заказа, опубликованы с согласия клиентов. Перевод с французского.'}
+    </p>
+  </header>
+
+  <section class="wrap section">
+    <AvisListe avis={avis} lang={lang} />
+  </section>
+
+  <section class="wrap section fin">
+    <h2>{fr ? 'Vous avez goûté ?' : 'Уже попробовали?'}</h2>
+    <p>{fr ? 'Dites-nous en une phrase ce que vous en avez pensé. Ça aide beaucoup Ria et Emma.' : 'Напишите пару слов о том, как вам. Это очень помогает Рие и Эмме.'}</p>
+    <div class="fin__cta">
+      <WhatsAppButton lang={lang} variant="miel" label={fr ? 'Donner mon avis' : 'Оставить отзыв'} message={fr ? 'Bonjour ! Voici mon avis sur ma commande (note sur 5 : ) :' : 'Здравствуйте! Вот мой отзыв о заказе (оценка из 5: ):'} />
+      <a class="btn btn--ghost" href={path(lang, 'carte')}>{fr ? 'Voir la carte' : 'Смотреть меню'}</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .top { display: grid; gap: var(--space-4); padding-block: var(--space-7) var(--space-4); max-width: 60rem; }
+  h1 { font-size: clamp(2.2rem, 1.4rem + 3vw, 4rem); }
+  .score { display: flex; align-items: center; gap: var(--space-4); }
+  .score__n { font-family: var(--font-display); font-size: clamp(3rem, 2rem + 3vw, 4.5rem); color: var(--choco); line-height: 1; }
+  .score__n small { font-size: 0.4em; color: var(--muted); }
+  .score__d { display: grid; gap: var(--space-1); color: var(--muted); }
+  .lead { color: var(--muted); max-width: 52ch; }
+  .fin { display: grid; gap: var(--space-3); justify-items: start; background: var(--alveole); border-radius: 28px; padding: clamp(24px, 4vw, 48px); margin-bottom: var(--space-7); }
+  .fin__cta { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-2); }
+</style>

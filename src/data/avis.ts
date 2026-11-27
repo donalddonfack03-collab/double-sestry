@@ -52,3 +52,9 @@ export const avis: Avis[] = [
     texte: { fr: 'Oui, bien sûr.', ru: 'Да, конечно.' },
   },
 ];
+
+const notes = avis.map((a) => a.note).filter((n): n is number => typeof n === 'number');
+/** Nombre d'avis qui ont une note. */
+export const nombreNotes = notes.length;
+/** Note moyenne sur 5, arrondie au dixième (0 s'il n'y a aucune note). */
+export const moyenne = notes.length ? Math.round((notes.reduce((s, n) => s + n, 0) / notes.length) * 10) / 10 : 0;
