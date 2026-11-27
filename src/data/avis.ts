@@ -23,6 +23,7 @@ export const avis: Avis[] = [
     },
   },
   {
+    prenom: 'Richnel',
     contexte: { fr: 'Bissap et pastels', ru: 'Биссап и пастели' },
     texte: {
       fr: 'Le bissap et les pastels, ça me rappelle les goûts de chez nous. Ça fait vraiment plaisir de retrouver ces petites choses ici, surtout quand on est loin de la maison.',
