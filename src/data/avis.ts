@@ -16,6 +16,7 @@ export type Avis = {
 export const avis: Avis[] = [
   {
     prenom: 'Arsène F.',
+    note: 5,
     contexte: { fr: 'Crêpes au poulet, pastels, bissap', ru: 'Блины с курицей, пастели, биссап' },
     texte: {
       fr: 'J’ai beaucoup aimé les crêpes au poulet, c’était trop bon. Ce mélange de farine avec une légère touche de sucré-salé, avec cette sauce qui explose dans la bouche à chaque bouchée : un pur délice. Et le bissap était hyper rafraîchissant, comme d’habitude.',
@@ -24,6 +25,7 @@ export const avis: Avis[] = [
   },
   {
     prenom: 'Richnel',
+    note: 5,
     contexte: { fr: 'Bissap et pastels', ru: 'Биссап и пастели' },
     texte: {
       fr: 'Le bissap et les pastels, ça me rappelle les goûts de chez nous. Ça fait vraiment plaisir de retrouver ces petites choses ici, surtout quand on est loin de la maison.',
@@ -32,6 +34,7 @@ export const avis: Avis[] = [
   },
   {
     prenom: 'Hassan',
+    note: 5,
     texte: {
       fr: 'J’ai pas de mots aujourd’hui, tellement ça me donne la joie au cœur. Je m’attendais pas à ce que ce soit autant.',
       ru: 'Сегодня у меня нет слов — так радостно на душе. Не ожидал, что будет так много.',
@@ -39,6 +42,7 @@ export const avis: Avis[] = [
   },
   {
     prenom: 'Scaneur',
+    note: 5,
     contexte: { fr: 'Client fidèle', ru: 'Постоянный клиент' },
     texte: {
       fr: 'C’est toujours aussi délicieux ! Merci pour ces saveurs.',
@@ -52,3 +56,9 @@ export const avis: Avis[] = [
     texte: { fr: 'Oui, bien sûr.', ru: 'Да, конечно.' },
   },
 ];
+
+const notes = avis.map((a) => a.note).filter((n): n is number => typeof n === 'number');
+/** Nombre d'avis qui ont une note. */
+export const nombreNotes = notes.length;
+/** Note moyenne sur 5, arrondie au dixième (0 s'il n'y a aucune note). */
+export const moyenne = notes.length ? Math.round((notes.reduce((s, n) => s + n, 0) / notes.length) * 10) / 10 : 0;

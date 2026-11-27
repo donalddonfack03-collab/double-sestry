@@ -1,0 +1,16 @@
+---
+// Cinq étoiles, pleines jusqu'à la note (arrondie à l'entier), lisibles par les lecteurs d'écran.
+import type { Lang } from '../i18n/ui';
+interface Props { note: number; lang: Lang; taille?: string }
+const { note, lang, taille = '1.1rem' } = Astro.props;
+const pleines = Math.round(note);
+const label = lang === 'fr' ? `${String(note).replace('.', ',')} sur 5` : `${String(note).replace('.', ',')} из 5`;
+---
+<span class="etoiles" role="img" aria-label={label} style={`font-size:${taille}`}>
+  {Array.from({ length: 5 }, (_, i) => <span aria-hidden="true" class={i < pleines ? 'on' : 'off'}>★</span>)}
+</span>
+<style>
+  .etoiles { display: inline-flex; gap: 0.08em; line-height: 1; }
+  .on { color: var(--miel); }
+  .off { color: color-mix(in srgb, var(--muted) 35%, transparent); }
+</style>

@@ -14,6 +14,7 @@ export const ui = {
   'nav.accueil': { fr: 'Accueil', ru: 'Главная' },
   'nav.carte': { fr: 'La carte', ru: 'Меню' },
   'nav.histoire': { fr: 'Notre histoire', ru: 'Наша история' },
+  'nav.avis': { fr: 'Avis', ru: 'Отзывы' },
   'nav.commander': { fr: 'Commander', ru: 'Заказать' },
   'nav.infos': { fr: 'Retrait & infos', ru: 'Выдача и инфо' },
   'cta.whatsapp': { fr: 'Commander sur WhatsApp', ru: 'Заказать в WhatsApp' },

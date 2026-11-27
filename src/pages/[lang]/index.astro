@@ -6,7 +6,9 @@ import { langPaths, t, path, type Lang } from '../../i18n/ui';
 import { marque, retrait, lienWhatsApp, messageBox, parcours, reponse } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
-import { avis } from '../../data/avis';
+import { avis, moyenne, nombreNotes } from '../../data/avis';
+import AvisListe from '../../components/AvisListe.astro';
+import Etoiles from '../../components/Etoiles.astro';
 import { etablissement } from '../../lib/schema';
 import table from '../../assets/photos/table.jpg';
 import sac from '../../assets/photos/sac.jpg';
@@ -120,26 +122,17 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     <div class="avis__head">
       <p class="eyebrow">{fr ? 'Ils ont goûté' : 'Уже попробовали'}</p>
       <h2>{fr ? 'Ce qu’ils nous ont écrit.' : 'Что нам написали.'}</h2>
+      {nombreNotes > 0 && (
+        <p class="avis__score"><Etoiles note={moyenne} lang={lang} taille="1.3rem" /> <b>{String(moyenne).replace('.', ',')}/5</b></p>
+      )}
       <p class="avis__note">
         {fr
           ? 'Extraits de messages reçus sur WhatsApp après livraison.'
           : 'Отрывки из сообщений в WhatsApp после получения заказа. Перевод с французского.'}
       </p>
     </div>
-    <ul class="avis__liste">
-      {avis.map((a) => (
-        <li class="avis__carte">
-          {a.note && (
-            <p class="avis__etoiles" aria-label={fr ? `${a.note} sur 5` : `${a.note} из 5`}>{'★'.repeat(a.note)}</p>
-          )}
-          <blockquote lang={fr ? 'fr' : 'ru'}><p>« {a.texte[lang]} »</p></blockquote>
-          <p class="avis__qui">
-            {a.prenom && <strong>{a.prenom}</strong>}
-            {a.contexte && <span>{a.contexte[lang]}</span>}
-          </p>
-        </li>
-      ))}
-    </ul>
+    <AvisListe avis={avis.slice(0, 3)} lang={lang} />
+    <a class="more" href={path(lang, 'avis')}>{fr ? `Voir tous les avis (${avis.length}) →` : `Все отзывы (${avis.length}) →`}</a>
   </section>
 
   <!-- 4 ter. Anniversaires -->
@@ -282,13 +275,8 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   .avis__head { display: grid; gap: var(--space-3); max-width: 46ch; }
   .avis h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.4rem); }
   .avis__note { color: var(--muted); }
-  .avis__liste { list-style: none; margin: 0; padding: 0; columns: 3 300px; column-gap: var(--space-5); }
-  .avis__carte { break-inside: avoid; margin: 0 0 var(--space-5); display: grid; gap: var(--space-3); background: var(--surface); border-radius: 22px; padding: var(--space-5); border-top: 4px solid var(--miel); }
-  .avis__carte blockquote { margin: 0; }
-  .avis__carte blockquote p { font-family: var(--font-display); color: var(--choco); font-size: 1.12rem; line-height: 1.5; }
-  .avis__etoiles { color: var(--miel); letter-spacing: 0.15em; font-size: 1.1rem; }
-  .avis__qui { display: grid; gap: 2px; font-size: 0.92rem; }
-  .avis__qui span { color: var(--muted); }
+  .avis .more { justify-self: start; margin-top: calc(-1 * var(--space-3)); }
+  .avis__score { display: flex; align-items: center; gap: var(--space-2); color: var(--choco); }
   .experience { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
   .experience__pic { aspect-ratio: 4 / 5; border-radius: 28px; overflow: hidden; max-height: 640px; }
   .experience__pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 78%; }
