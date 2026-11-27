@@ -88,7 +88,10 @@ export async function renderOg(o: OgOptions): Promise<Buffer> {
     h('div', { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: 720, padding: '56px 0 56px 72px' }, [
       h('div', { display: 'flex', alignItems: 'center', gap: 16 }, [
         h('img', { width: 64, height: 61 }, undefined, { src: mark }),
-        h('div', { fontFamily: 'Young Serif', fontSize: 34 }, 'Double Sestry'),
+        h('div', { display: 'flex', flexDirection: 'column', gap: 2 }, [
+          h('div', { fontFamily: 'Young Serif', fontSize: 34 }, 'Double Sestry'),
+          h('div', { fontSize: 17, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: C.mielInk }, 'La Maison des Douceurs'),
+        ]),
       ]),
       h('div', { display: 'flex', flexDirection: 'column', gap: 18 }, [
         h('div', { fontSize: 22, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', color: C.mielInk }, o.eyebrow),

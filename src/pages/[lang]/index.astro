@@ -26,7 +26,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
 ---
 <Base
   lang={lang}
-  title="Double Sestry"
+  title={marque.nomComplet}
   jsonLd={etablissement(lang, Astro.site!)}
   description={fr
     ? 'Crêpes, pastels et bissap faits maison par deux sœurs de Pointe-Noire, à Briansk. Le week-end, sur commande, retrait devant la cité.'
@@ -38,7 +38,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
       <Image src={table} alt={fr ? 'Plateau de crêpes salées, de pastels et de crêpes au chocolat avec du bissap' : 'Поднос: солёные блины, пастели, шоколадные блины и биссап'} widths={[480, 720, 1000, 1254]} sizes="(max-width: 860px) 100vw, 50vw" loading="eager" fetchpriority="high" format="webp" quality={82} />
     </div>
     <div class="hero__text">
-      <p class="hero__eyebrow">{fr ? 'La maison des douceurs' : 'Дом вкусных радостей'} · {marque.ville[lang]}</p>
+      <p class="hero__eyebrow">{fr ? 'Fait maison' : 'Домашняя кухня'} · {marque.ville[lang]}</p>
       <h1>
         {fr ? 'La semaine est chargée.' : 'Будни трудные.'}
         <em>{fr ? <>Le <span class="nowrap">week-end</span> sera doux.</> : 'Выходные\u00a0— вкусные.'}</em>

@@ -12,6 +12,7 @@ export function etablissement(lang: Lang, site: URL) {
     '@type': 'FoodEstablishment',
     '@id': new URL(withBase('#double-sestry'), site).href,
     name: marque.nom,
+    alternateName: marque.nomComplet,
     description: marque.slogan[lang],
     url: new URL(path(lang), site).href,
     image: new URL(withBase(`og/${lang}.png`), site).href,

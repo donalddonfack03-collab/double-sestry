@@ -3,6 +3,10 @@ import type { T } from '../i18n/ui';
 
 export const marque = {
   nom: 'Double Sestry',
+  /** La signature, écrite en français dans les deux langues (c'est un nom de marque). */
+  signature: 'La Maison des Douceurs',
+  /** Le nom complet du site. */
+  nomComplet: 'Double Sestry · La Maison des Douceurs',
   ville: { fr: 'Briansk', ru: 'Брянск' } as T,
   slogan: {
     fr: 'Cuisiné par deux sœurs. Le week-end, sur commande.',

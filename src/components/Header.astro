@@ -1,7 +1,7 @@
 ---
 import Mark from './Mark.astro';
 import { langs, t, path, switchLang, type Lang } from '../i18n/ui';
-import { retrait } from '../data/infos';
+import { retrait, marque } from '../data/infos';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -29,9 +29,9 @@ const isCurrent = (slug: string) =>
 </div>
 <header class="site-header">
   <div class="wrap bar">
-    <a class="brand" href={path(lang)} aria-label="Double Sestry">
+    <a class="brand" href={path(lang)} aria-label={marque.nomComplet}>
       <Mark size="40px" />
-      <span>Double Sestry</span>
+      <span class="brand__txt"><span>Double Sestry</span><small>{marque.signature}</small></span>
     </a>
     <button class="burger" type="button" aria-expanded="false" aria-controls="menu" aria-label={fr ? 'Menu' : 'Меню'}>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
@@ -104,7 +104,9 @@ const isCurrent = (slug: string) =>
   }
   .bar { display: flex; align-items: center; gap: var(--space-4); padding-block: 10px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-  .brand span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .brand__txt { display: grid; line-height: 1.05; }
+  .brand__txt span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .brand__txt small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--miel-ink); margin-top: 3px; }
   .nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
   .nav a[aria-current='page'] { background: var(--alveole); color: var(--choco); }
   .short { display: none; }
@@ -133,7 +135,8 @@ const isCurrent = (slug: string) =>
   @media (max-width: 860px) {
     .bar { gap: 8px; flex-wrap: wrap; padding-block: 8px; }
     .brand { margin-right: auto; min-width: 0; gap: 8px; }
-    .brand span { font-size: 1.02rem; white-space: nowrap; }
+    .brand__txt span { font-size: 1.02rem; white-space: nowrap; }
+    .brand__txt small { font-size: 0.66rem; letter-spacing: 0; text-transform: none; white-space: nowrap; }
     /* Un seul bouton : celui de l'autre langue. */
     .lang a { min-width: 44px; min-height: 42px; display: grid; place-items: center; padding: 0; }
     .lang a[aria-current='true'] { display: none; }
@@ -150,7 +153,7 @@ const isCurrent = (slug: string) =>
     .announce { font-size: 0.74rem; }
     .announce .wrap { padding-block: 6px; }
   }
-  @media (max-width: 359px) { .brand span { display: none; } }
+  @media (max-width: 359px) { .brand__txt { display: none; } }
   /* Sans JavaScript, le menu reste visible. */
   @media (max-width: 860px) and (scripting: none) { .nav { display: flex; } .burger { display: none; } }
 </style>
