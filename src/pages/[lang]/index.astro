@@ -3,12 +3,13 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Tuile from '../../components/Tuile.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
-import { marque, retrait, lienWhatsApp, messageBox, parcours } from '../../data/infos';
+import { marque, retrait, lienWhatsApp, messageBox, parcours, reponse } from '../../data/infos';
 import { trouver, type Produit } from '../../data/produits';
 import { accroche, promesses } from '../../data/histoire';
 import { etablissement } from '../../lib/schema';
 import table from '../../assets/photos/table.jpg';
 import sac from '../../assets/photos/sac.jpg';
+import trio from '../../assets/photos/trio.jpg';
 import boxBurgers from '../../assets/photos/box-burgers.jpg';
 import boxMix from '../../assets/photos/box-mix.jpg';
 import gateauCitron from '../../assets/photos/gateau-citron.jpg';
@@ -21,6 +22,21 @@ const formules = ['grande-faim', 'douceur-complete', 'mini-douceur'].map(trouver
 const badges: Record<string, { fr: string; ru: string }> = {
   'la-sestry': { fr: 'Signature', ru: 'Фирменный' },
 };
+
+// L'expérience client : les trois promesses de la maison, et une vraie personne au bout du fil.
+const [frais, pareil, prenom] = promesses;
+const experience = [
+  prenom,
+  frais,
+  pareil,
+  {
+    titre: { fr: 'Une vraie personne vous répond', ru: 'Вам отвечает живой человек' },
+    texte: {
+      fr: `Ria ou Emma, sur WhatsApp, en français ou en russe. ${reponse.fr}`,
+      ru: `Рия или Эмма — в WhatsApp, по-русски или по-французски. ${reponse.ru}`,
+    },
+  },
+];
 
 const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
 ---
@@ -77,6 +93,27 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     </div>
   </section>
 
+  <!-- 4. L'expérience client -->
+  <section class="wrap section experience" id="experience">
+    <div class="experience__pic">
+      <Image src={sac} alt={fr ? 'Deux sacs de commande avec « Bon appétit » et le prénom du client écrits à la main' : 'Два пакета с заказами, на которых от руки написано «Приятного аппетита» и имя клиента'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={80} />
+    </div>
+    <div class="experience__txt">
+      <p class="eyebrow">{fr ? 'Commander chez nous' : 'Заказ у нас'}</p>
+      <h2>{fr ? 'Une commande préparée comme pour la famille.' : 'Заказ, приготовленный как для своих.'}</h2>
+      <p class="experience__lead">
+        {fr
+          ? 'Pas de stock, pas de vitrine : chaque commande est préparée pour une personne, avec son prénom.'
+          : 'Никаких запасов и витрин: каждый заказ готовится для конкретного человека — с его именем.'}
+      </p>
+      <ul class="experience__liste">
+        {experience.map((e) => (
+          <li><h3>{e.titre[lang]}</h3><p>{e.texte[lang]}</p></li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
   <!-- 4 bis. Anniversaires -->
   <section class="wrap section" id="anniversaires">
     <div class="anniv">
@@ -125,7 +162,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   <section class="histoire">
     <div class="wrap histoire__grid">
       <div class="histoire__pic">
-        <Image src={sac} alt={fr ? 'Une des sœurs tient deux sacs de commande avec le prénom du client écrit à la main' : 'Одна из сестёр держит два пакета с заказами, на которых от руки написано имя клиента'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={80} />
+        <Image src={trio} alt={fr ? 'Crêpes La Sestry, La Choco, pastels et un verre de bissap sur la nappe de la maison' : 'Блины La Sestry, La Choco, пастели и стакан биссапа на домашней скатерти'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={80} />
       </div>
       <div class="histoire__txt">
         <p class="eyebrow">{t(lang, 'nav.histoire')}</p>
@@ -134,16 +171,6 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
         <a class="btn btn--ghost" href={path(lang, 'histoire')}>{fr ? 'Lire leur histoire' : 'Читать их историю'}</a>
       </div>
     </div>
-  </section>
-
-  <!-- 7. Les promesses -->
-  <section class="wrap section promesses">
-    {promesses.map((p) => (
-      <div>
-        <h3>{p.titre[lang]}</h3>
-        <p>{p.texte[lang]}</p>
-      </div>
-    ))}
   </section>
 
   <!-- 8. Dernier appel -->
@@ -223,10 +250,16 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   .histoire__txt p { font-size: var(--step-1); line-height: 1.55; max-width: 46ch; }
 
   /* 7. Promesses */
-  .promesses { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 4vw, 48px); }
-  .promesses > div { display: grid; gap: var(--space-3); align-content: start; border-top: 4px solid var(--miel); padding-top: var(--space-4); }
-  .promesses h3 { font-size: var(--step-2); }
-  .promesses p { color: var(--muted); }
+  .experience { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(28px, 5vw, 72px); align-items: center; }
+  .experience__pic { aspect-ratio: 4 / 5; border-radius: 28px; overflow: hidden; max-height: 640px; }
+  .experience__pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 78%; }
+  .experience__txt { display: grid; gap: var(--space-4); }
+  .experience h2 { font-size: clamp(2rem, 1.3rem + 2.4vw, 3.4rem); }
+  .experience__lead { font-size: var(--step-1); line-height: 1.5; max-width: 44ch; }
+  .experience__liste { list-style: none; margin: var(--space-3) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) clamp(20px, 3vw, 40px); }
+  .experience__liste li { display: grid; gap: var(--space-2); align-content: start; border-top: 4px solid var(--miel); padding-top: var(--space-3); }
+  .experience__liste h3 { font-size: var(--step-1); }
+  .experience__liste p { color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 
   /* 8. Dernier appel */
   .band { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; justify-content: space-between; background: #4a1a0f; color: #fef3e2; border-radius: 28px; padding: clamp(28px, 5vw, 64px); }
@@ -254,7 +287,8 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     .hero__link, .hero__facts { display: none; }
     .histoire__grid, .anniv { grid-template-columns: minmax(0, 1fr); }
     .histoire__pic { aspect-ratio: 4 / 4.2; }
-    .promesses { grid-template-columns: minmax(0, 1fr); }
+    .experience { grid-template-columns: minmax(0, 1fr); }
+    .experience__pic { aspect-ratio: 4 / 3; }
   }
   @media (max-width: 860px) and (max-height: 620px) {
     /* Très petits écrans : on garde la photo, le titre et le bouton. */
@@ -269,5 +303,5 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     .formules { grid-template-columns: minmax(0, 1fr); }
     .formules > :global(:first-child) { grid-column: auto; }
   }
-  @media (max-width: 520px) { .etapes { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 520px) { .etapes, .experience__liste { grid-template-columns: minmax(0, 1fr); } }
 </style>
