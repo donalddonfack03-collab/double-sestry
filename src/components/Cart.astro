@@ -29,6 +29,7 @@ const textes = fr
       retirer: 'Retirer',
       auLieuDe: 'au lieu de',
       prochain: 'week-end prochain',
+      siPossible: 'ce week-end si possible, sinon le suivant',
       moins: 'Un de moins',
       plus: 'Un de plus',
     }
@@ -43,6 +44,7 @@ const textes = fr
       retirer: 'Убрать',
       auLieuDe: 'вместо',
       prochain: 'следующие выходные',
+      siPossible: 'на эти выходные, если возможно, иначе на следующие',
       moins: 'На один меньше',
       plus: 'На один больше',
     };
@@ -69,8 +71,8 @@ const textes = fr
     <div class="foot" data-cart-foot>
       <p class="closed si-clos">
         {fr
-          ? 'Les commandes de ce week-end sont closes : votre demande concerne le week-end prochain.'
-          : 'Приём заказов на эти выходные закрыт: ваша заявка — на следующие.'}
+          ? 'La clôture de vendredi 20 h 30 est passée. Pour ce week-end, c’est selon disponibilité : on vous le confirme sur WhatsApp.'
+          : 'Приём заказов закрылся в пятницу в 20:30. На эти выходные — по наличию: подтвердим в WhatsApp.'}
       </p>
       <div class="total"><span>{textes.total}</span><b data-cart-total>0 ₽</b></div>
       <fieldset class="day">
@@ -115,7 +117,7 @@ const textes = fr
 
 <script>
   import { normaliser, detailLigne, totalPanier, indexUnite, type Ligne } from '../lib/panier';
-  import { commandesCloses } from '../lib/semaine';
+  import { commandesCloses, estDimanche } from '../lib/semaine';
   const data = JSON.parse(document.getElementById('ds-catalogue')!.textContent!);
   const { catalogue, textes, whatsapp } = data;
   const KEY = 'ds-panier';
@@ -137,7 +139,9 @@ const textes = fr
 
   function message() {
     const choisi = ($<HTMLInputElement>('input[name="ds-jour"]:checked')?.value === 'dimanche') ? textes.dimanche : textes.samedi;
-    const jour = commandesCloses() ? `${choisi} (${textes.prochain})` : choisi;
+    // Après la clôture, la dernière minute reste possible ; mais le dimanche, le samedi est déjà passé.
+    const mention = choisi === textes.samedi && estDimanche() ? textes.prochain : textes.siPossible;
+    const jour = commandesCloses() ? `${choisi} (${mention})` : choisi;
     const prenom = $<HTMLInputElement>('input[name="ds-prenom"]').value.trim();
     const lignes = panier.map((l) => {
       const p = catalogue[l.s]; const d = detailLigne(catalogue, l);

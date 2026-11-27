@@ -222,7 +222,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
     <div class="band">
       <div>
         <h2 class="si-ouvert">{fr ? `Commandes ouvertes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы принимаем до ${retrait.finCommandes.ru}.`}</h2>
-        <h2 class="si-clos">{fr ? `Commandes closes pour ce week-end. Prochaine clôture : ${retrait.finCommandes.fr}.` : 'Приём заказов на эти выходные закрыт. Следующий срок: пятница, 20:30.'}</h2>
+        <h2 class="si-clos">{fr ? 'Une envie de dernière minute ? Écrivez-nous, selon disponibilité.' : 'Хотите заказать в последний момент? Напишите нам — по наличию.'}</h2>
         <p>{retrait.prevenir[lang]}</p>
       </div>
       <WhatsAppButton lang={lang} variant="miel" />
