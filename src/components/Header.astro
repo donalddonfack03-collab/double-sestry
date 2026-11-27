@@ -19,9 +19,12 @@ const isCurrent = (slug: string) =>
 <div class="announce">
   <div class="wrap">
     <span class="pulse" aria-hidden="true"></span>
-    <span>{fr
+    <span class="si-ouvert">{fr
       ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b> · Retrait samedi et dimanche</>
       : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b> · Выдача в субботу и воскресенье</>}</span>
+    <span class="si-clos">{fr
+      ? <>Commandes closes pour ce week-end · Prochaine clôture : <b>vendredi 20 h 30</b></>
+      : <>Приём заказов на эти выходные закрыт · Следующий срок: <b>пятница, 20:30</b></>}</span>
   </div>
 </div>
 <header class="site-header">
@@ -48,7 +51,17 @@ const isCurrent = (slug: string) =>
   </div>
 </header>
 
+<script>
+  import { commandesCloses } from '../lib/semaine';
+  // Bascule les textes « ouvert / clos » selon l'heure de Briansk, y compris sur une page restée ouverte.
+  const actualiser = () => { document.documentElement.dataset.commandes = commandesCloses() ? 'closes' : 'ouvertes'; };
+  actualiser();
+  setInterval(actualiser, 30_000);
+  document.addEventListener('visibilitychange', actualiser);
+</script>
+
 <style>
+  :global(html[data-commandes='closes']) .pulse { background: var(--miel); animation: none; }
   .skip { position: absolute; left: -9999px; }
   .skip:focus { left: 12px; top: 12px; z-index: 50; background: var(--choco); color: var(--on-choco); padding: 8px 14px; border-radius: 6px; }
   .announce { background: var(--choco); color: var(--on-choco); font-size: 0.86rem; text-align: center; }

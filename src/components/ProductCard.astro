@@ -59,9 +59,14 @@ const autres = unite ? p.formats.filter((f, i) => i !== addIdx && f.prix !== nul
       <p class="packs">{autres.map((f) => (fr ? `${f.libelle.fr} : ${prix(f.prix!)}` : `${f.libelle.ru} — ${prix(f.prix!)}`)).join(' · ')}</p>
     )}
     {addIdx >= 0 ? (
-      <button class="add" type="button" data-add={p.slug} data-f={addIdx} aria-label={`${fr ? 'Ajouter au panier' : 'В корзину'} : ${p.nom[lang]}`}>
+      <button
+        class="add"
+        type="button"
+        {...(p.choixObligatoire ? { 'data-choose': p.slug } : { 'data-add': p.slug, 'data-f': addIdx })}
+        aria-label={`${p.choixObligatoire ? (fr ? 'Choisir la version' : 'Выбрать вариант') : (fr ? 'Ajouter au panier' : 'В корзину')} : ${p.nom[lang]}`}
+      >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2.2l2.1 10.2a1.6 1.6 0 0 0 1.6 1.3h8.4a1.6 1.6 0 0 0 1.6-1.2L20.5 8H6.1" /><circle cx="10" cy="19.5" r="1.3" /><circle cx="17" cy="19.5" r="1.3" /></svg>
-        <span>{fr ? 'Ajouter' : 'В корзину'}</span>
+        <span>{p.choixObligatoire ? (fr ? 'Choisir' : 'Выбрать') : (fr ? 'Ajouter' : 'В корзину')}</span>
       </button>
     ) : (
       <a class="add add--ghost" href={href}>{fr ? 'Demander' : 'Узнать'}</a>

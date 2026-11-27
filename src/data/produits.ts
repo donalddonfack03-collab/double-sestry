@@ -24,6 +24,8 @@ export interface Format {
   prix: number | null;
   /** Prix barré (formules : total des produits achetés séparément). */
   prixBarre?: number;
+  /** Nombre de pièces (1 pour l'unité). Le panier applique alors le tarif paquet le moins cher. */
+  pieces?: number;
 }
 
 export interface Produit {
@@ -47,6 +49,8 @@ export interface Produit {
   photoAlt?: T;
   /** Prix de départ seulement : le prix final se fixe sur WhatsApp (pas d'ajout au panier). */
   surMesure?: boolean;
+  /** Les formats sont des versions différentes : le client doit choisir avant l'ajout au panier. */
+  choixObligatoire?: boolean;
   /** Pour les formules : les slugs des produits inclus. */
   inclus?: string[];
 }
@@ -66,9 +70,9 @@ export const produits: Produit[] = [
       ru: 'Тонкий блин с острой домашней курицей, ложкой соуса и ломтиком чеддера. Мы складываем его конвертом и ещё раз обжариваем, начиная со шва, чтобы он не раскрылся. Сыр плавится внутри, а блин остаётся мягким.',
     },
     formats: [
-      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 150 },
-      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 480 },
-      { libelle: { fr: 'paquet de 6', ru: '6 шт.' }, prix: 690 },
+      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 150, pieces: 1 },
+      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 480, pieces: 4 },
+      { libelle: { fr: 'paquet de 6', ru: '6 шт.' }, prix: 690, pieces: 6 },
     ],
     contient: ['gluten', 'lait', 'oeufs', 'moutarde'],
     traces: ['noisette'],
@@ -91,9 +95,9 @@ export const produits: Produit[] = [
       ru: 'Блин к чаю. Намазываем шоколадно-ореховой пастой, сворачиваем, даём застыть в холодильнике и режем на рулетики. Вкусно и холодным, и тёплым.',
     },
     formats: [
-      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 120 },
-      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 400 },
-      { libelle: { fr: 'paquet de 6', ru: '6 шт.' }, prix: 560 },
+      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 120, pieces: 1 },
+      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 400, pieces: 4 },
+      { libelle: { fr: 'paquet de 6', ru: '6 шт.' }, prix: 560, pieces: 6 },
     ],
     contient: ['gluten', 'lait', 'oeufs', 'noisette', 'soja'],
     traces: [],
@@ -113,8 +117,8 @@ export const produits: Produit[] = [
       ru: 'Блин, который время от времени меняется. В этом месяце — крем Lotus: вкус карамели и корицы, как у печенья к кофе. О новом вкусе мы сообщаем в понедельник вместе с меню.',
     },
     formats: [
-      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 200 },
-      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 560 },
+      { libelle: { fr: 'la crêpe', ru: '1 шт.' }, prix: 200, pieces: 1 },
+      { libelle: { fr: 'paquet de 4', ru: '4 шт.' }, prix: 560, pieces: 4 },
     ],
     contient: ['gluten', 'lait', 'oeufs', 'soja'],
     traces: ['noisette'],
@@ -220,6 +224,7 @@ export const produits: Produit[] = [
     traces: [],
     conservation: deuxJours,
     inclus: ['la-choco', 'la-sestry', 'bissap'],
+    choixObligatoire: true,
   },
   {
     slug: 'gateaux',

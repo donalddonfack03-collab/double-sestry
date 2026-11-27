@@ -61,15 +61,15 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
       </h1>
       <p class="lead">
         {fr
-          ? 'Crêpes, pastels et bissap préparés le jour même, en petites quantités, avec la recette de leur maman.'
-          : 'Блины, пастели и биссап в день выдачи, небольшими партиями, по маминому рецепту.'}
+          ? 'Crêpes, pastels et bissap préparés sur commande pour le week-end, en petites quantités, avec la recette de leur maman.'
+          : 'Блины, пастели и биссап под заказ на выходные, небольшими партиями, по маминому рецепту.'}
       </p>
       <div class="cta">
         <WhatsAppButton lang={lang} variant="main" />
         <a class="btn btn--ghost" href={path(lang, 'carte')}>{t(lang, 'cta.voirCarte')}</a>
       </div>
       <ul class="trust">
-        <li>{fr ? 'Fait le jour même' : 'В день выдачи'}</li>
+        <li>{fr ? 'Fait sur commande' : 'Под заказ'}</li>
         <li>{fr ? 'Recette de maman' : 'Мамин рецепт'}</li>
         <li>{fr ? 'Dès 120 ₽ la crêpe' : 'От 120 ₽ за блин'}</li>
       </ul>
@@ -221,7 +221,8 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   <section class="wrap">
     <div class="band">
       <div>
-        <h2>{fr ? `Commandes ouvertes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы принимаем до ${retrait.finCommandes.ru}.`}</h2>
+        <h2 class="si-ouvert">{fr ? `Commandes ouvertes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы принимаем до ${retrait.finCommandes.ru}.`}</h2>
+        <h2 class="si-clos">{fr ? `Commandes closes pour ce week-end. Prochaine clôture : ${retrait.finCommandes.fr}.` : 'Приём заказов на эти выходные закрыт. Следующий срок: пятница, 20:30.'}</h2>
         <p>{retrait.prevenir[lang]}</p>
       </div>
       <WhatsAppButton lang={lang} variant="miel" />
