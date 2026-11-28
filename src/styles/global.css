@@ -1,8 +1,7 @@
 /* Styles de base et utilitaires partagés. Les composants gardent leurs propres styles. */
-@import '@fontsource/young-serif/400.css';
-@import '@fontsource-variable/figtree';
-@import '@fontsource-variable/golos-text';
-@import '@fontsource-variable/lora';
+@import '@fontsource-variable/playfair-display';
+@import '@fontsource-variable/playfair-display/wght-italic.css';
+@import '@fontsource-variable/montserrat';
 @import './tokens.css';
 
 *,
