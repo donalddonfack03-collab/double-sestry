@@ -1,0 +1,28 @@
+---
+// Moyen de paiement accepté : СБП (Система быстрых платежей), par numéro de téléphone.
+// Badge neutre aux couleurs du site (pas le logo officiel de la NSPK).
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang; compact?: boolean }
+const { lang, compact = false } = Astro.props;
+const fr = lang === 'fr';
+---
+<p class:list={['paiement', { compact }]}>
+  <span class="badge" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5" /><path d="M10 18.5h4" /><path d="M9.5 9.5l2 2 3.5-4" /></svg>
+    СБП
+  </span>
+  <span class="txt">
+    <strong>{fr ? 'Paiement par СБП' : 'Оплата через СБП'}</strong>
+    {compact && <span>{fr ? 'Vers Sber ou Alfa-Bank' : 'На Сбербанк или Альфа-Банк'}</span>}
+    {!compact && <span>{fr ? 'Par numéro de téléphone, depuis n’importe quelle banque russe. Vous recevez avec le total le numéro et la banque à choisir : Sber ou Alfa-Bank.' : 'По номеру телефона, из любого российского банка. Вместе с суммой пришлём номер и банк получателя: Сбербанк или Альфа-Банк.'}</span>}
+  </span>
+</p>
+<style>
+  .paiement { display: flex; align-items: center; gap: var(--space-3); margin: 0; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; flex: none; padding: 6px 12px 6px 9px; border-radius: 10px; background: var(--alveole); color: var(--choco); font-weight: 850; letter-spacing: 0.04em; border: 1.5px solid color-mix(in srgb, var(--choco) 22%, transparent); }
+  .badge svg { width: 18px; height: 18px; }
+  .txt { display: grid; gap: 2px; line-height: 1.35; }
+  .txt span { color: var(--muted); font-size: 0.92rem; }
+  .compact .badge { padding: 4px 10px 4px 7px; font-size: 0.85rem; }
+  .compact .txt strong { font-weight: 700; font-size: 0.92rem; }
+</style>

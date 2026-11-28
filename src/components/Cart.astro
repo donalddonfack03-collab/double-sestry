@@ -1,6 +1,7 @@
 ---
+import Paiement from './Paiement.astro';
 // Le panier. Le client ajoute des produits, voit le total, puis envoie la commande toute rédigée sur WhatsApp.
-// Pas de paiement en ligne : la confirmation se fait sur WhatsApp, puis le client paie par virement.
+// Pas de paiement en ligne : la confirmation se fait sur WhatsApp, puis le client paie par СБП.
 // Le contenu du panier est gardé dans le navigateur du client (localStorage), rien n'est envoyé ailleurs.
 import { enVente } from '../data/produits';
 import { contact, retrait } from '../data/infos';
@@ -89,10 +90,11 @@ const textes = fr
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.6-5.4A8.4 8.4 0 1 1 21 11.5z" /></svg>
         {fr ? 'Envoyer sur WhatsApp' : 'Отправить в WhatsApp'}
       </a>
+      <Paiement lang={lang} compact />
       <p class="hint">
         {fr
-          ? 'Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par virement pour valider.'
-          : 'Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата переводом подтверждает заказ.'}
+          ? 'Rien n’est payé ici. On vous répond sous 2 h avec le total, puis vous payez par СБП pour valider.'
+          : 'Здесь ничего не оплачивается. В течение 2 часов пришлём сумму, затем оплата через СБП подтверждает заказ.'}
         <span class="si-ouvert">{fr ? `Commandes jusqu’au ${retrait.finCommandes.fr}.` : `Заказы до ${retrait.finCommandes.ru}.`}</span>
       </p>
     </div>

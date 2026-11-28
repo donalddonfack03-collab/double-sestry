@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import WeekStrip from '../../components/WeekStrip.astro';
+import Paiement from '../../components/Paiement.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, colon, type Lang } from '../../i18n/ui';
 import { contact, retrait, paiement, livraison, parcours, reponse } from '../../data/infos';
@@ -34,7 +35,7 @@ const faq = [
   },
   {
     q: { fr: 'Pourquoi payer au moment de la confirmation ?', ru: 'Почему оплата при подтверждении?' },
-    r: { fr: 'On cuisine seulement ce qui est commandé, avec des produits achetés pour vous. Le virement valide la commande et nous permet de faire les courses le vendredi soir.', ru: 'Мы готовим только то, что заказано, из продуктов, купленных под ваш заказ. Перевод подтверждает заказ, и мы можем закупиться в пятницу вечером.' },
+    r: { fr: 'On cuisine seulement ce qui est commandé, avec des produits achetés pour vous. Le paiement par СБП valide la commande et nous permet de faire les courses le vendredi soir.', ru: 'Мы готовим только то, что заказано, из продуктов, купленных под ваш заказ. Оплата через СБП подтверждает заказ, и мы можем закупиться в пятницу вечером.' },
   },
   {
     q: { fr: 'J’ai commandé, quand est-ce qu’on me répond ?', ru: 'Я заказал(а). Когда мне ответят?' },
@@ -46,8 +47,8 @@ const faq = [
   lang={lang}
   title={t(lang, 'nav.commander')}
   description={fr
-    ? 'Commandez jusqu’au vendredi 20 h 30, payez par virement à la confirmation, récupérez le week-end devant la cité, Bezhitskaya 16 b à Briansk.'
-    : 'Заказ до пятницы, 20:30, оплата переводом при подтверждении, выдача на выходных у общежития: ул. Бежицкая, 16Б, Брянск.'}
+    ? 'Commandez jusqu’au vendredi 20 h 30, payez par СБП à la confirmation, récupérez le week-end devant la cité, Bezhitskaya 16 b à Briansk.'
+    : 'Заказ до пятницы, 20:30, оплата через СБП при подтверждении, выдача на выходных у общежития: ул. Бежицкая, 16Б, Брянск.'}
 >
   <header class="wrap intro">
     <p class="eyebrow">{t(lang, 'nav.commander')}</p>
@@ -84,6 +85,7 @@ const faq = [
         <button type="button" class="copy" data-copy={`+${contact.whatsapp}`} data-done={fr ? 'Copié' : 'Скопировано'}>{fr ? 'Copier' : 'Копировать'}</button>
       </div>
       <div class="btns"><a class="btn btn--main" href={path(lang, 'carte')}>{fr ? 'Choisir mes douceurs' : 'Выбрать вкусное'}</a><WhatsAppButton lang={lang} variant="ghost" label={fr ? 'Poser une question' : 'Задать вопрос'} /></div>
+      <Paiement lang={lang} />
       <dl class="pay">
         <div><dt>{fr ? 'Paiement' : 'Оплата'}{colon(lang)}</dt><dd>{paiement[lang]}</dd></div>
         <div><dt>{fr ? 'Livraison' : 'Доставка'}{colon(lang)}</dt><dd>{livraison[lang]}</dd></div>

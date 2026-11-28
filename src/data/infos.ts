@@ -55,13 +55,13 @@ export const retrait = {
 };
 
 export const paiement: T = {
-  fr: 'Par virement, au moment de la confirmation : c’est le paiement qui valide la commande.',
-  ru: 'Переводом при подтверждении заказа: заказ считается принятым после оплаты.',
+  fr: 'Par СБП (virement par numéro de téléphone) vers Sber ou Alfa-Bank, au moment de la confirmation : c’est le paiement qui valide la commande.',
+  ru: 'Через СБП (перевод по номеру телефона) на Сбербанк или Альфа-Банк при подтверждении заказа: заказ считается принятым после оплаты.',
 };
 
 export const livraison: T = {
-  fr: 'Vous commandez un coursier (Yandex Go) qui passe devant la cité. Paiement par virement avant l’envoi.',
-  ru: 'Вы вызываете курьера (Яндекс Go) к общежитию. Оплата переводом до отправки.',
+  fr: 'Vous commandez un coursier (Yandex Go) qui passe devant la cité. Paiement par СБП avant l’envoi.',
+  ru: 'Вы вызываете курьера (Яндекс Go) к общежитию. Оплата через СБП до отправки.',
 };
 
 /** Message pré-rempli pour composer une box anniversaire sur WhatsApp. */
@@ -85,8 +85,8 @@ export const parcours: { titre: T; texte: T }[] = [
   {
     titre: { fr: 'On confirme, vous payez', ru: 'Мы подтверждаем, вы оплачиваете' },
     texte: {
-      fr: 'On vous répond sous 2 h avec le total. Vous payez par virement : votre commande est validée.',
-      ru: 'В течение 2 часов присылаем сумму. Вы оплачиваете переводом — заказ принят.',
+      fr: 'On vous répond sous 2 h avec le total. Vous payez par СБП : votre commande est validée.',
+      ru: 'В течение 2 часов присылаем сумму. Вы оплачиваете через СБП — заказ принят.',
     },
   },
   {
