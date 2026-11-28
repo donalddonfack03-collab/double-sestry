@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { Image } from 'astro:assets';
-import sac from '../../assets/photos/sac.jpg';
+import soeursPhoto from '../../assets/photos/soeurs.jpg';
 import Mark from '../../components/Mark.astro';
 import WhatsAppButton from '../../components/WhatsAppButton.astro';
 import { langPaths, t, path, type Lang } from '../../i18n/ui';
@@ -22,7 +22,7 @@ const fr = lang === 'fr';
         <li><b>{fr ? 'La recette' : 'Рецепт'}</b>{fr ? 'celle de leur maman' : 'мамин'}</li>
       </ul>
     </div>
-    <div class="portrait"><Image src={sac} widths={[340, 520, 700]} sizes="(max-width: 860px) 100vw, 420px" loading="eager" format="webp" quality={80} alt={fr ? 'Une des sœurs tient deux sacs de commande avec « Bon appétit » et le prénom du client écrits à la main' : 'Одна из сестёр держит два пакета с заказами, на которых от руки написано «Приятного аппетита» и имя клиента'} /></div>
+    <div class="portrait"><Image src={soeursPhoto} widths={[340, 520, 700]} sizes="(max-width: 860px) 100vw, 420px" loading="eager" format="webp" quality={82} alt={fr ? 'Les deux sœurs de Double Sestry, en tablier, dans leur cuisine' : 'Две сестры Double Sestry в фартуках у себя на кухне'} /></div>
   </header>
 
   <article class="wrap chapters">
@@ -81,7 +81,7 @@ const fr = lang === 'fr';
   }
   .top__txt { gap: var(--space-5); }
   .portrait { aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; }
-  .portrait :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+  .portrait :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; }
   .facts { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-6); }
   .facts li { display: grid; color: var(--ink); }
   .facts b { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--miel-ink); }
