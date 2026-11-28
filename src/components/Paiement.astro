@@ -13,7 +13,8 @@ const fr = lang === 'fr';
   </span>
   <span class="txt">
     <strong>{fr ? 'Paiement par СБП' : 'Оплата через СБП'}</strong>
-    {!compact && <span>{fr ? 'Système de paiement rapide, par numéro de téléphone, depuis n’importe quelle banque russe.' : 'Система быстрых платежей — по номеру телефона, из любого российского банка.'}</span>}
+    {compact && <span>{fr ? 'Vers Sber ou Alfa-Bank' : 'На Сбербанк или Альфа-Банк'}</span>}
+    {!compact && <span>{fr ? 'Par numéro de téléphone, depuis n’importe quelle banque russe. Vous recevez avec le total le numéro et la banque à choisir : Sber ou Alfa-Bank.' : 'По номеру телефона, из любого российского банка. Вместе с суммой пришлём номер и банк получателя: Сбербанк или Альфа-Банк.'}</span>}
   </span>
 </p>
 <style>

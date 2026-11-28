@@ -55,8 +55,8 @@ export const retrait = {
 };
 
 export const paiement: T = {
-  fr: 'Par СБП (virement par numéro de téléphone), au moment de la confirmation : c’est le paiement qui valide la commande.',
-  ru: 'Через СБП (перевод по номеру телефона) при подтверждении заказа: заказ считается принятым после оплаты.',
+  fr: 'Par СБП (virement par numéro de téléphone) vers Sber ou Alfa-Bank, au moment de la confirmation : c’est le paiement qui valide la commande.',
+  ru: 'Через СБП (перевод по номеру телефона) на Сбербанк или Альфа-Банк при подтверждении заказа: заказ считается принятым после оплаты.',
 };
 
 export const livraison: T = {
