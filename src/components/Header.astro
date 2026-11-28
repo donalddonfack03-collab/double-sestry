@@ -21,11 +21,11 @@ const isCurrent = (slug: string) =>
   <div class="wrap">
     <span class="pulse" aria-hidden="true"></span>
     <span class="si-ouvert">{fr
-      ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b> · Retrait samedi et dimanche</>
-      : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b> · Выдача в субботу и воскресенье</>}</span>
+      ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b><span class="announce__long"> · Retrait samedi et dimanche</span></>
+      : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b><span class="announce__long"> · Выдача в субботу и воскресенье</span></>}</span>
     <span class="si-clos">{fr
-      ? <>Dernière minute ? Écrivez-nous sur WhatsApp : <b>selon disponibilité</b></>
-      : <>Заказ в последний момент? Напишите нам в WhatsApp: <b>по наличию</b></>}</span>
+      ? <>Dernière minute ? <span class="announce__long">Écrivez-nous sur </span>WhatsApp : <b>selon disponibilité</b></>
+      : <>Заказ в последний момент? <span class="announce__long">Напишите нам в </span>WhatsApp: <b>по наличию</b></>}</span>
   </div>
 </div>
 <header class="site-header">
@@ -152,6 +152,7 @@ const isCurrent = (slug: string) =>
     .long { display: none; }
     .short { display: inline; }
     .announce { font-size: 0.74rem; }
+    .announce__long { display: none; }
     .announce .wrap { padding-block: 6px; }
   }
   @media (max-width: 359px) { .brand__txt { display: none; } }
