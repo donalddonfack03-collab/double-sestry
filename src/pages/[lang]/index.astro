@@ -12,7 +12,7 @@ import Etoiles from '../../components/Etoiles.astro';
 import { etablissement } from '../../lib/schema';
 import table from '../../assets/photos/table.jpg';
 import sac from '../../assets/photos/sac.jpg';
-import trio from '../../assets/photos/trio.jpg';
+import soeursPhoto from '../../assets/photos/soeurs.jpg';
 import boxBurgers from '../../assets/photos/box-burgers.jpg';
 import boxMix from '../../assets/photos/box-mix.jpg';
 import gateauCitron from '../../assets/photos/gateau-citron.jpg';
@@ -183,7 +183,7 @@ const etapes = parcours.map((e) => ({ t: e.titre[lang], d: e.texte[lang] }));
   <section class="histoire">
     <div class="wrap histoire__grid">
       <div class="histoire__pic">
-        <Image src={trio} alt={fr ? 'Crêpes La Sestry, La Choco, pastels et un verre de bissap sur la nappe de la maison' : 'Блины La Sestry, La Choco, пастели и стакан биссапа на домашней скатерти'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={80} />
+        <Image src={soeursPhoto} alt={fr ? 'Les deux sœurs de Double Sestry, en tablier, dans leur cuisine' : 'Две сестры Double Sestry в фартуках у себя на кухне'} widths={[400, 640, 800]} sizes="(max-width: 860px) 100vw, 40vw" format="webp" quality={82} />
       </div>
       <div class="histoire__txt">
         <p class="eyebrow">{t(lang, 'nav.histoire')}</p>
