@@ -13,30 +13,24 @@ const font = (pkg: string, file: string) => readFile(root(`node_modules/@fontsou
 
 let fontsCache: Awaited<ReturnType<typeof loadFonts>> | undefined;
 async function loadFonts() {
-  const [ys, lora, loraLat, fig4, fig7, golos4, golos6, golosLat, golosExt4, golosExt7] = await Promise.all([
-    font('young-serif', 'young-serif-latin-400-normal.woff'),
-    font('lora', 'lora-cyrillic-600-normal.woff'),
-    font('lora', 'lora-latin-600-normal.woff'),
-    font('figtree', 'figtree-latin-400-normal.woff'),
-    font('figtree', 'figtree-latin-700-normal.woff'),
-    font('golos-text', 'golos-text-cyrillic-400-normal.woff'),
-    font('golos-text', 'golos-text-cyrillic-600-normal.woff'),
-    font('golos-text', 'golos-text-latin-400-normal.woff'),
-    // Le signe ₽ est dans le sous-ensemble « latin-ext » de Golos.
-    font('golos-text', 'golos-text-latin-ext-400-normal.woff'),
-    font('golos-text', 'golos-text-latin-ext-700-normal.woff'),
+  // Même typographie que le site : Playfair Display (titres) et Montserrat (texte).
+  // Chaque police est chargée en trois sous-ensembles : latin, cyrillique, et latin-ext (signe ₽).
+  const [pfLat, pfCyr, pfExt, m4Lat, m4Cyr, m4Ext, m7Lat, m7Cyr, m7Ext] = await Promise.all([
+    font('playfair-display', 'playfair-display-latin-600-normal.woff'),
+    font('playfair-display', 'playfair-display-cyrillic-600-normal.woff'),
+    font('playfair-display', 'playfair-display-latin-ext-600-normal.woff'),
+    font('montserrat', 'montserrat-latin-400-normal.woff'),
+    font('montserrat', 'montserrat-cyrillic-400-normal.woff'),
+    font('montserrat', 'montserrat-latin-ext-400-normal.woff'),
+    font('montserrat', 'montserrat-latin-700-normal.woff'),
+    font('montserrat', 'montserrat-cyrillic-700-normal.woff'),
+    font('montserrat', 'montserrat-latin-ext-700-normal.woff'),
   ]);
+  const f = (name: string, data: Buffer, weight: 400 | 600 | 700) => ({ name, data, weight, style: 'normal' as const });
   return [
-    { name: 'Young Serif', data: ys, weight: 400 as const, style: 'normal' as const },
-    { name: 'Lora', data: lora, weight: 600 as const, style: 'normal' as const },
-    { name: 'Lora Latin', data: loraLat, weight: 600 as const, style: 'normal' as const },
-    { name: 'Figtree', data: fig4, weight: 400 as const, style: 'normal' as const },
-    { name: 'Figtree', data: fig7, weight: 700 as const, style: 'normal' as const },
-    { name: 'Golos', data: golos4, weight: 400 as const, style: 'normal' as const },
-    { name: 'Golos', data: golos6, weight: 700 as const, style: 'normal' as const },
-    { name: 'Golos Latin', data: golosLat, weight: 400 as const, style: 'normal' as const },
-    { name: 'Golos Ext', data: golosExt4, weight: 400 as const, style: 'normal' as const },
-    { name: 'Golos Ext', data: golosExt7, weight: 700 as const, style: 'normal' as const },
+    f('Playfair', pfLat, 600), f('Playfair Cyr', pfCyr, 600), f('Playfair Ext', pfExt, 600),
+    f('Montserrat', m4Lat, 400), f('Montserrat Cyr', m4Cyr, 400), f('Montserrat Ext', m4Ext, 400),
+    f('Montserrat', m7Lat, 700), f('Montserrat Cyr', m7Cyr, 700), f('Montserrat Ext', m7Ext, 700),
   ];
 }
 
@@ -79,8 +73,8 @@ export interface OgOptions {
 export async function renderOg(o: OgOptions): Promise<Buffer> {
   const fonts = (fontsCache ??= await loadFonts());
   const ru = o.lang === 'ru';
-  const display = ru ? 'Lora, Lora Latin' : 'Young Serif';
-  const body = ru ? 'Golos, Golos Latin, Golos Ext' : 'Figtree, Golos Ext';
+  const display = 'Playfair, Playfair Cyr, Playfair Ext';
+  const body = 'Montserrat, Montserrat Cyr, Montserrat Ext';
   const mark = `data:image/svg+xml;base64,${(await readFile(root('public/ds-mark.svg'))).toString('base64')}`;
   const titleSize = o.title.length > 34 ? 56 : o.title.length > 22 ? 66 : 78;
 
@@ -89,18 +83,18 @@ export async function renderOg(o: OgOptions): Promise<Buffer> {
       h('div', { display: 'flex', alignItems: 'center', gap: 16 }, [
         h('img', { width: 64, height: 61 }, undefined, { src: mark }),
         h('div', { display: 'flex', flexDirection: 'column', gap: 2 }, [
-          h('div', { fontFamily: 'Young Serif', fontSize: 34 }, 'Double Sestry'),
+          h('div', { fontFamily: display, fontSize: 34, fontWeight: 600 }, 'Double Sestry'),
           h('div', { fontSize: 17, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: C.mielInk }, 'La Maison des Douceurs'),
         ]),
       ]),
       h('div', { display: 'flex', flexDirection: 'column', gap: 18 }, [
         h('div', { fontSize: 22, fontWeight: 700, letterSpacing: 3, textTransform: 'uppercase', color: C.mielInk }, o.eyebrow),
-        h('div', { fontFamily: display, fontSize: titleSize, lineHeight: 1.04, fontWeight: ru ? 600 : 400 }, o.title),
+        h('div', { fontFamily: display, fontSize: titleSize, lineHeight: 1.04, fontWeight: 600 }, o.title),
         o.subtitle ? h('div', { fontSize: 28, lineHeight: 1.35, color: C.muted, maxWidth: 600 }, o.subtitle) : null,
       ].filter(Boolean)),
       h('div', { display: 'flex', alignItems: 'center', gap: 18 }, [
-        o.badge ? h('div', { background: C.choco, color: C.creme, fontSize: 28, fontWeight: 700, padding: '12px 26px', borderRadius: 999 }, o.badge) : null,
-        h('div', { fontSize: 24, color: C.muted }, ru ? 'Брянск · под заказ' : 'Briansk · sur commande'),
+        o.badge ? h('div', { background: C.choco, color: C.creme, fontSize: o.badge.length > 18 ? 22 : 28, fontWeight: 700, padding: '12px 26px', borderRadius: 999, whiteSpace: 'nowrap', flexShrink: 0 }, o.badge) : null,
+        h('div', { fontSize: 22, color: C.muted, whiteSpace: 'nowrap' }, ru ? 'Брянск · под заказ' : 'Briansk · sur commande'),
       ].filter(Boolean)),
     ]),
     h('div', { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 480 }, [
