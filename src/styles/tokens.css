@@ -1,7 +1,7 @@
 /*
  * Design system Double Sestry — les jetons.
- * Charte : chocolat + miel sur crème. Young Serif pour les titres (Lora pour le russe,
- * car Young Serif n'a pas de cyrillique), Figtree pour le texte (Golos Text pour le russe).
+ * Charte : chocolat + miel sur crème. Playfair Display pour les titres, Montserrat pour le texte
+ * (les deux ont le cyrillique : même typographie en français et en russe).
  * Le site suit le réglage du téléphone : crème le jour, chocolat foncé la nuit.
  */
 :root {
@@ -22,9 +22,9 @@
   --shadow: 0 1px 2px rgb(84 31 18 / 0.06), 0 8px 24px rgb(84 31 18 / 0.08);
 
   /* Typographie */
-  --font-display: 'Young Serif', 'Lora Variable', Georgia, 'Times New Roman', serif;
-  --font-body: 'Figtree Variable', 'Golos Text Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --display-weight: 400;
+  --font-display: 'Playfair Display Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Montserrat Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display-weight: 600;
 
   --step--1: clamp(0.84rem, 0.82rem + 0.1vw, 0.9rem);
   --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
@@ -52,12 +52,7 @@
   color-scheme: light;
 }
 
-/* Le russe : titres en Lora (cyrillique), texte en Golos Text. */
-:lang(ru) {
-  --font-display: 'Lora Variable', Georgia, 'Times New Roman', serif;
-  --font-body: 'Golos Text Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --display-weight: 600;
-}
+/* Playfair Display et Montserrat ont le cyrillique : même typographie en russe. */
 
 @media (prefers-color-scheme: dark) {
   :root {

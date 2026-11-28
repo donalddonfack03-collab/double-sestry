@@ -138,7 +138,7 @@ const faq = [
     clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
     background: var(--miel);
     color: var(--on-miel);
-    font-family: 'Young Serif', Georgia, serif;
+    font-family: var(--font-display); font-weight: var(--display-weight);
     font-size: 1.1rem;
     margin-bottom: var(--space-2);
   }
@@ -168,7 +168,7 @@ const faq = [
   details { border-bottom: 1px solid var(--line); padding-block: var(--space-4); }
   summary { cursor: pointer; font-weight: 750; color: var(--choco); list-style: none; display: flex; justify-content: space-between; gap: var(--space-4); }
   summary::-webkit-details-marker { display: none; }
-  summary::after { content: '+'; font-family: 'Young Serif', Georgia, serif; color: var(--miel-ink); font-size: 1.3rem; line-height: 1; }
+  summary::after { content: '+'; font-family: var(--font-display); font-weight: var(--display-weight); color: var(--miel-ink); font-size: 1.3rem; line-height: 1; }
   details[open] summary::after { content: '–'; }
   details p { margin-top: var(--space-2); color: var(--muted); max-width: 64ch; }
   .back { margin-top: var(--space-6); }

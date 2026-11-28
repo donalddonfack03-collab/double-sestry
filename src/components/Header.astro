@@ -21,11 +21,11 @@ const isCurrent = (slug: string) =>
   <div class="wrap">
     <span class="pulse" aria-hidden="true"></span>
     <span class="si-ouvert">{fr
-      ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b> · Retrait samedi et dimanche</>
-      : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b> · Выдача в субботу и воскресенье</>}</span>
+      ? <>Commandes ouvertes jusqu’au <b>{retrait.finCommandes.fr}</b><span class="announce__long"> · Retrait samedi et dimanche</span></>
+      : <>Заказы принимаем до <b>{retrait.finCommandes.ru}</b><span class="announce__long"> · Выдача в субботу и воскресенье</span></>}</span>
     <span class="si-clos">{fr
-      ? <>Dernière minute ? Écrivez-nous sur WhatsApp : <b>selon disponibilité</b></>
-      : <>Заказ в последний момент? Напишите нам в WhatsApp: <b>по наличию</b></>}</span>
+      ? <>Dernière minute ? <span class="announce__long">Écrivez-nous sur </span>WhatsApp : <b>selon disponibilité</b></>
+      : <>Заказ в последний момент? <span class="announce__long">Напишите нам в </span>WhatsApp: <b>по наличию</b></>}</span>
   </div>
 </div>
 <header class="site-header">
@@ -106,7 +106,7 @@ const isCurrent = (slug: string) =>
   .bar { display: flex; align-items: center; gap: var(--space-4); padding-block: 10px; flex-wrap: wrap; }
   .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .brand__txt { display: grid; line-height: 1.05; }
-  .brand__txt span { font-family: 'Young Serif', Georgia, serif; font-size: 1.28rem; color: var(--choco); }
+  .brand__txt span { font-family: var(--font-display); font-weight: var(--display-weight); font-size: 1.28rem; color: var(--choco); }
   .brand__txt small { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--miel-ink); margin-top: 3px; }
   .nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
   .nav a[aria-current='page'] { background: var(--alveole); color: var(--choco); }
@@ -152,6 +152,7 @@ const isCurrent = (slug: string) =>
     .long { display: none; }
     .short { display: inline; }
     .announce { font-size: 0.74rem; }
+    .announce__long { display: none; }
     .announce .wrap { padding-block: 6px; }
   }
   @media (max-width: 359px) { .brand__txt { display: none; } }
